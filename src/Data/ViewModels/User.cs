@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Data.ViewModels
 {
-    public class User
+    public class UserViewModel
     {
         public int Id { get; set; }
 

@@ -29,7 +29,7 @@ Obj/
 # Visual Studio 2015 cache/options directory
 .vs/
 
-/yarn.lock
+/src/yarn.lock
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -133,7 +133,7 @@ DocProject/Help/Html2
 DocProject/Help/html
 
 # Click-Once directory
-publish/
+/src/publish/
 
 # Publish Web Output
 *.[Pp]ublish.xml
@@ -183,11 +183,6 @@ ClientBin/
 *.publishsettings
 orleans.codegen.cs
 
-/node_modules
-
-# RIA/Silverlight projects
-Generated_Code/
-
 # Backup & report files from converting an old project file
 # to a newer Visual Studio version. Backup files are not needed,
 # because we have git ;-)
@@ -229,8 +224,8 @@ FakesAssemblies/
 _Pvt_Extensions
 
 # Paket dependency manager
-.paket/paket.exe
+/src/.paket/paket.exe
 
 # FAKE - F# Make
-.fake/
+/src/.fake/
 

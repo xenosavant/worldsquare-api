@@ -9,15 +9,23 @@
 
   <ItemGroup>
     <Compile Remove="Client\**" />
+    <Compile Remove="src\**" />
+    <Compile Remove="Test\**" />
     <Compile Remove="Views\**" />
     <Compile Remove="wwwroot\**" />
     <Content Remove="Client\**" />
+    <Content Remove="src\**" />
+    <Content Remove="Test\**" />
     <Content Remove="Views\**" />
     <Content Remove="wwwroot\**" />
     <EmbeddedResource Remove="Client\**" />
+    <EmbeddedResource Remove="src\**" />
+    <EmbeddedResource Remove="Test\**" />
     <EmbeddedResource Remove="Views\**" />
     <EmbeddedResource Remove="wwwroot\**" />
     <None Remove="Client\**" />
+    <None Remove="src\**" />
+    <None Remove="Test\**" />
     <None Remove="Views\**" />
     <None Remove="wwwroot\**" />
   </ItemGroup>
@@ -40,7 +48,6 @@
 
   <ItemGroup>
     <Folder Include="Data\Responses\" />
-    <Folder Include="Test\" />
   </ItemGroup>
 
 

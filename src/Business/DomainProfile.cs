@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ViewModel = Stellmart.Data.ViewModels;
+using Stellmart.Data.ViewModels;
 using Stellmart.Context.Entities;
 
 namespace Stellmart.Business
@@ -8,7 +8,7 @@ namespace Stellmart.Business
     {
         public DomainProfile()
         {
-            CreateMap<User, ViewModel.User>();
+            CreateMap<User, UserViewModel>();
         }
     }
 }

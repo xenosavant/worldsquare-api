@@ -1,1 +1,1 @@
-Stellmart.Api
+stellmart-api
