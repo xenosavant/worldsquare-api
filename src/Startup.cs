@@ -1,21 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.SpaServices.Webpack;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Http;
-using System.IO;
-using Microsoft.EntityFrameworkCore;
-using Stellmart.Business.Logic;
-using Stellmart.DataAccess;
-using AutoMapper;
-using Stellmart.Context;
-using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.Extensions.Logging;
+using Stellmart.Business.Logic;
+using Stellmart.Context;
+using Stellmart.DataAccess;
 
 namespace Stellmart
 {
@@ -31,6 +26,13 @@ namespace Stellmart
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<StellmartContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<StellmartContext>()
+                .AddDefaultTokenProviders();
+
             services.AddOptions();
 
             services.AddCors(options =>
@@ -48,8 +50,7 @@ namespace Stellmart
             services.AddAutoMapper();
             services.AddMvcCore();
             services.AddMvc();
-            var connectionString = Configuration.GetConnectionString("StellmartDatabase");
-            services.AddDbContext<StellmartContext>(options => options.UseSqlServer(connectionString));
+            
             services.AddTransient<IUserLogic, UserLogic>();
             services.AddTransient<IUserDataAccess, UserDataAccess>();
         }

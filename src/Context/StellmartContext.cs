@@ -1,13 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Stellmart.Context.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Stellmart.Context
 {
-    public class StellmartContext : DbContext
+    public class StellmartContext : IdentityDbContext<IdentityUser>
     {
         public StellmartContext(DbContextOptions<StellmartContext> options)
             : base(options)
@@ -21,6 +19,7 @@ namespace Stellmart.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>().HasIndex(
                 user => user.Email).IsUnique(true);
