@@ -40,6 +40,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.4" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="stellar-dotnetcore-sdk" Version="1.0.3" />
+    <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="WebEssentials.AspNetCore.ServiceWorker" Version="1.0.11" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.1.1" />
   </ItemGroup>
@@ -51,6 +52,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Business\Mapping\Profiles\" />
+    <Folder Include="Business\Mapping\Resolvers\" />
+    <Folder Include="Context\Migrations\" />
     <Folder Include="Data\Responses\" />
   </ItemGroup>
 

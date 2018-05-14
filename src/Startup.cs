@@ -8,9 +8,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Stellmart.Api.Config;
+using Stellmart.Api.Context;
 using Stellmart.Business.Logic;
 using Stellmart.Context;
-using Stellmart.DataAccess;
+using StructureMap;
+using System;
 
 namespace Stellmart
 {
@@ -24,14 +27,13 @@ namespace Stellmart
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IConfigurationBuilder, ConfigurationBuilder>();
-            services.AddDbContext<StellmartContext>(options =>
+            services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddEntityFrameworkStores<StellmartContext>()
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
             services.AddOptions();
@@ -48,12 +50,17 @@ namespace Stellmart
                     });
             });
 
-            services.AddAutoMapper();
             services.AddMvcCore();
             services.AddMvc();
-            
-            services.AddTransient<IUserLogic, UserLogic>();
-            services.AddTransient<IUserDataAccess, UserDataAccess>();
+
+            // Add di framework
+            var container = new Container(new DependencyInjectionRegistry());
+            container.Populate(services);
+
+            services.AddAutoMapper(cfg => cfg.ConstructServicesUsing(container.GetInstance));
+            Mapper.AssertConfigurationIsValid();
+
+            return container.GetInstance<IServiceProvider>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,7 +91,14 @@ namespace Stellmart
             }
 
             app.UseCors("AllowAllOrigins");
-            app.UseMvc();
+            app.UseStaticFiles();
+
+            app.UseMvc(routes =>
+            {
+                routes.MapRoute(
+                    "default",
+                    "{controller=Default}/{action=Index}/{id?}");
+            });
         }
     }
 }

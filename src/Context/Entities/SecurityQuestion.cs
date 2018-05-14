@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Stellmart.Api.Context.Entities.BaseEntity;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Stellmart.Context.Entities
 {
-    public class SecurityQuestion : IStellmartEntity
+    public class SecurityQuestion : Entity<int>
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         public string Question { get; set; }

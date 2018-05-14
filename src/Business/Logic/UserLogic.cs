@@ -1,48 +1,45 @@
-﻿using Stellmart.DataAccess;
-using Stellmart.Data;
+﻿using AutoMapper;
+using Stellmart.Api.DataAccess;
 using Stellmart.Context.Entities;
-using System;
+using Stellmart.Data;
+using Stellmart.Data.ViewModels;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Stellmart.Business.Logic
 {
     public class UserLogic : IUserLogic
     {
-        private readonly IUserDataAccess _dataAccess;
+        private readonly IRepository _repository;
+        private readonly IMapper _mapper;
 
-        public UserLogic(IUserDataAccess dataAccess)
+        public UserLogic(IRepository repository, IMapper mapper)
         {
-            _dataAccess = dataAccess;
+            _repository = repository;
+            _mapper = mapper;
         }
 
-        public async Task<User> Signup(SignupRequest request)
+        public async Task<int> SignupAsync(SignupRequest request)
         {
-            var user = new User()
-            {
-                Email = request.Email,
-                Username = request.Username,
-            };
-            return await _dataAccess.InsertAsync(user);
+            _repository.Create(_mapper.Map<User>(request));
+            return await _repository.SaveAsync();
         }
 
-        public async Task<User> Get(int id)
+        public async Task<UserViewModel> GetByIdAsync(int id)
         {
-            return await _dataAccess.GetSingleByIdAsync(id);
+            return _mapper.Map<UserViewModel>(await _repository.GetByIdAsync<User>(id));
         }
 
-        public async Task<IEnumerable<User>> GetAll()
+        public async Task<IReadOnlyCollection<UserViewModel>> GetAllAsync()
         {
-            return await _dataAccess.GetAllAsync();
+            return _mapper.Map<List<UserViewModel>>(await _repository.GetAllAsync<User>());
         }
     }
 
     public interface IUserLogic
     {
-        Task<User> Signup(SignupRequest reqest);
-        Task<IEnumerable<User>> GetAll();
-        Task<User> Get(int id);
+        Task<int> SignupAsync(SignupRequest request);
+        Task<IReadOnlyCollection<UserViewModel>> GetAllAsync();
+        Task<UserViewModel> GetByIdAsync(int id);
     }
 }

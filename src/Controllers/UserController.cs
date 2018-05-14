@@ -29,7 +29,7 @@ namespace Stellmart.Controllers
         [HttpGet]
         public async Task<IEnumerable<UserViewModel>> Get()
         {
-            return _mapper.Map<List<UserViewModel>>(await _userLogic.GetAll());
+            return _mapper.Map<List<UserViewModel>>(await _userLogic.GetAllAsync());
         }
 
         // GET: api/user/get/5
@@ -37,14 +37,14 @@ namespace Stellmart.Controllers
         [Route("{id:int}", Name = nameof(Get))]
         public async Task<UserViewModel> Get(int id)
         {
-            return _mapper.Map<UserViewModel>(await _userLogic.Get(id));
+            return _mapper.Map<UserViewModel>(await _userLogic.GetByIdAsync(id));
         }
         
         // POST: api/user/signup
         [HttpPost]
         public async Task<UserViewModel> Signup([FromBody]SignupRequest request)
         {
-            return _mapper.Map<UserViewModel>(await _userLogic.Signup(request));
+            return _mapper.Map<UserViewModel>(await _userLogic.SignupAsync(request));
         }
        
     }

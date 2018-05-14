@@ -1,15 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Stellmart.Api.Context.Entities.BaseEntity;
 
 namespace Stellmart.Context.Entities
 {
-    public class KeyRecoveryStep : IStellmartEntity
+    public class KeyRecoveryStep : Entity<int>
     {
-        [Key]
-        public int Id { get; set; }
 
         public int OrderNumber { get; set; }
 
@@ -18,7 +12,5 @@ namespace Stellmart.Context.Entities
         public int SecurityQuestionId { get; set; }
 
         public SecurityQuestion SecurityQuestion { get; set; }
-
-        public User User { get; set; }
     }
 }
