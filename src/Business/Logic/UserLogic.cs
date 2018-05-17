@@ -4,6 +4,7 @@ using Stellmart.Context.Entities;
 using Stellmart.Data;
 using Stellmart.Data.ViewModels;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Stellmart.Business.Logic
@@ -33,6 +34,12 @@ namespace Stellmart.Business.Logic
         public async Task<IReadOnlyCollection<UserViewModel>> GetAllAsync()
         {
             return _mapper.Map<List<UserViewModel>>(await _repository.GetAllAsync<User>());
+        }
+
+        //example method for ordering and including entities by eager loading (aka include())
+        public async Task<IReadOnlyCollection<UserViewModel>> GetAllOrderingAndIncludeExampleAsync()
+        {
+            return _mapper.Map<List<UserViewModel>>(await _repository.GetAsync<User>(x => x.IsActive, x => x.OrderByDescending(y => y.CreatedDate), "NameOfRelatedEntity,NameOfOtherRelatedEntity,NameOfRelatedEntity.ChildEntity"));
         }
     }
 
