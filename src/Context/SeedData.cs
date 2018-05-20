@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Stellmart.Context;
 using System.Linq;
 using System.Security.Claims;
@@ -8,8 +10,11 @@ namespace Stellmart.Api.Context
 {
     public class SeedData
     {
-        public static async Task Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
+        public static async Task Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
+            //ensure database exists and migration applied
+            context.Database.Migrate();
+
             // Look for any users.
             if (context.Users.Any())
             {
@@ -18,11 +23,11 @@ namespace Stellmart.Api.Context
 
             var user = new ApplicationUser
             {
-                Email = "admin@test.com",
-                UserName = "admin@test.com"
+                Email = configuration["SeedData:InitialAdminUser"],
+                UserName = configuration["SeedData:InitialAdminUser"]
             };
 
-            var password = "Admin1234!";
+            var password = configuration["SeedData:InitialAdminPassword"];
             await userManager.CreateAsync(user, password);
             await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin"));
         }

@@ -16,29 +16,7 @@ namespace Stellmart
     {
         public static void Main(string[] args)
         {
-            var host = BuildWebHost(args);
-
-            Task.Run(async () =>
-            {
-                // seeding initial admin user
-                using (var scope = host.Services.CreateScope())
-                {
-                    var services = scope.ServiceProvider;
-                    try
-                    {
-                            var context = services.GetRequiredService<ApplicationDbContext>();
-                            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                            await SeedData.Initialize(context, userManager);
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = services.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "An error occurred seeding the DB.");
-                    }
-                }
-            });
-
-            host.Run();
+            BuildWebHost(args).Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

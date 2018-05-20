@@ -14,6 +14,7 @@ using Stellmart.Business.Logic;
 using Stellmart.Context;
 using StructureMap;
 using System;
+using System.Threading.Tasks;
 
 namespace Stellmart
 {
@@ -27,7 +28,7 @@ namespace Stellmart
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
@@ -60,7 +61,28 @@ namespace Stellmart
             services.AddAutoMapper(cfg => cfg.ConstructServicesUsing(container.GetInstance));
             Mapper.AssertConfigurationIsValid();
 
-            return container.GetInstance<IServiceProvider>();
+            container.GetInstance<IServiceProvider>();
+
+            Task.Run(async () =>
+            {
+                await SeedDataStartup(services);
+            });
+        }
+
+        private async Task SeedDataStartup(IServiceCollection services)
+        {
+            try
+            {
+                var context = services.BuildServiceProvider().GetRequiredService<ApplicationDbContext>();
+                var userManager = services.BuildServiceProvider().GetRequiredService<UserManager<ApplicationUser>>();
+
+                await SeedData.Initialize(context, userManager, Configuration);
+            }
+            catch (Exception ex)
+            {
+                var logger = services.BuildServiceProvider().GetRequiredService<ILogger<Program>>();
+                logger.LogError(ex, "An error occurred seeding the DB.");
+            }
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
