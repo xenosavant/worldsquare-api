@@ -23,7 +23,7 @@ namespace Stellmart.Services
             var keypair = KeyPair.Random();
             data.Public_Key = keypair.AccountId;
 	    /* ToDo encode the SecretSeed */
-            data.Encoded_Secret = keypair.SecretSeed;
+            data.Secret_Key = keypair.SecretSeed;
         }
     }
 }
