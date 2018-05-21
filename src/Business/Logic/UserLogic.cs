@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Stellmart.Api.Business.Logic;
 using Stellmart.Api.DataAccess;
 using Stellmart.Context.Entities;
 using Stellmart.Data;
@@ -41,12 +42,5 @@ namespace Stellmart.Business.Logic
         {
             return _mapper.Map<List<UserViewModel>>(await _repository.GetAsync<User>(x => x.IsActive, x => x.OrderByDescending(y => y.CreatedDate), "NameOfRelatedEntity,NameOfOtherRelatedEntity,NameOfRelatedEntity.ChildEntity"));
         }
-    }
-
-    public interface IUserLogic
-    {
-        Task<int> SignupAsync(SignupRequest request);
-        Task<IReadOnlyCollection<UserViewModel>> GetAllAsync();
-        Task<UserViewModel> GetByIdAsync(int id);
     }
 }

@@ -1,18 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Stellmart.Data.ViewModels;
-using AutoMapper;
-using Stellmart.Business.Logic;
+using Stellmart.Api.Business.Logic;
 using Stellmart.Data;
+using Stellmart.Data.ViewModels;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Stellmart.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
+    //[Authorize]
     public class UserController : Controller
     {
         private readonly IUserLogic _userLogic;

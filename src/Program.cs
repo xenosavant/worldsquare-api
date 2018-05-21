@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Stellmart.Api.Business.Extensions;
 using Stellmart.Api.Context;
 using Stellmart.Context;
 using System;
@@ -16,7 +17,9 @@ namespace Stellmart
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            var host = BuildWebHost(args).Migrate();
+
+            host.Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

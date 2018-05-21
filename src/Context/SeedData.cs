@@ -10,7 +10,7 @@ namespace Stellmart.Api.Context
 {
     public class SeedData
     {
-        public static async Task Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public static void Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             //ensure database exists and migration applied
             context.Database.Migrate();
@@ -28,8 +28,8 @@ namespace Stellmart.Api.Context
             };
 
             var password = configuration["SeedData:InitialAdminPassword"];
-            await userManager.CreateAsync(user, password);
-            await userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin"));
+            userManager.CreateAsync(user, password);
+            userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin"));
         }
     }
 }

@@ -1,30 +1,40 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using stellar_dotnetcore_sdk;
-using Horizon_data = Stellmart.Api.Data.Horizon;
+﻿using stellar_dotnetcore_sdk;
+using Stellmart.Api.Services;
+using Stellmart.Api.Data.Horizon;
+using Microsoft.Extensions.Options;
+using Stellmart.Api.Data.Settings;
+using AutoMapper;
 
 namespace Stellmart.Services
 {
-    public class HorizonService
+    public class HorizonService : IHorizonService
     {
-        static public Server server;
-        public static void Horizon_Server(string network) {
-            if(network.Equals("public")) {
-                Network.UsePublicNetwork();
-                server = new Server("https://horizon.stellar.org");
-            } else {
+        private readonly Server _server;
+        private readonly IOptions<HorizonSettings> _horizonSettings;
+        private readonly IMapper _mapper;
+
+        public HorizonService(IOptions<HorizonSettings> horizonSettings, IMapper mapper)
+        {
+            _horizonSettings = horizonSettings;
+            _mapper = mapper;
+
+            if (_horizonSettings.Value.Server.Contains("testnet"))
+            {
                 Network.UseTestNetwork();
-                server = new Server("https://horizon-testnet.stellar.org");
             }
+            else
+            {
+                Network.UsePublicNetwork();
+            }
+            
+            _server = new Server(_horizonSettings.Value.Server);
         }
-        public Horizon_data.KeyPair Create_Stellar_account() {
-            Horizon_data.KeyPair data_kp = new Horizon_data.KeyPair();
-            var keypair = KeyPair.Random();
-            data_kp.Public_Key = keypair.AccountId;
-            data_kp.Secret_Key = keypair.SecretSeed;
-            return data_kp;
+
+        public void CreateAccount(HorizonKeyPairModel data)
+        {
+            var keypair = _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
+
+            //do whatever next
         }
     }
 }
