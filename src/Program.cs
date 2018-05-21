@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Stellmart.Api.Business.Extensions;
 using Stellmart.Api.Context;
 using Stellmart.Context;
 using System;
@@ -16,27 +17,7 @@ namespace Stellmart
     {
         public static void Main(string[] args)
         {
-            var host = BuildWebHost(args);
-
-            Task.Run(async () =>
-            {
-                // seeding initial admin user
-                using (var scope = host.Services.CreateScope())
-                {
-                    var services = scope.ServiceProvider;
-                    try
-                    {
-                            var context = services.GetRequiredService<ApplicationDbContext>();
-                            var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                            await SeedData.Initialize(context, userManager);
-                    }
-                    catch (Exception ex)
-                    {
-                        var logger = services.GetRequiredService<ILogger<Program>>();
-                        logger.LogError(ex, "An error occurred seeding the DB.");
-                    }
-                }
-            });
+            var host = BuildWebHost(args).Migrate();
 
             host.Run();
         }

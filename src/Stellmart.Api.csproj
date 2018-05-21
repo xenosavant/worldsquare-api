@@ -32,6 +32,8 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="3.2.0" />
+    <PackageReference Include="IdentityServer4" Version="2.2.0" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.0.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.0.3" />
@@ -52,7 +54,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Business\Mapping\Profiles\" />
     <Folder Include="Business\Mapping\Resolvers\" />
     <Folder Include="Context\Migrations\" />
     <Folder Include="Data\Responses\" />

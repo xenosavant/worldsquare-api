@@ -16,6 +16,7 @@ namespace Stellmart.Api.Config
             Scan(x =>
             {
                 x.AssemblyContainingType<Startup>();
+                x.Assembly("Stellmart.Api");
                 x.LookForRegistries();
                 x.AddAllTypesOf<Profile>();
                 x.WithDefaultConventions();
