@@ -19,11 +19,12 @@ namespace Stellmart.Services
                 server = new Server("https://horizon-testnet.stellar.org");
             }
         }
-        public static void Create_Stellar_account(ref Horizon_data.KeyPair data) {
+        public Horizon_data.KeyPair Create_Stellar_account() {
+            Horizon_data.KeyPair data_kp = new Horizon_data.KeyPair();
             var keypair = KeyPair.Random();
-            data.Public_Key = keypair.AccountId;
-	    /* ToDo encode the SecretSeed */
-            data.Secret_Key = keypair.SecretSeed;
+            data_kp.Public_Key = keypair.AccountId;
+            data_kp.Secret_Key = keypair.SecretSeed;
+            return data_kp;
         }
     }
 }
