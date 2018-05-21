@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Stellmart.Api.Data.Horizon;
 
 namespace Stellmart.Api.Services
 {
     public interface IHorizonService
     {
+        void CreateAccount(HorizonKeyPairModel data);
     }
 }
