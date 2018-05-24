@@ -62,8 +62,8 @@ namespace Stellmart
                 .AddIdentityServerAuthentication(o =>
                 {
                     o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-                    o.ApiName = "api";
-                    o.ApiSecret = "secret";
+                    o.ApiName = "api1";
+                    o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
                     o.EnableCaching = true;
                     o.RequireHttpsMetadata = false;
                     o.SupportedTokens = SupportedTokens.Both;

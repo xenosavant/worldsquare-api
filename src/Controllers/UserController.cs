@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Business.Logic;
 using Stellmart.Data;
@@ -10,7 +11,7 @@ namespace Stellmart.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
-    //[Authorize]
+    [Authorize]
     public class UserController : Controller
     {
         private readonly IUserLogic _userLogic;
