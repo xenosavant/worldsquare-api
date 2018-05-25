@@ -30,11 +30,10 @@ namespace Stellmart.Services
             _server = new Server(_horizonSettings.Value.Server);
         }
 
-        public void CreateAccount(HorizonKeyPairModel data)
+        public HorizonKeyPairModel CreateAccount()
         {
             var keypair = _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
-
-            //do whatever next
+	    return keypair;
         }
     }
 }

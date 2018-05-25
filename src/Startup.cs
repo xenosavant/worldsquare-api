@@ -12,8 +12,10 @@ using Microsoft.Extensions.Logging;
 using Stellmart.Api.Config;
 using Stellmart.Api.Context;
 using Stellmart.Api.Data.Settings;
+using Stellmart.Api.Services;
 using Stellmart.Business.Logic;
 using Stellmart.Context;
+using Stellmart.Services;
 using StructureMap;
 using System;
 using System.IdentityModel.Tokens.Jwt;
@@ -70,6 +72,7 @@ namespace Stellmart
                 });
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
+	    services.AddSingleton<IHorizonService, HorizonService>();
 
             // Add di framework
             var container = new Container(new DependencyInjectionRegistry());
