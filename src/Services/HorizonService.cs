@@ -1,4 +1,7 @@
-﻿using stellar_dotnetcore_sdk;
+﻿using System;
+using System.IO;
+using System.Net;
+using stellar_dotnetcore_sdk;
 using Stellmart.Api.Services;
 using Stellmart.Api.Data.Horizon;
 using Microsoft.Extensions.Options;
@@ -35,5 +38,18 @@ namespace Stellmart.Services
             var keypair = _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
 	    return keypair;
         }
+
+	public void Fund_Test_Account(string Public_Key)
+	{
+            UriBuilder baseUri = new UriBuilder("https://horizon-testnet.stellar.org/friendbot");
+            string queryToAppend = "addr=" + Public_Key;
+
+	     baseUri.Query = queryToAppend;
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri.ToString());
+            request.Method = "GET";
+            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+            StreamReader sr = new StreamReader(response.GetResponseStream());
+            sr.ReadToEnd();
+	}
     }
 }
