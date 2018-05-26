@@ -3,6 +3,6 @@
     public class HorizonKeyPairModel
     {
         public string PublicKey { get; set; }
-        public string EncodedSecret { get; set; }
+        public string SecretKey { get; set; }
     }
 }

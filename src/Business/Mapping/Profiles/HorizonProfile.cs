@@ -10,7 +10,7 @@ namespace Stellmart.Api.Business.Mapping.Profiles
         {
             CreateMap<KeyPair, HorizonKeyPairModel>()
                 .ForMember(dest => dest.PublicKey, opts => opts.MapFrom(src => src.AccountId))
-                .ForMember(dest => dest.EncodedSecret, opts => opts.MapFrom(src => src.SecretSeed))
+                .ForMember(dest => dest.SecretKey, opts => opts.MapFrom(src => src.SecretSeed))
                 .ForAllOtherMembers(x => x.Ignore());
         }
     }
