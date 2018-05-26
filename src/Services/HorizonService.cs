@@ -1,12 +1,10 @@
-﻿using System;
-using System.IO;
-using System.Net;
-using stellar_dotnetcore_sdk;
-using Stellmart.Api.Services;
-using Stellmart.Api.Data.Horizon;
+﻿using AutoMapper;
 using Microsoft.Extensions.Options;
+using stellar_dotnetcore_sdk;
+using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
-using AutoMapper;
+using System;
+using System.Threading.Tasks;
 
 namespace Stellmart.Services
 {
@@ -16,10 +14,11 @@ namespace Stellmart.Services
         private readonly IOptions<HorizonSettings> _horizonSettings;
         private readonly IMapper _mapper;
 
-        public HorizonService(IOptions<HorizonSettings> horizonSettings, IMapper mapper)
+        public HorizonService(IOptions<HorizonSettings> horizonSettings, IMapper mapper, Server server)
         {
             _horizonSettings = horizonSettings;
             _mapper = mapper;
+            _server = server;
 
             if (_horizonSettings.Value.Server.Contains("testnet"))
             {
@@ -29,27 +28,20 @@ namespace Stellmart.Services
             {
                 Network.UsePublicNetwork();
             }
-            
-            _server = new Server(_horizonSettings.Value.Server);
         }
 
         public HorizonKeyPairModel CreateAccount()
         {
-            var keypair = _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
-	    return keypair;
+            return _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
         }
 
-	public void Fund_Test_Account(string Public_Key)
-	{
-            UriBuilder baseUri = new UriBuilder("https://horizon-testnet.stellar.org/friendbot");
-            string queryToAppend = "addr=" + Public_Key;
+        public async Task<HorizonFundTestAccountModel> FundTestAccount(string publicKey)
+        {
+            // fund test acc
+            await _server.HttpClient.GetAsync($"friendbot?addr={publicKey}");
 
-	     baseUri.Query = queryToAppend;
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(baseUri.ToString());
-            request.Method = "GET";
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            StreamReader sr = new StreamReader(response.GetResponseStream());
-            sr.ReadToEnd();
-	}
+            //See our newly created account.
+            return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
+         }
     }
 }
