@@ -35,7 +35,7 @@ namespace Stellmart.Services
             return _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
         }
 
-        public async Task<HorizonFundTestAccountModel> FundTestAccount(string publicKey)
+        public async Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey)
         {
             // fund test acc
             await _server.HttpClient.GetAsync($"friendbot?addr={publicKey}");

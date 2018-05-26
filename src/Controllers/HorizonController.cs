@@ -30,7 +30,7 @@ namespace Stellmart.Api.Controllers
         [Route("{publicKey}")]
         public async Task<ActionResult> FundTestAccount(string publicKey)
         {
-            return Ok(_mapper.Map<HorizonFundTestAccountViewModel>(await _horizonService.FundTestAccount(publicKey)));
+            return Ok(_mapper.Map<HorizonFundTestAccountViewModel>(await _horizonService.FundTestAccountAsync(publicKey)));
         }
 
 

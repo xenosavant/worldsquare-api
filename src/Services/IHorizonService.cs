@@ -7,6 +7,6 @@ namespace Stellmart.Services
     public interface IHorizonService
     {
         HorizonKeyPairModel CreateAccount();
-        Task<HorizonFundTestAccountModel> FundTestAccount(string publicKey);
+        Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
     }
 }
