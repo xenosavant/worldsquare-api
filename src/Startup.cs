@@ -12,12 +12,9 @@ using Microsoft.Extensions.Logging;
 using Stellmart.Api.Config;
 using Stellmart.Api.Context;
 using Stellmart.Api.Data.Settings;
-using Stellmart.Business.Logic;
 using Stellmart.Context;
 using StructureMap;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
 
 namespace Stellmart
 {
@@ -62,8 +59,8 @@ namespace Stellmart
                 .AddIdentityServerAuthentication(o =>
                 {
                     o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-                    o.ApiName = "api";
-                    o.ApiSecret = "secret";
+                    o.ApiName = "api1";
+                    o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
                     o.EnableCaching = true;
                     o.RequireHttpsMetadata = false;
                     o.SupportedTokens = SupportedTokens.Both;
@@ -72,7 +69,7 @@ namespace Stellmart
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
 
             // Add di framework
-            var container = new Container(new DependencyInjectionRegistry());
+            var container = new Container(new DependencyInjectionRegistry(Configuration));
             container.Populate(services);
 
             services.AddAutoMapper(cfg => cfg.ConstructServicesUsing(container.GetInstance));

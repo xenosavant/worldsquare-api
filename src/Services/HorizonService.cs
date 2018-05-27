@@ -1,9 +1,10 @@
-﻿using stellar_dotnetcore_sdk;
-using Stellmart.Api.Services;
-using Stellmart.Api.Data.Horizon;
+﻿using AutoMapper;
 using Microsoft.Extensions.Options;
+using stellar_dotnetcore_sdk;
+using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
-using AutoMapper;
+using System;
+using System.Threading.Tasks;
 
 namespace Stellmart.Services
 {
@@ -13,10 +14,11 @@ namespace Stellmart.Services
         private readonly IOptions<HorizonSettings> _horizonSettings;
         private readonly IMapper _mapper;
 
-        public HorizonService(IOptions<HorizonSettings> horizonSettings, IMapper mapper)
+        public HorizonService(IOptions<HorizonSettings> horizonSettings, IMapper mapper, Server server)
         {
             _horizonSettings = horizonSettings;
             _mapper = mapper;
+            _server = server;
 
             if (_horizonSettings.Value.Server.Contains("testnet"))
             {
@@ -26,15 +28,20 @@ namespace Stellmart.Services
             {
                 Network.UsePublicNetwork();
             }
-            
-            _server = new Server(_horizonSettings.Value.Server);
         }
 
-        public void CreateAccount(HorizonKeyPairModel data)
+        public HorizonKeyPairModel CreateAccount()
         {
-            var keypair = _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
-
-            //do whatever next
+            return _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
         }
+
+        public async Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey)
+        {
+            // fund test acc
+            await _server.HttpClient.GetAsync($"friendbot?addr={publicKey}");
+
+            //See our newly created account.
+            return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
+         }
     }
 }
