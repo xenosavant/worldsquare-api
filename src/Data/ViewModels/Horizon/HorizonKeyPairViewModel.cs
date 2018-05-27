@@ -1,6 +1,6 @@
-﻿namespace Stellmart.Api.Data.Horizon
+﻿namespace Stellmart.Api.ViewModels.Horizon
 {
-    public class HorizonKeyPairModel
+    public class HorizonKeyPairViewModel
     {
         public string PublicKey { get; set; }
         public string SecretKey { get; set; }
