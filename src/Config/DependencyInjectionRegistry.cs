@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using stellar_dotnetcore_sdk;
+using Stellmart.Api.Business.Constants;
 using Stellmart.Api.Context;
 using Stellmart.Api.DataAccess;
 using Stellmart.Context;
@@ -34,15 +35,22 @@ namespace Stellmart.Api.Config
             For<IHttpContextAccessor>().Singleton().Use<HttpContextAccessor>();
             For<IMapper>().Use(() => Mapper.Instance);
             For<IHorizonService>().Singleton().Use<HorizonService>();
+
+            var horizonServer = configuration["HorizonSettings:Server"];
+
             For<Server>()
                 .Singleton()
-                .Use(new Server(configuration["HorizonSettings:Server"])
+                .Use(new Server(horizonServer)
                 {
                     HttpClient = new HttpClient
                     {
-                        BaseAddress = new Uri(configuration["HorizonSettings:Server"])
+                        BaseAddress = new Uri(horizonServer)
                     }
                 });
+
+            For<Network>()
+                .Singleton()
+                .Use(horizonServer.Contains("testnet") ? new Network(Horizon.NetworkPassphraseTestnet) : new Network(Horizon.NetworkPassphrasePublic));
         }
     }
 }
