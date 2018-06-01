@@ -1,25 +1,27 @@
-﻿using stellar_dotnetcore_sdk;
+﻿using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
 using System.Threading.Tasks;
+using stellar_dotnetcore_sdk;
+using Transaction = stellar_dotnetcore_sdk.Transaction;
+using XdrTransaction = stellar_dotnetcore_sdk.xdr.Transaction;
+
 
 namespace Stellmart.Services.Contract
 {
     public interface IContractService
     {
-	/* Escrow account to be created by SourceAccount, SourceAccount has access of Escrow SecretSeed */
-	HorizonKeyPairModel CreateEscrowAccount(HorizonKeyPairModel SourceAccount);
-	/* Fund the Escrow account and returns hash of the fund escrow account transaction */
-	byte[] FundEscrowAccount(HorizonKeyPairModel SourceAccount,string EscrowAccountPublicKey, string Amount);
-	/* Set individual weights and threshold, returns hash of the transaction */
-	byte[] SetEscrowWeightThreshold(HorizonKeyPairModel SourceAccount, string DestAccountPublicKey, int DestAccountWeight,
-				string StellmartPublicKey, int StellmartWeight, int Threshold);
-	/* Create Pre transactions with the same sequence number, one for success and another for failure.
-	   Source Account signs the transaction, returns the XDR string */
-	string CreatePreTxn(HorizonKeyPairModel SourceAccount, string DestAccountPublicKey, string StellmartPublicKey, 
-			byte[] EscrowHash, long MinTime, long MaxTime);
-	/* Destination account and Stellmart signs the pre transaction, returns the signed transaction XDR */
-	string SignPreTxn(HorizonKeyPairModel Account, string PreTxnXDR);
-	/*Submit Success or Failure transaction XDR */
-	byte[] SubmitPreTxn(HorizonKeyPairModel Account, string TxnXDR);
+	/* Create and fund escrow account.
+	   Add signer as destination, stellmart and change threshold weights.
+	   Returns Escrow account id */
+	HorizonKeyPairModel SetupContract(HorizonKeyPairModel SourceAccount, string DestAccount,
+						string Amount);
+	/* Create Pre Transactions and returns txn_1 and txn_2 XDR.
+	   ContractModel to be stored in database.
+	   TBD: Add data model parameter to support delivery date, waiting days etc to determine time bounds*/
+	ContractModel CreateContract(HorizonKeyPairModel EscrowAccount, HorizonKeyPairModel DestAccount);
+
+	SignContract(HorizonKeyPairModel Account, ContractModel Contract);
+	/*Submits the transaction to the network, returns the hash of transaction*/
+	string ExecuteContract(XdrTransaction PreTxn);
     }
 }
