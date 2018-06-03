@@ -16,8 +16,5 @@ namespace Stellmart.Api.Context
 
         //public string StellarPrivateKey { get; set; }
 
-        //public string StellarRecoveryKey { get; set; }
-
-        //public ICollection<KeyRecoveryStep> KeyRecoverySteps { get; set; }
     }
 }

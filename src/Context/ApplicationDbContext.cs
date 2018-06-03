@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Stellmart.Api.Context;
-using Stellmart.Context.Entities;
+using Stellmart.Api.Context.Entities;
+using System.Linq;
 
 namespace Stellmart.Context
 {
@@ -11,13 +12,16 @@ namespace Stellmart.Context
             : base(options)
         { }
 
-        public DbSet<SecurityQuestion> SecurityQuestion { get; set; }
+        public DbSet<Area> Areas { get; set; }
 
-        public DbSet<KeyRecoveryStep> KeyRecoveryStep { get; set; }
+        public DbSet<GeoLocation> GeoLocations { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Area>()
+               .HasOne(a => a.GeoLocation);
         }
     }
 }

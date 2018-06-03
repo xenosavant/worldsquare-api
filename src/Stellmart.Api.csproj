@@ -8,22 +8,30 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Business\Mapping\Resolvers\**" />
     <Compile Remove="Client\**" />
+    <Compile Remove="Context\Migrations\**" />
     <Compile Remove="src\**" />
     <Compile Remove="Test\**" />
     <Compile Remove="Views\**" />
     <Compile Remove="wwwroot\**" />
+    <Content Remove="Business\Mapping\Resolvers\**" />
     <Content Remove="Client\**" />
+    <Content Remove="Context\Migrations\**" />
     <Content Remove="src\**" />
     <Content Remove="Test\**" />
     <Content Remove="Views\**" />
     <Content Remove="wwwroot\**" />
+    <EmbeddedResource Remove="Business\Mapping\Resolvers\**" />
     <EmbeddedResource Remove="Client\**" />
+    <EmbeddedResource Remove="Context\Migrations\**" />
     <EmbeddedResource Remove="src\**" />
     <EmbeddedResource Remove="Test\**" />
     <EmbeddedResource Remove="Views\**" />
     <EmbeddedResource Remove="wwwroot\**" />
+    <None Remove="Business\Mapping\Resolvers\**" />
     <None Remove="Client\**" />
+    <None Remove="Context\Migrations\**" />
     <None Remove="src\**" />
     <None Remove="Test\**" />
     <None Remove="Views\**" />
@@ -43,7 +51,6 @@
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="stellar-dotnetcore-sdk" Version="1.0.3" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
-    <PackageReference Include="WebEssentials.AspNetCore.ServiceWorker" Version="1.0.11" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.1.1" />
   </ItemGroup>
 
@@ -54,8 +61,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Business\Mapping\Resolvers\" />
-    <Folder Include="Context\Migrations\" />
     <Folder Include="Data\Responses\" />
   </ItemGroup>
 

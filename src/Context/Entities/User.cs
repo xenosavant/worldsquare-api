@@ -32,6 +32,5 @@ namespace Stellmart.Context.Entities
 
         public string StellarRecoveryKey { get; set; }
 
-        public ICollection<KeyRecoveryStep> KeyRecoverySteps { get; set; }
     }
 }

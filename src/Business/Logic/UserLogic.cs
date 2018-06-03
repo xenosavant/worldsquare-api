@@ -10,6 +10,13 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Business.Logic
 {
+    public interface IUserLogic
+    {
+        Task<int> SignupAsync(SignupRequest request);
+        Task<IReadOnlyCollection<UserViewModel>> GetAllAsync();
+        Task<UserViewModel> GetByIdAsync(int id);
+    }
+
     public class UserLogic : IUserLogic
     {
         private readonly IRepository _repository;
