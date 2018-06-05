@@ -1,9 +1,12 @@
-﻿using Stellmart.Api.Data.Horizon;
+﻿using stellar_dotnetcore_sdk;
+using Stellmart.Api.Data.Horizon;
+using System.Threading.Tasks;
 
-namespace Stellmart.Api.Services
+namespace Stellmart.Services
 {
     public interface IHorizonService
     {
-        void CreateAccount(HorizonKeyPairModel data);
+        HorizonKeyPairModel CreateAccount();
+        Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
     }
 }
