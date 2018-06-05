@@ -12,7 +12,6 @@ using Microsoft.Extensions.Logging;
 using Stellmart.Api.Config;
 using Stellmart.Api.Context;
 using Stellmart.Api.Data.Settings;
-using Stellmart.Business.Logic;
 using Stellmart.Context;
 using StructureMap;
 using System;
@@ -121,9 +120,4 @@ namespace Stellmart
             });
         }
     }
-}
-
-using Stellmart.Api.Business.Logic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using Stellmart.Api.Context.Entities;
+}
