@@ -4,10 +4,10 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Context.Entities.BaseEntity
+namespace Stellmart.Api.Context.Entities.Entity
 {
 
-    public interface IAuditableEntity<T> : IEntity
+    public interface IAuditableEntity : IEntity
     {
         DateTime CreatedDate { get; set; }
         DateTime? ModifiedDate { get; set; }
@@ -15,7 +15,7 @@ namespace Stellmart.Api.Context.Entities.BaseEntity
         string CreatedBy { get; set; }
     }
 
-    public class AuditableEntity<T> : Entity<T>, IAuditableEntity<T>
+    public class AuditableEntity<T> : Entity<T>, IAuditableEntity
     {
         private DateTime? _createdDate;
         [DataType(DataType.DateTime)]

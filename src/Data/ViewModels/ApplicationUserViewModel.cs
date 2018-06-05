@@ -1,6 +1,6 @@
 ﻿namespace Stellmart.Data.ViewModels
 {
-    public class UserViewModel
+    public class ApplicationUserViewModel
     {
         public int Id { get; set; }
 
@@ -8,9 +8,7 @@
 
         public string LastName { get; set; }
 
-        public string Username { get; set; }
-
-        public string Email { get; set; }
+        public string UsernName { get; set; }
 
     }
 }

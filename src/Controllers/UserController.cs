@@ -25,24 +25,24 @@ namespace Stellmart.Controllers
 
         // GET: api/user/get
         [HttpGet]
-        public async Task<IEnumerable<UserViewModel>> Get()
+        public async Task<IEnumerable<ApplicationUserViewModel>> Get()
         {
-            return _mapper.Map<List<UserViewModel>>(await _userLogic.GetAllAsync());
+            return _mapper.Map<List<ApplicationUserViewModel>>(await _userLogic.GetAllAsync());
         }
 
         // GET: api/user/get/5
         [HttpGet]
         [Route("{id:int}", Name = nameof(Get))]
-        public async Task<UserViewModel> Get(int id)
+        public async Task<ApplicationUserViewModel> Get(int id)
         {
-            return _mapper.Map<UserViewModel>(await _userLogic.GetByIdAsync(id));
+            return _mapper.Map<ApplicationUserViewModel>(await _userLogic.GetByIdAsync(id));
         }
         
         // POST: api/user/signup
         [HttpPost]
-        public async Task<UserViewModel> Signup([FromBody]SignupRequest request)
+        public async Task<ApplicationUserViewModel> Signup([FromBody]SignupRequest request)
         {
-            return _mapper.Map<UserViewModel>(await _userLogic.SignupAsync(request));
+            return _mapper.Map<ApplicationUserViewModel>(await _userLogic.SignupAsync(request));
         }
        
     }

@@ -21,15 +21,15 @@ namespace Stellmart.Api.Context
                 return; // DB has been seeded
             }
 
-            var user = new ApplicationUser
-            {
-                Email = configuration["SeedData:InitialAdminUser"],
-                UserName = configuration["SeedData:InitialAdminUser"]
-            };
+            //var user = new ApplicationUser
+            //{
+            //    Email = configuration["SeedData:InitialAdminUser"],
+            //    UserName = configuration["SeedData:InitialAdminUser"]
+            //};
 
-            var password = configuration["SeedData:InitialAdminPassword"];
-            userManager.CreateAsync(user, password);
-            userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin"));
+            //var password = configuration["SeedData:InitialAdminPassword"];
+            //userManager.CreateAsync(user, password);
+            //userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin"));
         }
     }
 }

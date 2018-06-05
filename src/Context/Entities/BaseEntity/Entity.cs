@@ -2,11 +2,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Stellmart.Api.Context.Entities.BaseEntity
+namespace Stellmart.Api.Context.Entities.Entity
 {
     public interface IEntity
     {
-        object Id { get; set; }
+        object Id { get; }
         Guid UniqueId { get; set; }
         bool IsDeleted { get; set; }
     }
@@ -24,7 +24,6 @@ namespace Stellmart.Api.Context.Entities.BaseEntity
         object IEntity.Id
         {
             get => Id;
-            set => throw new NotImplementedException();
         }
 
         public Guid UniqueId { get; set; }

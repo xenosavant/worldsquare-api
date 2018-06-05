@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class UserSignature
+    public class UserSignature : Signature
     {
+        public int SignerId { get; set; }
     }
 }

@@ -1,7 +1,8 @@
 ﻿using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Context.Entities.BaseEntity;
+using Stellmart.Api.Context.Entities.Entity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -16,6 +17,9 @@ namespace Stellmart.Api.Context
         public string LocationComponents { get; set; }
 
         public string PlaceId { get; set; }
+
+        [Required]
+        public bool Verified { get; set; }
 
         public virtual GeoLocation GeoLocation { get; set; }
 

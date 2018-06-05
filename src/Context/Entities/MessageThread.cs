@@ -1,4 +1,4 @@
-﻿using Stellmart.Api.Context.Entities.BaseEntity;
+﻿using Stellmart.Api.Context.Entities.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class Threads : EntityMaximum
+    public class MessageThread : EntityMaximum
     {
         int InitiatorId { get; set; }
 
+        public virtual ApplicationUser Initiator { get; set; }
     }
 }

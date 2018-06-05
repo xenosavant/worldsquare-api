@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities
 {
     public class TimeDelayedReleaseTransaction
     {
+        public DateTime MinimumTime { get; set; }
     }
 }

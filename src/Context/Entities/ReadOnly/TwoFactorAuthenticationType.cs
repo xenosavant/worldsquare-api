@@ -1,4 +1,4 @@
-﻿using Stellmart.Api.Context.Entities.BaseEntity;
+﻿using Stellmart.Api.Context.Entities.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;

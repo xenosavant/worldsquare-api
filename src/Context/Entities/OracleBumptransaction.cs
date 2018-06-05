@@ -7,6 +7,6 @@ namespace Stellmart.Api.Context.Entities
 {
     public class OracleBumpTransaction : PreTransaction
     {
-
+        public int? TimeDelay { get; set; }
     }
 }

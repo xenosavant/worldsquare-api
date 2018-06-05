@@ -5,7 +5,10 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class SystemSignature : Signature
+    public class DeliveryRequest : ServiceRequest
     {
+        public int DestinationId { get; set; }
+
+        public virtual Location Destination { get; set; }
     }
 }

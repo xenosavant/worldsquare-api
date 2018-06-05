@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Context.Entities
+namespace Stellmart.Api.Context.Entities.ReadOnly
 {
-    public class ItemDescriptor
+    public class RewardsLevel : LookupData
     {
     }
 }

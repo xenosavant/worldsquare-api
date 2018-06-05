@@ -1,4 +1,4 @@
-﻿using Stellmart.Api.Context.Entities.BaseEntity;
+﻿using Stellmart.Api.Context.Entities.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class Reviews : Entity<int>
+    public class DistributionCenter : Service
     {
-
+        public bool Internal { get; set; }
     }
 }

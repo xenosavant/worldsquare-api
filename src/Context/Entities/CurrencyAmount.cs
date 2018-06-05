@@ -8,16 +8,14 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class PricePerTime : Entity<int>
+    public class CurrencyAmount : AuditableEntity<int>
     {
         [Required]
-        public int CurrencyAmountId { get; set; }
+        public int CurrrencyTypeId { get; set; }
 
         [Required]
-        public int DistanceUnitId { get; set; }
+        public decimal Amount { get; set; }
 
-        public virtual CurrencyAmount Amount { get; set; }
-
-        public virtual DistanceUnit DistanceUnit { get; set; }
+        public virtual Currency CurrencyType { get; set; }
     }
 }

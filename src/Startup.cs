@@ -12,12 +12,13 @@ using Microsoft.Extensions.Logging;
 using Stellmart.Api.Config;
 using Stellmart.Api.Context;
 using Stellmart.Api.Data.Settings;
-using Stellmart.Business.Logic;
+using Stellmart.Api.Business.Logic;
 using Stellmart.Context;
 using StructureMap;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Stellmart.Api.Context.Entities;
 
 namespace Stellmart
 {
@@ -36,7 +37,7 @@ namespace Stellmart
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 

@@ -22,7 +22,7 @@ namespace Stellmart.Api.Config
                 x.WithDefaultConventions();
             });
 
-            For<IUserStore<ApplicationUser>>().Use<UserStore<ApplicationUser>>();
+            For<IUserStore<ApplicationUser>>().Use<ApplicationUserStore>();
             For<UserManager<ApplicationUser>>().Use<UserManager<ApplicationUser>>();
             For<IRepository>().Use<Repository<ApplicationDbContext>>();
 
