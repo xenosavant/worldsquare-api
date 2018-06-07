@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Stellmart.Api.Context.Entities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Context.Entities
+namespace Stellmart.Api.Context
 {
-    public class TimeOverrideTransaction : PreTransaction
+    public class ChangeWeightsTransaction : PreTransaction
     {
         public DateTime MinimumTime { get; set; }
     }

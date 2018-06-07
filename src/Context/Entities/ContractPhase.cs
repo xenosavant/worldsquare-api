@@ -21,6 +21,8 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         public bool Contested { get; set; }
 
+        public int TimeDelay { get; set; }
+
         public Contract Contract { get; set; }
 
         public ICollection<PreTransaction> Transactions { get; set; }

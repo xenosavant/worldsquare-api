@@ -8,7 +8,7 @@ namespace Stellmart.Api.Context.Entities
 {
     public class Message : Entity<int>
     {
-        public int ThreadId { get; set; }
+        public int MessageThreadId { get; set; }
 
         public int PosterId { get; set; }
 

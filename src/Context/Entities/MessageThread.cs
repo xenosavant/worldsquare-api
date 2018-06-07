@@ -8,7 +8,7 @@ namespace Stellmart.Api.Context.Entities
 {
     public class MessageThread : EntityMaximum
     {
-        int InitiatorId { get; set; }
+        public int InitiatorId { get; set; }
 
         public virtual ApplicationUser Initiator { get; set; }
     }

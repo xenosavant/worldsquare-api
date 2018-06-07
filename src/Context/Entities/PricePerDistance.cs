@@ -14,7 +14,7 @@ namespace Stellmart.Api.Context.Entities
         public int CurrencyAmountId { get; set; }
 
         [Required]
-        public int DistanceUnitTypeId { get; set; }
+        public int DistanceUnitId { get; set; }
 
         public virtual CurrencyAmount Amount { get; set; }
 

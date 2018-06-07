@@ -32,10 +32,6 @@ namespace Stellmart.Api.Context.Entities
 
         public int UnitsReturned { get; set; }
 
-        public int ListingId { get; set; }
-
-        public Condition Condition { get; set; }
-
         [ForeignKey("UnitPriceId")]
         public virtual CurrencyAmount Price { get; set; }
 
@@ -44,10 +40,11 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual QuantityUnit UnitType { get; set; }
 
-        public virtual Listing Listing { get; set; }
-
-        public virtual DistributionCenter DistributionCenter { get; set; }
+        [NotMapped]
+        public virtual Listing Listing => ListingInventoryItems?.Select(l => l.Listing)?.FirstOrDefault();
 
         public virtual TradeInState TradeInState { get; set; }
+
+        public virtual ICollection<ListingInventoryItem> ListingInventoryItems { get; set; }
     }
 }

@@ -17,15 +17,13 @@ namespace Stellmart.Api.Context
         [MaxLength(50)]
         public string LastName { get; set; }
 
-        public bool Verified { get; set; }
-
         public bool MustRecoverKey { get; set; }
 
         public bool MustResetKey { get; set; }
 
         public string StellarPublicKey { get; set; }
 
-        public string StellarPrivateKey { get; set; }
+        public string StellarEncryptedSecretKey { get; set; }
 
         public bool ManagedAccount { get; set; }
 
@@ -50,6 +48,10 @@ namespace Stellmart.Api.Context
         public virtual ICollection<OnlineStore> OnlineStores { get; set; }
 
         public virtual ICollection<DeliveryService> DeliveryServices { get; set; }
+
+        public virtual ICollection<TradeItem> TradeItems { get; set; }
+
+        public virtual ICollection<VerificationLevel> VerificationLevels { get; set; }
 
         public Guid UniqueId { get; set; }
 

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities.ReadOnly
 {
-    public class PretransactionType : LookupData
+    public class PreTransactionType : LookupData
     {
     }
 }

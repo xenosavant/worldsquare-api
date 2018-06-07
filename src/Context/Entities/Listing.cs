@@ -12,7 +12,7 @@ namespace Stellmart.Api.Context.Entities
     public class Listing : EntityMaximum
     {
         [Required]
-        public int StoreId { get; set; }
+        public int ServiceId { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -25,31 +25,20 @@ namespace Stellmart.Api.Context.Entities
         public int? ThreadId { get; set; }
 
         [Required]
-        public int SuperCategoryId { get; set; }
-
-        [Required]
-        public int SubCategoryId { get; set; }
-
-        [Required]
-        public int ListingCategoryId { get; set; }
-
-        public string KeyWords { get; set; }
-
-        [Required]
         public bool Internal { get; set; }
 
-        [ForeignKey("StoreId")]
+        public int ItemMetaDataId { get; set; }
+
         public virtual OnlineStore Store { get; set; }
 
-        [Required]
-        public virtual SuperCategory SuperCategory{ get; set; }
+        public virtual MessageThread Thread { get; set; }
 
-        [Required]
-        public virtual SubCategory SubCategory { get; set; }
+        [NotMapped]
+        public virtual IEnumerable<InventoryItem> InventoryItems => ListingInventoryItems?.Select(l => l.InventoryItem);
 
-        [Required]
-        public virtual ListingCategory ListingCategory { get; set; }
+        public virtual ICollection<ListingInventoryItem> ListingInventoryItems { get; set; }
 
-        public virtual ICollection<MessageThread> Threads { get; set; }
+        public virtual ItemMetaData ItemMetaData { get; set; }
+
     }
 }

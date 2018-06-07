@@ -10,7 +10,7 @@ namespace Stellmart.Api.Context.Entities
     {
        public string Name { get; set; }
         
-       public string LocationId { get; set; }
+       public int LocationId { get; set; }
 
        public virtual Location Location { get; set; }
     }

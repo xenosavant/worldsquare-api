@@ -18,5 +18,7 @@ namespace Stellmart.Api.Context.Entities
         public int? ShippingManifestId { get; set; }
 
         public virtual ICollection<ShippingManifestLineItem> ShippingManifestLineItems { get; set; }
+
+        public virtual InventoryItem InventoryItem { get; set; }
     }
 }

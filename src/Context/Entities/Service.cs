@@ -23,7 +23,5 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         bool Verified { get; set; }
 
-        public ICollection<Review> Reviews { get; set; }
-
     }
 }

@@ -30,23 +30,23 @@ namespace Stellmart.Context
 
         public DbSet<InventoryItem> InventoryItems { get; set; }
 
+        public DbSet<ItemMetaData> ItemMetaDatas { get; set; }
+
         public DbSet<LineItem> LineItems { get; set; }
 
         public DbSet<Listing> Listings { get; set; }
 
         public DbSet<Location> Locations { get; set; }
 
+        public DbSet<ListingInventoryItem> ListingInventoryItems { get; set; }
+
         public DbSet<Message> Messages { get; set; }
 
         public DbSet<MessageThread> MessageThreads { get; set; }
 
-        public DbSet<ReleaseTransaction> ReleaseTransaction { get; set; }
-
         public DbSet<DisputeTransaction> DisputeTransaction { get; set; }
 
-        public DbSet<TimeOverrideTransaction> TimeOverrideTransaction { get; set; }
-
-        public DbSet<OracleBumpTransaction> OracleBumpTransaction { get; set; }
+        public DbSet<PreTransaction> PreTransactions { get; set; }
 
         public DbSet<PricePerDistance> PricePerDistances { get; set; }
 
@@ -68,6 +68,12 @@ namespace Stellmart.Context
 
         public DbSet<ShippingManifest> ShippingManifests { get; set; }
 
+        public DbSet<TradeItem> TradeItems { get; set; }
+
+        public DbSet<ShippingManifestLineItem> ShippingManifestLineItems { get; set; }
+
+        public DbSet<OnlineStoreReview> OnlineStoreReviews { get; set; }
+
         public DbSet<OracleSignature> OracleSignatures { get; set; }
 
         public DbSet<SystemSignature> SystemSignature { get; set; }
@@ -78,11 +84,11 @@ namespace Stellmart.Context
 
         // Read Only Data
 
-        public DbSet<Condition> Conditions { get; set; }
+        public DbSet<ItemCondition> ItemConditions { get; set; }
 
         public DbSet<ContractState> ContractStates { get; set; }
 
-        public DbSet<ContractType> CobntractTypes { get; set; }
+        public DbSet<ContractType> ContractTypes { get; set; }
 
         public DbSet<Currency> Currencies { get; set; }
 
@@ -91,8 +97,6 @@ namespace Stellmart.Context
         public DbSet<FulfillmentState> FulfillmentStates { get; set; }
 
         public DbSet<ListingCategory> ListingCategory { get; set; }
-
-        public DbSet<PretransactionType> PretransactionTypes { get; set; }
 
         public DbSet<QuantityUnit> QuantityUnits { get; set; }
 
@@ -118,18 +122,46 @@ namespace Stellmart.Context
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<ShippingManifestLineItem>()
-                .HasKey(t => new { t.ShippingManifestId, t.LineItemId });
+            //  Many to Many relationships
 
             modelBuilder.Entity<ShippingManifestLineItem>()
-                .HasOne(smli => smli.LineItem)
-                .WithMany(li => li.ShippingManifestLineItems)
-                .HasForeignKey(smli => smli.LineItemId);
+                .HasKey(sl => new { sl.ShippingManifestId, sl.LineItemId });
 
             modelBuilder.Entity<ShippingManifestLineItem>()
-                .HasOne(smli => smli.Manifest)
-                .WithMany(sm => sm.ShippingManifestLineItems)
-                .HasForeignKey(smli => smli.ShippingManifestId);
+                .HasOne(sl => sl.LineItem)
+                .WithMany(l => l.ShippingManifestLineItems)
+                .HasForeignKey(sl => sl.LineItemId);
+
+            modelBuilder.Entity<ShippingManifestLineItem>()
+                .HasOne(sl => sl.Manifest)
+                .WithMany(m => m.ShippingManifestLineItems)
+                .HasForeignKey(sl => sl.ShippingManifestId);
+
+            modelBuilder.Entity<OnlineStoreReview>()
+                .HasKey(or => new { or.OnlineStoreId, or.ReviewId });
+
+            modelBuilder.Entity<OnlineStoreReview>()
+                .HasOne(or => or.OnlineStore)
+                .WithMany(o => o.OnlineStoreReviews)
+                .HasForeignKey(or => or.OnlineStoreId);
+
+            modelBuilder.Entity<OnlineStoreReview>()
+                .HasOne(or => or.Review)
+                .WithMany(r => r.OnlineStoreReviews)
+                .HasForeignKey(or => or.ReviewId);
+
+            modelBuilder.Entity<ListingInventoryItem>()
+                .HasKey(li => new { li.ListingId, li.InventoryItemId });
+
+            modelBuilder.Entity<ListingInventoryItem>()
+                .HasOne(li => li.InventoryItem)
+                .WithMany(i => i.ListingInventoryItems)
+                .HasForeignKey(li => li.InventoryItemId);
+
+            modelBuilder.Entity<ListingInventoryItem>()
+                .HasOne(li => li.Listing)
+                .WithMany(l => l.ListingInventoryItems)
+                .HasForeignKey(li => li.ListingId);
         }
     }
 }

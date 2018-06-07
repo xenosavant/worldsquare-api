@@ -14,10 +14,11 @@ namespace Stellmart.Api.Context.Entities
         public int CurrencyAmountId { get; set; }
 
         [Required]
-        public int DistanceUnitId { get; set; }
+        public int TimeUnitId { get; set; }
 
         public virtual CurrencyAmount Amount { get; set; }
 
-        public virtual DistanceUnit DistanceUnit { get; set; }
+        public virtual TimeUnit TimeUnit { get; set; }
+
     }
 }

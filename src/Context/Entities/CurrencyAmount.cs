@@ -11,7 +11,7 @@ namespace Stellmart.Api.Context.Entities
     public class CurrencyAmount : AuditableEntity<int>
     {
         [Required]
-        public int CurrrencyTypeId { get; set; }
+        public int CurrencyTypeId { get; set; }
 
         [Required]
         public decimal Amount { get; set; }
