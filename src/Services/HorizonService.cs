@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using stellar_dotnetcore_sdk;
+using stellar_dotnetcore_sdk.responses;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using System;
@@ -38,5 +39,22 @@ namespace Stellmart.Services
             //See our newly created account.
             return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
          }
+	public async Task <SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
+				HorizonKeyPairModel destAccount, String amount)
+	{
+	    var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+	    Asset native = new AssetTypeNative();
+
+           var operation = new PaymentOperation.Builder(KeyPair.FromSecretSeed(destAccount.SecretKey), native, amount)
+                .SetSourceAccount(source)
+                .Build();
+	    var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(sourceAccount.PublicKey));
+	    var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+                .AddOperation(operation)
+                .Build();
+           transaction.Sign(source);
+
+	    return await _server.SubmitTransaction(transaction);
+	}
     }
 }
