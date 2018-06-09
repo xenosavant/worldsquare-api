@@ -1,13 +1,19 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using stellar_dotnetcore_sdk;
-using Stellmart.Api.Data.Horizon;
-using Stellmart.Api.Data.Settings;
+using WorldSquare.Api.Data.Horizon;
+using WorldSquare.Api.Data.Settings;
 using System;
 using System.Threading.Tasks;
 
-namespace Stellmart.Services
+namespace WorldSquare.Services
 {
+    public interface IHorizonService
+    {
+        HorizonKeyPairModel CreateAccount();
+        Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
+    }
+
     public class HorizonService : IHorizonService
     {
         private readonly Server _server;

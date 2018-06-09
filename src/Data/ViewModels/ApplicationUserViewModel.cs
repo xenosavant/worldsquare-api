@@ -1,4 +1,4 @@
-﻿namespace Stellmart.Data.ViewModels
+﻿namespace WorldSquare.Data.ViewModels
 {
     public class ApplicationUserViewModel
     {

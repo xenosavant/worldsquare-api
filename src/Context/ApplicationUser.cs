@@ -25,6 +25,8 @@ namespace Stellmart.Api.Context
 
         public string StellarEncryptedSecretKey { get; set; }
 
+        public string StellarRecoveryKey { get; set; }
+
         public bool ManagedAccount { get; set; }
 
         public int PrimaryShippingLocationId { get; set; }
@@ -38,6 +40,10 @@ namespace Stellmart.Api.Context
         public int VerificationLevelId { get; set; }
 
         public bool Flagged { get; set; }
+
+        public bool Use2FaForLogin { get; set; }
+
+        public string SecurityQuestions { get; set; }
 
         public virtual Location PrimaryShippingLocation { get; set; }
 
