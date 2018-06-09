@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using WorldSquare.Context;
+using Stellmart.Context;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace WorldSquare.Api.Context
+namespace Stellmart.Api.Context
 {
     public class SeedData
     {

@@ -1,14 +1,14 @@
-﻿using WorldSquare.Api.Context;
-using WorldSquare.Api.Data.ViewModels;
-using WorldSquare.Api.DataAccess;
+﻿using Stellmart.Api.Context;
+using Stellmart.Api.Data.ViewModels;
+using Stellmart.Api.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
-using WorldSquare.Api.Services;
+using Stellmart.Api.Services;
 
-namespace WorldSquare.Api.Business.Logic
+namespace Stellmart.Api.Business.Logic
 {
 
     public interface ISecurityLogic

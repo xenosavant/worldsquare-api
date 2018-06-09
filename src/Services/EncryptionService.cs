@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Security.Cryptography;
-using WorldSquare.Api.Data.ViewModels;
+using Stellmart.Api.Data.ViewModels;
 using System.Text;
 using System.IO;
 
-namespace WorldSquare.Api.Services
+namespace Stellmart.Api.Services
 {
 
     public interface IEncryptionService

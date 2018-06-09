@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace WorldSquare.Api.Data.ViewModels
+namespace Stellmart.Api.Data.ViewModels
 {
     public class SecurityAnswerViewModel
     {

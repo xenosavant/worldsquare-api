@@ -4,14 +4,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WorldSquare.Api.Business.Extensions;
-using WorldSquare.Api.Context;
-using WorldSquare.Context;
+using Stellmart.Api.Business.Extensions;
+using Stellmart.Api.Context;
+using Stellmart.Context;
 using System;
 using System.IO;
 using System.Threading.Tasks;
 
-namespace WorldSquare
+namespace Stellmart
 {
     public class Program
     {

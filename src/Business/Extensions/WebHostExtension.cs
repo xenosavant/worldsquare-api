@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WorldSquare.Api.Context;
-using WorldSquare.Context;
+using Stellmart.Api.Context;
+using Stellmart.Context;
 using System;
 
-namespace WorldSquare.Api.Business.Extensions
+namespace Stellmart.Api.Business.Extensions
 {
     public static class WebHostExtension
     {

@@ -9,16 +9,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using WorldSquare.Api.Config;
-using WorldSquare.Api.Context;
-using WorldSquare.Api.Data.Settings;
-using WorldSquare.Context;
+using Stellmart.Api.Config;
+using Stellmart.Api.Context;
+using Stellmart.Api.Data.Settings;
+using Stellmart.Context;
 using StructureMap;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
 
-namespace WorldSquare
+namespace Stellmart
 {
     public class Startup
     {
@@ -53,20 +53,20 @@ namespace WorldSquare
             services.AddMvcCore();
             services.AddMvc();
 
-            //services.AddAuthentication(o =>
-            //{
-            //    o.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-            //    o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-            //})
-            //    .AddIdentityServerAuthentication(o =>
-            //    {
-            //        o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-            //        o.ApiName = "api1";
-            //        o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
-            //        o.EnableCaching = true;
-            //        o.RequireHttpsMetadata = false;
-            //        o.SupportedTokens = SupportedTokens.Both;
-            //    });
+            services.AddAuthentication(o =>
+            {
+                o.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+            })
+                .AddIdentityServerAuthentication(o =>
+                {
+                    o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+                    o.ApiName = "api1";
+                    o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
+                    o.EnableCaching = true;
+                    o.RequireHttpsMetadata = false;
+                    o.SupportedTokens = SupportedTokens.Both;
+                });
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
 

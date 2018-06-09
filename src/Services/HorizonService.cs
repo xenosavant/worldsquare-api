@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using stellar_dotnetcore_sdk;
-using WorldSquare.Api.Data.Horizon;
-using WorldSquare.Api.Data.Settings;
+using Stellmart.Api.Data.Horizon;
+using Stellmart.Api.Data.Settings;
 using System;
 using System.Threading.Tasks;
 
-namespace WorldSquare.Services
+namespace Stellmart.Services
 {
     public interface IHorizonService
     {
