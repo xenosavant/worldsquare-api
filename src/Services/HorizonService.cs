@@ -19,6 +19,10 @@ namespace Stellmart.Services
             _horizonSettings = horizonSettings;
             _mapper = mapper;
             _server = server;
+            if (_horizonSettings.Value.Server.Contains("testnet"))
+                Network.UseTestNetwork();
+            else
+                Network.UsePublicNetwork();
         }
 
         public HorizonKeyPairModel CreateAccount()

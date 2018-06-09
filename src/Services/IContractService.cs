@@ -20,7 +20,7 @@ namespace Stellmart.Services.Contract
 	   TBD: Add data model parameter to support delivery date, waiting days etc to determine time bounds*/
 	ContractModel CreateContract(HorizonKeyPairModel EscrowAccount, HorizonKeyPairModel DestAccount);
 
-	SignContract(HorizonKeyPairModel Account, ContractModel Contract);
+	string SignContract(HorizonKeyPairModel Account, ContractModel Contract);
 	/*Submits the transaction to the network, returns the hash of transaction*/
 	string ExecuteContract(XdrTransaction PreTxn);
     }
