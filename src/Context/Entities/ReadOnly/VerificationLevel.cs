@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class VerificationLevel : LookupData
     {
+        public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 }

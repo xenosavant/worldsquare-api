@@ -15,11 +15,11 @@ namespace Stellmart.Api.Context
 
         public int OwnerId { get; set; }
 
-        public int TradeInValueId { get; set; }
+        public int? TradeInValueId { get; set; }
 
-        public int TradeInStateId { get; set; }
+        public int? TradeInStateId { get; set; }
 
-        public int ItemMetaDataId { get; set; }
+        public int? ItemMetaDataId { get; set; }
 
         public virtual ApplicationUser Owner { get; set; }
 

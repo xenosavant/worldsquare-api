@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class ShippingCarrier : LookupData
     {
+        public virtual ICollection<ProductShipment> Shipments { get; set; }
     }
 }

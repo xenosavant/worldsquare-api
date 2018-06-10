@@ -23,6 +23,9 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual DistanceUnit DistanceUnit { get; set; }
 
+        public virtual ICollection<DeliveryService> DeliveryServices { get; set; }
+
+
 
     }
 }

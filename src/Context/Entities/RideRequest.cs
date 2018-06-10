@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class DeliveryRequest : ServiceRequest
+    public class RideRequest : ServiceRequest
     {
-        public virtual ProductShipment Shipment { get; set; }
+
     }
 }

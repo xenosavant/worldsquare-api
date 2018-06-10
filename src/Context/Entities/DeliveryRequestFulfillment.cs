@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class UserSignature : Signature
+    public class DeliveryRequestFulfillment : ServiceRequestFulfillment
     {
-        public int SignerId { get; set; }
-
-        public virtual ApplicationUser Signer { get; set; }
     }
 }

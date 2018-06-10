@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Context.Entities.ReadOnly
+namespace Stellmart.Api.Context.Entities
 {
-    public class PreTransactionType : LookupData
+    public class RideService : Service
     {
     }
 }

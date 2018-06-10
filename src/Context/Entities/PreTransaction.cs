@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public abstract class PreTransaction : AuditableEntity<int>
+    public class PreTransaction : AuditableEntity<int>
     {
         [Required]
         public int PreTransactionTypeId { get; set; }
@@ -28,8 +28,6 @@ namespace Stellmart.Api.Context.Entities
         public ContractPhase Phase { get; set; }
 
         public virtual ICollection<Signature> Signatures { get; set; }
-
-        public virtual PreTransactionType PreTransactionType { get; set; }
 
     }
 }

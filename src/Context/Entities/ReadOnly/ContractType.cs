@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class ContractType : LookupData
     {
+        public virtual ICollection<Contract> Contracts { get; set; }
     }
 }

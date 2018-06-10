@@ -29,7 +29,7 @@ namespace Stellmart.Api.Context.Entities
 
         public int ItemMetaDataId { get; set; }
 
-        public virtual OnlineStore Store { get; set; }
+        public virtual OnlineStore OnlineStore { get; set; }
 
         public virtual MessageThread Thread { get; set; }
 

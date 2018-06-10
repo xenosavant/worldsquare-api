@@ -16,5 +16,7 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
         public string SubCategoryId { get; set; }
 
         public bool Active { get; set; }
+
+        public ICollection<ItemMetaData> ItemMetaDatas { get; set; }
     }
 }

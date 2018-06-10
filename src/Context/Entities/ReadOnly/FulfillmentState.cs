@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class FulfillmentState : LookupData
     {
+        public virtual ICollection<ServiceRequestFulfillment> Fulfillments { get; set; }
     }
 }

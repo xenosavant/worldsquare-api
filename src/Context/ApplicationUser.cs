@@ -5,6 +5,7 @@ using Stellmart.Api.Context.Entities.ReadOnly;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stellmart.Api.Context
 {
@@ -25,6 +26,10 @@ namespace Stellmart.Api.Context
 
         public string StellarEncryptedSecretKey { get; set; }
 
+        public string StellarRecoveryKey { get; set; }
+
+        public byte[] StellarSecretKeyIv { get; set; }
+
         public bool ManagedAccount { get; set; }
 
         public int PrimaryShippingLocationId { get; set; }
@@ -39,19 +44,55 @@ namespace Stellmart.Api.Context
 
         public bool Flagged { get; set; }
 
+        public bool UseTwoFactorForLogin { get; set; }
+
+        public string SecurityQuestions { get; set; }
+
         public virtual Location PrimaryShippingLocation { get; set; }
 
         public virtual RewardsLevel RewardsLevel { get; set; }
 
+        public virtual VerificationLevel VerificationLevel { get; set; }
+
+        public virtual TwoFactorAuthenticationType TwoFactorAuthenticationType { get; set; }
+
         public virtual Currency NativeCurrency { get; set; }
 
+        [ForeignKey("UserId")]
         public virtual ICollection<OnlineStore> OnlineStores { get; set; }
 
+        [ForeignKey("UserId")]
         public virtual ICollection<DeliveryService> DeliveryServices { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<DistributionCenter> DistributionCenters { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<RideService> RideServices { get; set; }
+
+        [ForeignKey("RequestorId")]
+        public virtual ICollection<DeliveryRequest> DeliveryRequests { get; set; }
+
+        [ForeignKey("RequestorId")]
+        public virtual ICollection<RideRequest> RideRequests { get; set; }
+
+        [ForeignKey("SignerId")]
+        public virtual ICollection<UserSignature> Signatures { get; set; }
 
         public virtual ICollection<TradeItem> TradeItems { get; set; }
 
-        public virtual ICollection<VerificationLevel> VerificationLevels { get; set; }
+        public virtual ICollection<Review> Reviews { get; set; }
+
+        public virtual ICollection<ProductShipment> SentShipments { get; set; }
+
+        public virtual ICollection<ProductShipment> ReceivedShipments { get; set; }
+
+        public virtual ICollection<MessageThread> Threads { get; set; }
+
+        public virtual ICollection<Message> Messages { get; set; }
+
+
+        // IEntity
 
         public Guid UniqueId { get; set; }
 
