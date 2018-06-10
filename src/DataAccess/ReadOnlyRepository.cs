@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Stellmart.Api.Context.Entities.BaseEntity;
+using Stellmart.Api.Context.Entities.Entity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +24,7 @@ namespace Stellmart.Api.DataAccess
             string includeProperties = null,
             int? skip = null,
             int? take = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             includeProperties = includeProperties ?? string.Empty;
             IQueryable<TEntity> query = context.Set<TEntity>();
@@ -66,7 +66,7 @@ namespace Stellmart.Api.DataAccess
             string includeProperties = null,
             int? skip = null,
             int? take = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return GetQueryable(null, orderBy, includeProperties, skip, take).ToList();
         }
@@ -76,7 +76,7 @@ namespace Stellmart.Api.DataAccess
             string includeProperties = null,
             int? skip = null,
             int? take = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return await GetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToListAsync();
         }
@@ -87,7 +87,7 @@ namespace Stellmart.Api.DataAccess
             string includeProperties = null,
             int? skip = null,
             int? take = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return GetQueryable<TEntity>(filter, orderBy, includeProperties, skip, take).ToList();
         }
@@ -98,7 +98,7 @@ namespace Stellmart.Api.DataAccess
             string includeProperties = null,
             int? skip = null,
             int? take = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return await GetQueryable<TEntity>(filter, orderBy, includeProperties, skip, take).ToListAsync();
         }
@@ -165,7 +165,7 @@ namespace Stellmart.Api.DataAccess
         public virtual TEntity GetOne<TEntity>(
             Expression<Func<TEntity, bool>> filter = null,
             string includeProperties = "")
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return GetQueryable<TEntity>(filter, null, includeProperties).SingleOrDefault();
         }
@@ -173,7 +173,7 @@ namespace Stellmart.Api.DataAccess
         public virtual async Task<TEntity> GetOneAsync<TEntity>(
             Expression<Func<TEntity, bool>> filter = null,
             string includeProperties = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return await GetQueryable<TEntity>(filter, null, includeProperties).SingleOrDefaultAsync();
         }
@@ -182,7 +182,7 @@ namespace Stellmart.Api.DataAccess
            Expression<Func<TEntity, bool>> filter = null,
            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
            string includeProperties = "")
-           where TEntity : class, IEntity
+           where TEntity : class, IAuditableEntity
         {
             return GetQueryable<TEntity>(filter, orderBy, includeProperties).FirstOrDefault();
         }
@@ -191,43 +191,43 @@ namespace Stellmart.Api.DataAccess
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return await GetQueryable<TEntity>(filter, orderBy, includeProperties).FirstOrDefaultAsync();
         }
 
         public virtual TEntity GetById<TEntity>(object id)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return context.Set<TEntity>().Find(id);
         }
 
         public virtual Task<TEntity> GetByIdAsync<TEntity>(object id)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return context.Set<TEntity>().FindAsync(id);
         }
 
         public virtual int GetCount<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return GetQueryable<TEntity>(filter).Count();
         }
 
         public virtual Task<int> GetCountAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return GetQueryable<TEntity>(filter).CountAsync();
         }
 
         public virtual bool GetExists<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return GetQueryable<TEntity>(filter).Any();
         }
 
         public virtual Task<bool> GetExistsAsync<TEntity>(Expression<Func<TEntity, bool>> filter = null)
-            where TEntity : class, IEntity
+            where TEntity : class, IAuditableEntity
         {
             return GetQueryable<TEntity>(filter).AnyAsync();
         }

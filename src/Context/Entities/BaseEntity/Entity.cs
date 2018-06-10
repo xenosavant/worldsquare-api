@@ -2,8 +2,20 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Stellmart.Api.Context.Entities.BaseEntity
+namespace Stellmart.Api.Context.Entities.Entity
 {
+    public interface IEntity
+    {
+        object Id { get; }
+        Guid UniqueId { get; set; }
+        bool IsDeleted { get; set; }
+    }
+    
+    public interface IEntity<T> : IEntity
+    {
+        new T Id { get; set; }
+    }
+
     public abstract class Entity<T> : IEntity<T>
     {
         [Key]
@@ -12,25 +24,11 @@ namespace Stellmart.Api.Context.Entities.BaseEntity
         object IEntity.Id
         {
             get => Id;
-            set => throw new NotImplementedException();
         }
-
-        private DateTime? _createdDate;
-        [DataType(DataType.DateTime)]
-        public DateTime CreatedDate
-        {
-            get => _createdDate ?? DateTime.UtcNow;
-            set => _createdDate = value;
-        }
-
-        public bool IsDeleted { get; set; }
-        public string CreatedBy { get; set; }
 
         public Guid UniqueId { get; set; }
 
-        [DataType(DataType.DateTime)]
-        public DateTime? ModifiedDate { get; set; }
+        public bool IsDeleted { get; set; }
 
-        public string ModifiedBy { get; set; }
     }
 }

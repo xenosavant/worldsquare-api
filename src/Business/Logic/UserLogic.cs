@@ -1,15 +1,22 @@
 ﻿using AutoMapper;
-using Stellmart.Api.Business.Logic;
 using Stellmart.Api.DataAccess;
-using Stellmart.Context.Entities;
+using Stellmart.Api.Context.Entities;
 using Stellmart.Data;
 using Stellmart.Data.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Stellmart.Api.Context;
 
-namespace Stellmart.Business.Logic
+namespace Stellmart.Api.Business.Logic
 {
+    public interface IUserLogic
+    {
+        Task<int> SignupAsync(SignupRequest request);
+        Task<IReadOnlyCollection<ApplicationUserViewModel>> GetAllAsync();
+        Task<ApplicationUserViewModel> GetByIdAsync(int id);
+    }
+
     public class UserLogic : IUserLogic
     {
         private readonly IRepository _repository;
@@ -23,24 +30,24 @@ namespace Stellmart.Business.Logic
 
         public async Task<int> SignupAsync(SignupRequest request)
         {
-            _repository.Create(_mapper.Map<User>(request));
+            _repository.Create(_mapper.Map<ApplicationUser>(request));
             return await _repository.SaveAsync();
         }
 
-        public async Task<UserViewModel> GetByIdAsync(int id)
+        public async Task<ApplicationUserViewModel> GetByIdAsync(int id)
         {
-            return _mapper.Map<UserViewModel>(await _repository.GetByIdAsync<User>(id));
+            return _mapper.Map<ApplicationUserViewModel>(await _repository.GetByIdAsync<ApplicationUser>(id));
         }
 
-        public async Task<IReadOnlyCollection<UserViewModel>> GetAllAsync()
+        public async Task<IReadOnlyCollection<ApplicationUserViewModel>> GetAllAsync()
         {
-            return _mapper.Map<List<UserViewModel>>(await _repository.GetAllAsync<User>());
+            return _mapper.Map<List<ApplicationUserViewModel>>(await _repository.GetAllAsync<ApplicationUser>());
         }
 
         //example method for ordering and including entities by eager loading (aka include())
-        public async Task<IReadOnlyCollection<UserViewModel>> GetAllOrderingAndIncludeExampleAsync()
+        public async Task<IReadOnlyCollection<ApplicationUserViewModel>> GetAllOrderingAndIncludeExampleAsync()
         {
-            return _mapper.Map<List<UserViewModel>>(await _repository.GetAsync<User>(x => x.IsActive, x => x.OrderByDescending(y => y.CreatedDate), "NameOfRelatedEntity,NameOfOtherRelatedEntity,NameOfRelatedEntity.ChildEntity"));
+            return _mapper.Map<List<ApplicationUserViewModel>>(await _repository.GetAsync<ApplicationUser>(x => x.IsActive, x => x.OrderByDescending(y => y.CreatedDate), "NameOfRelatedEntity,NameOfOtherRelatedEntity,NameOfRelatedEntity.ChildEntity"));
         }
     }
 }

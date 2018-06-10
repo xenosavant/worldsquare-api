@@ -15,6 +15,8 @@ using Stellmart.Api.Data.Settings;
 using Stellmart.Context;
 using StructureMap;
 using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.Threading.Tasks;
 
 namespace Stellmart
 {
@@ -33,7 +35,7 @@ namespace Stellmart
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
@@ -118,4 +120,4 @@ namespace Stellmart
             });
         }
     }
-}
+}
