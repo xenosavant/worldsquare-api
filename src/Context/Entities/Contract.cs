@@ -19,9 +19,18 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         public int ContractStateId { get; set; }
 
+        [Required]
+        public int ContractTypeId { get; set; }
+
         public virtual ContractState State { get; set; }
 
+        public virtual ContractType Type { get; set; }
+
         public virtual ICollection<ContractPhase> Phases { get; set; }
+
+        public virtual ServiceRequestFulfillment Fulfillment { get; set; }
+
+        public virtual ProductShipment ProductShipment { get; set; }
 
     }
 }

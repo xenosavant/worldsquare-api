@@ -1,4 +1,5 @@
-﻿using Stellmart.Api.Context.Entities.Entity;
+﻿using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Context.Entities.Entity;
 using Stellmart.Api.Context.Entities.ReadOnly;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace Stellmart.Api.Context
 
         public string KeyWords { get; set; }
 
-        public int itemConditionId { get; set; }
+        public int ItemConditionId { get; set; }
 
         public ItemCondition ItemCondition { get; set; }
 
@@ -27,5 +28,9 @@ namespace Stellmart.Api.Context
         public virtual SubCategory SubCategory { get; set; }
 
         public virtual ListingCategory ListingCategory { get; set; }
+
+        public virtual TradeItem TradeItem { get; set; }
+
+        public virtual Listing Listing { get; set; }
     }
 }

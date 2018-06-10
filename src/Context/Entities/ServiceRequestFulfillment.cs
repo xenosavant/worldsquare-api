@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class ServiceRequestFulfillment : EntityMaximum
+    public abstract class ServiceRequestFulfillment : EntityMaximum
     {
         [Required]
         public int ServiceId { get; set; }
@@ -24,9 +24,9 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual Service Service { get; set; }
 
-        public virtual Service ServiceRequest { get; set; }
+        public virtual ServiceRequest ServiceRequest { get; set; }
 
-        public virtual Service Contract { get; set; }
+        public virtual Contract Contract { get; set; }
 
         public virtual FulfillmentState FulfillmentState {get; set;}
     }

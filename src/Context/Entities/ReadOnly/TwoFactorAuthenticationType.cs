@@ -8,6 +8,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class TwoFactorAuthenticationType : LookupData
     {
-
+        public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 }

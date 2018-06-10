@@ -8,9 +8,9 @@ namespace Stellmart.Api.Context.Entities
 {
     public class ProductShipment : AuditableEntity<int>
     {
-        public int SenderId { get; set; }
+        public int? SenderId { get; set; }
 
-        public int ReceiverId { get; set; }
+        public int? ReceiverId { get; set; }
 
         public DateTime OrderDate { get; set; }
 
@@ -21,13 +21,14 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         public bool FulfilledInternally { get; set; }
 
+        [Required]
         public bool Internal { get; set; }
 
         public bool TradeIn { get; set; }
 
-        public int ShippingCarrierId { get; set; }
+        public int? ShippingCarrierId { get; set; }
 
-        public int DeliveryRequestId { get; set; }
+        public int? DeliveryRequestId { get; set; }
 
         public int ShippingManifestId { get; set; }
 
@@ -49,5 +50,6 @@ namespace Stellmart.Api.Context.Entities
         public virtual ShippingManifest Manifest { get; set; }
 
         public virtual Contract Contract { get; set; }
+
     }
 }

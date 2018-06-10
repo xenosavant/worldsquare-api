@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class RewardsLevel : LookupData
     {
+        public virtual ICollection<ApplicationUser> Users { get; set; }
     }
 }

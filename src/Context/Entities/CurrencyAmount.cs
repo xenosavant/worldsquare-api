@@ -17,5 +17,11 @@ namespace Stellmart.Api.Context.Entities
         public decimal Amount { get; set; }
 
         public virtual Currency CurrencyType { get; set; }
+
+        public virtual TradeItem TradeItem { get; set; }
+
+        public virtual PricePerDistance PricePerDistance { get; set; }
+
+        public virtual PricePerTime PricePerTime { get; set; }
     }
 }

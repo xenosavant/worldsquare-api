@@ -13,5 +13,7 @@ namespace Stellmart.Api.Context.Entities
        public int LocationId { get; set; }
 
        public virtual Location Location { get; set; }
+
+       public virtual OnlineStore OnlineStore { get; set; }
     }
 }

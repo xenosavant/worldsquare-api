@@ -14,5 +14,7 @@ namespace Stellmart.Api.Context.Entities
         public IEnumerable<LineItem> LineItems => ShippingManifestLineItems?.Select(s => s.LineItem);
 
         public virtual ICollection<ShippingManifestLineItem> ShippingManifestLineItems { get; set; }
+
+        public virtual ProductShipment Shipment { get; set; }
     }
 }

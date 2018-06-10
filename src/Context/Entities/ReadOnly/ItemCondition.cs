@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class ItemCondition : LookupData
     {
+        public ICollection<ItemMetaData> ItemMetaDatas { get; set; }
     }
 }

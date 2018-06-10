@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class TimeUnit : LookupData
     {
+        public virtual ICollection<PricePerTime> PricePerTimes { get; set; }
     }
 }
