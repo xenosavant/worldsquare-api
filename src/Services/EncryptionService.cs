@@ -12,11 +12,11 @@ namespace Stellmart.Api.Services
 
     public interface IEncryptionService
     {
-        void EncryptRecoveryKey(List<SecurityAnswerViewModel> answers);
-        string DecryptRecveryKey(string text, List<SecurityAnswerViewModel> answers);
+        string EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
+        string DecryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
     }
 
-    public class EncryptionService
+    public class EncryptionService : IEncryptionService
     {
 
         private ICryptoTransform _decryptor => _decryptor ?? Aes.Create().CreateDecryptor();
@@ -56,6 +56,14 @@ namespace Stellmart.Api.Services
             return DecryptStringFromString(text, key, iv);
         }
 
+        public byte [] GenerateIv()
+        {
+            var array = new byte[16];
+            var rng = new RNGCryptoServiceProvider();
+            rng.GetBytes(array);
+            return array;
+        }
+
         private string DecryptStringFromString(string plainText, byte[] Key, byte[] IV)
         {
             string decryptedtext = null;
@@ -65,6 +73,7 @@ namespace Stellmart.Api.Services
             {
                 aes.Key = Key;
                 aes.IV = IV;
+                aes.BlockSize = 128;
 
                 using (MemoryStream msDecrypt = new MemoryStream(cipherText))
                 {
@@ -92,6 +101,7 @@ namespace Stellmart.Api.Services
             {
                 aes.Key = Key;
                 aes.IV = IV;
+                aes.BlockSize = 128;
 
                 using (MemoryStream msEncrypt = new MemoryStream())
                 {
@@ -110,6 +120,8 @@ namespace Stellmart.Api.Services
             return Encoding.ASCII.GetString(encrypted);
 
         }
+
+        
 
     }
 }

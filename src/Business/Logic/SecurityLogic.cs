@@ -38,7 +38,7 @@ namespace Stellmart.Api.Business.Logic
         {
             var user = await _repository.GetOneAsync<ApplicationUser>(u => u.UserName == userName);
             var recoveryKey = user.StellarRecoveryKey;
-            var decryptedKey = _encryptionService.DecryptRecveryKey(recoveryKey, answers);
+            var decryptedKey = _encryptionService.DecryptRecoveryKey(recoveryKey, answers);
 
             // check that key is valid from horizon
 

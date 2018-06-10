@@ -47,7 +47,6 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.0" />
-    <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="stellar-dotnetcore-sdk" Version="1.0.3" />
     <PackageReference Include="StructureMap.Microsoft.DependencyInjection" Version="1.4.0" />
     <PackageReference Include="WindowsAzure.Storage" Version="9.1.1" />
