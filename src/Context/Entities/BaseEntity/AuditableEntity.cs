@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities.Entity
 {
@@ -11,8 +8,8 @@ namespace Stellmart.Api.Context.Entities.Entity
     {
         DateTime CreatedDate { get; set; }
         DateTime? ModifiedDate { get; set; }
-        string ModifiedBy { get; set; }
-        string CreatedBy { get; set; }
+        int? ModifiedBy { get; set; }
+        int CreatedBy { get; set; }
     }
 
     public class AuditableEntity<T> : Entity<T>, IAuditableEntity
@@ -25,11 +22,11 @@ namespace Stellmart.Api.Context.Entities.Entity
             set => _createdDate = value;
         }
 
-        public string CreatedBy { get; set; }
+        public int CreatedBy { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime? ModifiedDate { get; set; }
 
-        public string ModifiedBy { get; set; }
+        public int? ModifiedBy { get; set; }
     }
 }
