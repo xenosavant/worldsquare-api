@@ -12,51 +12,70 @@ namespace Stellmart.Api.Services
 
     public interface IEncryptionService
     {
-        string EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
-        string DecryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
+        byte [] EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
+        string DecryptRecoveryKey(byte [] text, List<SecurityAnswerViewModel> answers);
     }
 
     public class EncryptionService : IEncryptionService
     {
 
-        private ICryptoTransform _decryptor => _decryptor ?? Aes.Create().CreateDecryptor();
-        private ICryptoTransform _encryptor => _encryptor ?? Aes.Create().CreateEncryptor();
+        private Aes _aes;
+        private Aes Aes
+        {
+            get
+            {
+                if (ReferenceEquals(_aes, null))
+                {
+                    var aes = Aes.Create();
+                    aes.BlockSize = 128;
+                    aes.KeySize = 128;
+                    aes.Padding = PaddingMode.PKCS7;
+                    aes.Mode = CipherMode.CBC;
+                    return _aes = aes;
+                }
+                else
+                {
+                    return _aes;
+                }
+            }
+        }
 
-        public string DecryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers)
+        public string DecryptRecoveryKey(byte [] bytes, List<SecurityAnswerViewModel> answers)
         {
             var sortedAnswers = answers.OrderByDescending(a => a.Order);
             foreach (var answer in sortedAnswers)
             {
-                var key = Encoding.ASCII.GetBytes(answer.Answer);
-                text = DecryptStringFromString(text, key, answer.IV);
+                var key = KeyToSixteenBytes(answer.Answer);
+                bytes = DecryptBytesFromBytes(bytes, key, answer.IV);
             }
-            return text;
+            return Encoding.UTF8.GetString(bytes);
         }
 
-        public string EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers)
+        public byte[] EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers)
         {
             var sortedAnswers = answers.OrderBy(a => a.Order);
+            var textAsBytes = Encoding.UTF8.GetBytes(text);
             foreach (var answer in sortedAnswers)
             {
-                var key = Encoding.ASCII.GetBytes(answer.Answer);
-                text = EncryptStringToString(text, key, answer.IV);
+                var key = KeyToSixteenBytes(answer.Answer);
+                textAsBytes = EncryptBytesToBytes(textAsBytes, key, answer.IV);
             }
-            return text;
+            return textAsBytes;
         }
 
-        public string EncyrptSecretKey(string text, byte [] iv, string password)
-        {
-            var key = Encoding.ASCII.GetBytes(password);
-            return EncryptStringToString(text, key, iv);
-        }
+        //public string EncyrptSecretKey(string text, byte[] iv, string password)
+        //{
+        //    var key = KeyToSixteenBytes(password);
+        //    return EncryptStringToString(text, key, iv);
+        //}
 
-        public string DecryptSecretKey(string text, byte[] iv, string password)
-        {
-            var key = Encoding.ASCII.GetBytes(password);
-            return DecryptStringFromString(text, key, iv);
-        }
+        //public string DecryptSecretKey(string text, byte[] iv, string password)
+        //{
+        //    var key = KeyToSixteenBytes(password);
+        //    return DecryptStringFromString(text, key, iv);
+        //}
 
-        public byte [] GenerateIv()
+        public byte[] GenerateIv()
         {
             var array = new byte[16];
             var rng = new RNGCryptoServiceProvider();
@@ -64,64 +83,70 @@ namespace Stellmart.Api.Services
             return array;
         }
 
-        private string DecryptStringFromString(string plainText, byte[] Key, byte[] IV)
+        // This method fits the key to 16 bytes so it can be used i
+        public byte[] KeyToSixteenBytes(string key)
         {
-            string decryptedtext = null;
-            byte [] cipherText = Encoding.ASCII.GetBytes(plainText);
-
-            using (Aes aes = _decryptor as Aes)
+            var keyAsBytes = Encoding.UTF8.GetBytes(key);
+            if (keyAsBytes.Length < 16)
             {
-                aes.Key = Key;
-                aes.IV = IV;
-                aes.BlockSize = 128;
-
-                using (MemoryStream msDecrypt = new MemoryStream(cipherText))
+                var buffer = new byte[16];
+                var keyIndex = 0;
+                for (var i = 0; i < 16; i++)
                 {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, _decryptor, CryptoStreamMode.Read))
+                    if (keyIndex == keyAsBytes.Length)
                     {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-
-                            decryptedtext = srDecrypt.ReadToEnd();
-                        }
+                        keyIndex = 0;
                     }
+                    buffer[i] = keyAsBytes[keyIndex];
+                    keyIndex++;
                 }
-
+                return buffer;
             }
-
-            return decryptedtext;
-
+            else
+            {
+                return keyAsBytes;
+            }
         }
 
-        private string EncryptStringToString(string plainText, byte[] Key, byte[] IV)
+        private byte[] DecryptBytesFromBytes(byte[] bytes, byte[] Key, byte[] IV)
+        {
+
+            Aes.Key = Key;
+            Aes.IV = IV;
+            var decryptor = Aes.CreateDecryptor();
+
+            using (MemoryStream msDecrypt = new MemoryStream())
+            {
+                using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
+                {
+                    csDecrypt.Write(bytes, 0, bytes.Length);
+                    csDecrypt.FlushFinalBlock();
+                    return msDecrypt.ToArray();
+                }
+            }
+        }
+
+        private byte[] EncryptBytesToBytes(byte[] text, byte[] Key, byte[] IV)
         {
             byte[] encrypted;
 
-            using (Aes aes = _encryptor as Aes)
+            Aes.Key = Key;
+            Aes.IV = IV;
+            var encryptor = Aes.CreateEncryptor();
+
+            using (MemoryStream msEncrypt = new MemoryStream())
             {
-                aes.Key = Key;
-                aes.IV = IV;
-                aes.BlockSize = 128;
-
-                using (MemoryStream msEncrypt = new MemoryStream())
+                using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                 {
-                    using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, _encryptor, CryptoStreamMode.Write))
-                    {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                        {
-
-                            swEncrypt.Write(plainText);
-                        }
-                        encrypted = msEncrypt.ToArray();
-                    }
+                    csEncrypt.Write(text, 0, text.Length);
+                    csEncrypt.Close();
+                    encrypted = msEncrypt.ToArray();
                 }
             }
-
-            return Encoding.ASCII.GetString(encrypted);
-
+            return encrypted;
         }
 
-        
+
 
     }
 }

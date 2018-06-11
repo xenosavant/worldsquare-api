@@ -60,8 +60,8 @@ namespace Stellmart.Api.Tests
                 }
             };
             var encrypted = _encryptionService.EncryptRecoveryKey(key, answers);
-            var decrypted = _encryptionService.DecryptRecoveryKey(key, answers);
-            Assert.AreEqual(decrypted, key);
+            var decrypted = _encryptionService.DecryptRecoveryKey(encrypted, answers);
+            Assert.AreEqual(key, decrypted);
         }
 
     }
