@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using stellar_dotnetcore_sdk;
-using stellar_dotnetcore_sdk.responses;
+using response = stellar_dotnetcore_sdk.responses;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using System;
@@ -39,7 +39,7 @@ namespace Stellmart.Services
             //See our newly created account.
             return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
          }
-	public async Task <SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
+	public async Task <response.SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
 				HorizonKeyPairModel destAccount, String amount)
 	{
 	    var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
@@ -55,6 +55,32 @@ namespace Stellmart.Services
            transaction.Sign(source);
 
 	    return await _server.SubmitTransaction(transaction);
+	}
+
+	public async Task <response.SubmitTransactionResponse> SetWeightSigner(HorizonKeyPairModel SourceAccount,
+		HorizonAccountWeightModel Weights) {
+	   var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
+	   var operation = new SetOptionsOperation.Builder();
+	   operation.SetMasterKeyWeight(Weights.MasterWeight);
+	   operation.SetLowThreshold(Weights.LowThreshold);
+	   operation.SetMediumThreshold(Weights.MediumThreshold);
+	   operation.SetHighThreshold(Weights.HighThreshold);
+
+	   /*BUG: Second signer is not getting added */
+	   foreach(HorizonAccountSignerModel SignerAccount in Weights.Signers) {
+			operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromSecretSeed
+				(SignerAccount.Signer.SecretKey)), SignerAccount.Weight);
+		}
+	   operation.SetSourceAccount(source);
+	   var opBuild = operation.Build();
+
+	   var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
+	   var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+		.AddOperation(opBuild)
+		.Build();
+	   transaction.Sign(source);
+
+	   return await _server.SubmitTransaction(transaction);
 	}
     }
 }

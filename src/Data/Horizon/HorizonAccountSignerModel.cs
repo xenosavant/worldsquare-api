@@ -2,7 +2,7 @@
 {
     public class HorizonAccountSignerModel
     {
-        public string PublicKey { get; set; }
+        public HorizonKeyPairModel Signer { get; set; }
         public int Weight { get; set; }
     }
 }
