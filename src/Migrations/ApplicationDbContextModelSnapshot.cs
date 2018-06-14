@@ -138,7 +138,7 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -165,7 +165,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("ManagedAccount");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -246,7 +246,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -258,7 +258,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -286,7 +286,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractTypeId");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -297,7 +297,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -324,13 +324,13 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractId");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -356,7 +356,7 @@ namespace Stellmart.Api.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(14, 2)");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -364,7 +364,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -404,7 +404,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ConditionId");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -412,7 +412,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -449,7 +449,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -457,7 +457,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -481,7 +481,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -497,7 +497,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ItemMetaDataId");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -568,7 +568,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -578,7 +578,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -612,7 +612,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractPhaseId");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -622,7 +622,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<DateTime>("MinimumTime");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -697,7 +697,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractId");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -713,7 +713,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -1075,7 +1075,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -1088,7 +1088,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -1117,7 +1117,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -1134,7 +1134,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int?>("LocationId");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -1165,7 +1165,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractId");
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -1178,7 +1178,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -1238,7 +1238,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -1249,7 +1249,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
@@ -1337,7 +1337,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("CreatedBy");
+                    b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
 
@@ -1345,7 +1345,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int?>("ItemMetaDataId");
 
-                    b.Property<string>("ModifiedBy");
+                    b.Property<int?>("ModifiedBy");
 
                     b.Property<DateTime?>("ModifiedDate");
 
