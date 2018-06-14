@@ -106,12 +106,12 @@ namespace Stellmart.Api.Context
             set => _createdDate = value;
         }
 
-        public string CreatedBy { get; set; }
+        public int CreatedBy { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime? ModifiedDate { get; set; }
 
-        public string ModifiedBy { get; set; }
+        public int? ModifiedBy { get; set; }
 
         object IEntity.Id
         {

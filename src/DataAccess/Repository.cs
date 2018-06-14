@@ -16,11 +16,15 @@ namespace Stellmart.Api.DataAccess
         {
         }
 
-        public virtual void Create<TEntity>(TEntity entity, string createdBy = null)
+        public virtual void Create<TEntity>(TEntity entity, int? createdBy = null)
             where TEntity : class, IAuditableEntity
         {
             entity.CreatedDate = DateTime.UtcNow;
-            entity.CreatedBy = createdBy;
+
+            if (createdBy.HasValue && createdBy.Value > 0)
+            {
+                entity.CreatedBy = (int)createdBy;
+            }
 
             if (entity.UniqueId == new Guid())
             {
@@ -30,7 +34,7 @@ namespace Stellmart.Api.DataAccess
             context.Set<TEntity>().Add(entity);
         }
 
-        public virtual void CreateRange<TEntity>(ICollection<TEntity> entities, string createdBy = null)
+        public virtual void CreateRange<TEntity>(ICollection<TEntity> entities, int createdBy)
             where TEntity : class, IAuditableEntity
         {
             foreach (var item in entities)
@@ -62,7 +66,7 @@ namespace Stellmart.Api.DataAccess
                 .Select(t => t.t.item);
         }
 
-        public virtual void Update<TEntity>(TEntity entity, string modifiedBy = null)
+        public virtual void Update<TEntity>(TEntity entity, int? modifiedBy)
             where TEntity : class, IAuditableEntity
         {
             entity.ModifiedDate = DateTime.UtcNow;
@@ -71,7 +75,7 @@ namespace Stellmart.Api.DataAccess
             context.Entry(entity).State = EntityState.Modified;
         }
 
-        public virtual void Delete<TEntity>(TEntity entity, string modifiedBy = null)
+        public virtual void Delete<TEntity>(TEntity entity, int? modifiedBy = null)
             where TEntity : class, IAuditableEntity
         {
             entity.ModifiedDate = DateTime.UtcNow;
