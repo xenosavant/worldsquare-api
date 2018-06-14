@@ -21,7 +21,7 @@ namespace Stellmart.Api.Business.Extensions
                     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
                     var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-                    //SeedData.Initialize(context, userManager, configuration);
+                    SeedData.Initialize(context, userManager, configuration);
                 }
                 catch (Exception ex)
                 {
