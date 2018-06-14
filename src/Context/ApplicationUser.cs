@@ -24,9 +24,9 @@ namespace Stellmart.Api.Context
 
         public string StellarPublicKey { get; set; }
 
-        public string StellarEncryptedSecretKey { get; set; }
+        public byte [] StellarEncryptedSecretKey { get; set; }
 
-        public string StellarRecoveryKey { get; set; }
+        public byte [] StellarRecoveryKey { get; set; }
 
         public byte[] StellarSecretKeyIv { get; set; }
 

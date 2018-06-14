@@ -14,6 +14,8 @@ namespace Stellmart.Api.Services
     {
         byte [] EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
         string DecryptRecoveryKey(byte [] text, List<SecurityAnswerViewModel> answers);
+        byte [] EncryptSecretKey(string text, byte[] iv, string password);
+        string DecryptSecretKey(byte [] bytes, byte[] iv, string password);
     }
 
     public class EncryptionService : IEncryptionService
@@ -45,7 +47,8 @@ namespace Stellmart.Api.Services
             var sortedAnswers = answers.OrderByDescending(a => a.Order);
             foreach (var answer in sortedAnswers)
             {
-                var key = KeyToSixteenBytes(answer.Answer);
+                var downCased = answer.Answer.ToLower();
+                var key = KeyToSixteenBytes(downCased);
                 bytes = DecryptBytesFromBytes(bytes, key, answer.IV);
             }
             return Encoding.UTF8.GetString(bytes);
@@ -57,24 +60,29 @@ namespace Stellmart.Api.Services
             var textAsBytes = Encoding.UTF8.GetBytes(text);
             foreach (var answer in sortedAnswers)
             {
-                var key = KeyToSixteenBytes(answer.Answer);
+                var downCased = answer.Answer.ToLower();
+                var key = KeyToSixteenBytes(downCased);
                 textAsBytes = EncryptBytesToBytes(textAsBytes, key, answer.IV);
             }
             return textAsBytes;
         }
 
-        //public string EncyrptSecretKey(string text, byte[] iv, string password)
-        //{
-        //    var key = KeyToSixteenBytes(password);
-        //    return EncryptStringToString(text, key, iv);
-        //}
+        public byte [] EncryptSecretKey(string text, byte[] iv, string password)
+        {
+            var downCased = password.ToLower();
+            var key = KeyToSixteenBytes(downCased);
+            var bytes = Encoding.UTF8.GetBytes(text);
+            return EncryptBytesToBytes(bytes, key, iv);
+        }
 
-        //public string DecryptSecretKey(string text, byte[] iv, string password)
-        //{
-        //    var key = KeyToSixteenBytes(password);
-        //    return DecryptStringFromString(text, key, iv);
-        //}
+        public string DecryptSecretKey(byte[] bytes, byte[] iv, string password)
+        {
+            var downCased = password.ToLower();
+            var key = KeyToSixteenBytes(downCased);
+            return Encoding.UTF8.GetString(DecryptBytesFromBytes(bytes, key, iv));
+        }
 
+        // Generate a random Initialization Vector
         public byte[] GenerateIv()
         {
             var array = new byte[16];
@@ -83,7 +91,7 @@ namespace Stellmart.Api.Services
             return array;
         }
 
-        // This method fits the key to 16 bytes so it can be used i
+        // This method fits the key to 16 bytes so it can be used in AES
         public byte[] KeyToSixteenBytes(string key)
         {
             var keyAsBytes = Encoding.UTF8.GetBytes(key);

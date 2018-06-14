@@ -1,11 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
-using System;
-using System.Collections.Generic;
 
 namespace Stellmart.Api.Migrations
 {
-    public partial class Initial : Migration
+    public partial class Intial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,9 +14,9 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
                     Name = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(maxLength: 256, nullable: true)
+                    NormalizedName = table.Column<string>(maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -28,11 +27,11 @@ namespace Stellmart.Api.Migrations
                 name: "ContractStates",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -43,11 +42,11 @@ namespace Stellmart.Api.Migrations
                 name: "ContractTypes",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -58,11 +57,11 @@ namespace Stellmart.Api.Migrations
                 name: "Currencies",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -73,11 +72,11 @@ namespace Stellmart.Api.Migrations
                 name: "DistanceUnits",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,11 +87,11 @@ namespace Stellmart.Api.Migrations
                 name: "FulfillmentStates",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -106,9 +105,9 @@ namespace Stellmart.Api.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     Latitude = table.Column<double>(nullable: false),
-                    Longitude = table.Column<double>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    Longitude = table.Column<double>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -119,11 +118,11 @@ namespace Stellmart.Api.Migrations
                 name: "ItemConditions",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -136,9 +135,9 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
                     SubCategoryId = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true)
+                    Active = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -149,11 +148,11 @@ namespace Stellmart.Api.Migrations
                 name: "QuantityUnits",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -164,11 +163,11 @@ namespace Stellmart.Api.Migrations
                 name: "RewardsLevels",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -179,11 +178,11 @@ namespace Stellmart.Api.Migrations
                 name: "ShippingCarriers",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -210,9 +209,9 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
+                    Title = table.Column<string>(nullable: true),
                     SuperCategoryId = table.Column<string>(nullable: true),
-                    Title = table.Column<string>(nullable: true)
+                    Active = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -225,8 +224,8 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Title = table.Column<string>(nullable: true)
+                    Title = table.Column<string>(nullable: true),
+                    Active = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -237,11 +236,11 @@ namespace Stellmart.Api.Migrations
                 name: "TimeUnits",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -252,11 +251,11 @@ namespace Stellmart.Api.Migrations
                 name: "TradeInStates",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -267,11 +266,11 @@ namespace Stellmart.Api.Migrations
                 name: "TwoFactorAuthenticationTypes",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -282,11 +281,11 @@ namespace Stellmart.Api.Migrations
                 name: "VerificationLevels",
                 columns: table => new
                 {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Active = table.Column<bool>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    DisplayOrder = table.Column<int>(nullable: false)
+                    Description = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -299,9 +298,9 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    RoleId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true),
-                    RoleId = table.Column<int>(nullable: false)
+                    ClaimValue = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -320,16 +319,16 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ContractStateId = table.Column<int>(nullable: false),
-                    ContractTypeId = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CurrentSequenceNumber = table.Column<int>(nullable: false),
-                    EscrowAccountId = table.Column<string>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    EscrowAccountId = table.Column<string>(nullable: false),
+                    CurrentSequenceNumber = table.Column<int>(nullable: false),
+                    ContractStateId = table.Column<int>(nullable: false),
+                    ContractTypeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -354,14 +353,14 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Amount = table.Column<decimal>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CurrencyTypeId = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    CurrencyTypeId = table.Column<int>(nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(14, 2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -380,16 +379,16 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    DistanceUnitId = table.Column<int>(nullable: true),
-                    DistanceUnitTypeId = table.Column<int>(nullable: false),
-                    GeoLocationId = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
                     Radius = table.Column<double>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    GeoLocationId = table.Column<int>(nullable: false),
+                    DistanceUnitTypeId = table.Column<int>(nullable: false),
+                    DistanceUnitId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -414,12 +413,12 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     Address = table.Column<string>(nullable: true),
                     GeoLocationId = table.Column<int>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
                     LocationComponents = table.Column<string>(nullable: true),
                     PlaceId = table.Column<string>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false),
                     Verified = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
@@ -440,12 +439,12 @@ namespace Stellmart.Api.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ItemConditionId = table.Column<int>(nullable: false),
-                    KeyWords = table.Column<string>(nullable: true),
-                    ListingCategoryId = table.Column<int>(nullable: false),
-                    SubCategoryId = table.Column<int>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     SuperCategoryId = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    SubCategoryId = table.Column<int>(nullable: false),
+                    ListingCategoryId = table.Column<int>(nullable: false),
+                    KeyWords = table.Column<string>(nullable: true),
+                    ItemConditionId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -482,17 +481,17 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    ContractId = table.Column<int>(nullable: false),
+                    SequenceNumber = table.Column<int>(nullable: false),
                     Completed = table.Column<bool>(nullable: false),
                     Contested = table.Column<bool>(nullable: false),
-                    ContractId = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    SequenceNumber = table.Column<int>(nullable: false),
-                    TimeDelay = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    TimeDelay = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -511,22 +510,22 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ConditionId = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    Descriptors = table.Column<string>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    PriceId = table.Column<int>(nullable: true),
-                    SKU = table.Column<string>(nullable: true),
-                    UPC = table.Column<string>(nullable: true),
                     UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    ConditionId = table.Column<int>(nullable: false),
                     UnitPriceId = table.Column<int>(nullable: false),
                     UnitTypeId = table.Column<int>(nullable: false),
+                    Descriptors = table.Column<string>(nullable: true),
+                    UPC = table.Column<string>(nullable: true),
+                    SKU = table.Column<string>(nullable: true),
                     UnitsAvailable = table.Column<int>(nullable: false),
+                    UnitsSold = table.Column<int>(nullable: false),
                     UnitsReturned = table.Column<int>(nullable: false),
-                    UnitsSold = table.Column<int>(nullable: false)
+                    PriceId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -551,10 +550,10 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CurrencyAmountId = table.Column<int>(nullable: false),
-                    DistanceUnitId = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CurrencyAmountId = table.Column<int>(nullable: false),
+                    DistanceUnitId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -579,10 +578,10 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CurrencyAmountId = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    TimeUnitId = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CurrencyAmountId = table.Column<int>(nullable: false),
+                    TimeUnitId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -607,44 +606,44 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    FirstName = table.Column<string>(maxLength: 50, nullable: true),
-                    Flagged = table.Column<bool>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    LastName = table.Column<string>(maxLength: 50, nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    ManagedAccount = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    MustRecoverKey = table.Column<bool>(nullable: false),
-                    MustResetKey = table.Column<bool>(nullable: false),
-                    NativeCurrencyId = table.Column<int>(nullable: false),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
                     PasswordHash = table.Column<string>(nullable: true),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
                     PhoneNumber = table.Column<string>(nullable: true),
                     PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    FirstName = table.Column<string>(maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(maxLength: 50, nullable: true),
+                    MustRecoverKey = table.Column<bool>(nullable: false),
+                    MustResetKey = table.Column<bool>(nullable: false),
+                    StellarPublicKey = table.Column<string>(nullable: true),
+                    StellarEncryptedSecretKey = table.Column<byte[]>(nullable: true),
+                    StellarRecoveryKey = table.Column<byte[]>(nullable: true),
+                    StellarSecretKeyIv = table.Column<byte[]>(nullable: true),
+                    ManagedAccount = table.Column<bool>(nullable: false),
                     PrimaryShippingLocationId = table.Column<int>(nullable: false),
                     RewardsLevelId = table.Column<int>(nullable: false),
-                    SecurityQuestions = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    StellarEncryptedSecretKey = table.Column<string>(nullable: true),
-                    StellarPublicKey = table.Column<string>(nullable: true),
-                    StellarRecoveryKey = table.Column<string>(nullable: true),
-                    StellarSecretKeyIv = table.Column<byte[]>(nullable: true),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
                     TwoFactorTypeId = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false),
+                    NativeCurrencyId = table.Column<int>(nullable: false),
+                    VerificationLevelId = table.Column<int>(nullable: false),
+                    Flagged = table.Column<bool>(nullable: false),
                     UseTwoFactorForLogin = table.Column<bool>(nullable: false),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    VerificationLevelId = table.Column<int>(nullable: false)
+                    SecurityQuestions = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -688,9 +687,9 @@ namespace Stellmart.Api.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    LocationId = table.Column<int>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    LocationId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -709,18 +708,18 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ContractPhaseId = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    MaximumTime = table.Column<DateTime>(nullable: false),
-                    MinimumTime = table.Column<DateTime>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    PreTransactionTypeId = table.Column<int>(nullable: false),
-                    Submitted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    XdrString = table.Column<string>(nullable: true)
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    PreTransactionTypeId = table.Column<int>(nullable: false),
+                    XdrString = table.Column<string>(nullable: true),
+                    Submitted = table.Column<bool>(nullable: false),
+                    ContractPhaseId = table.Column<int>(nullable: false),
+                    MinimumTime = table.Column<DateTime>(nullable: false),
+                    MaximumTime = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -739,15 +738,15 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    InventoryItemId = table.Column<int>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    InventoryItemId = table.Column<int>(nullable: false),
                     Quantity = table.Column<int>(nullable: false),
-                    ShippingManifestId = table.Column<int>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    ShippingManifestId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -766,9 +765,9 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserId = table.Column<int>(nullable: false),
                     ClaimType = table.Column<string>(nullable: true),
-                    ClaimValue = table.Column<string>(nullable: true),
-                    UserId = table.Column<int>(nullable: false)
+                    ClaimValue = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -851,14 +850,14 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    InitiatorId = table.Column<int>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    InitiatorId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -877,11 +876,11 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Body = table.Column<string>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     ReviewerId = table.Column<int>(nullable: false),
                     Stars = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    Body = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -900,24 +899,30 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    DestinationId = table.Column<int>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
-                    Fulfilled = table.Column<bool>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    LocationId = table.Column<int>(nullable: true),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    DestinationId = table.Column<int>(nullable: true),
+                    Fulfilled = table.Column<bool>(nullable: false),
+                    LocationId = table.Column<int>(nullable: true),
                     RequestorId = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ServiceRequests", x => x.Id);
                     table.ForeignKey(
                         name: "FK_ServiceRequests_AspNetUsers_RequestorId",
+                        column: x => x.RequestorId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ServiceRequests_AspNetUsers_RequestorId1",
                         column: x => x.RequestorId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -942,17 +947,17 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ItemMetaDataId = table.Column<int>(nullable: true),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
-                    OwnerId = table.Column<int>(nullable: false),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
                     Title = table.Column<string>(nullable: true),
-                    TradeInStateId = table.Column<int>(nullable: true),
+                    OwnerId = table.Column<int>(nullable: false),
                     TradeInValueId = table.Column<int>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    TradeInStateId = table.Column<int>(nullable: true),
+                    ItemMetaDataId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -987,27 +992,27 @@ namespace Stellmart.Api.Migrations
                 name: "Services",
                 columns: table => new
                 {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    NativeCurrencyId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    TagLine = table.Column<string>(nullable: true),
+                    Discriminator = table.Column<string>(nullable: false),
                     ServiceAreaId = table.Column<int>(nullable: true),
                     Internal = table.Column<bool>(nullable: true),
                     Global = table.Column<bool>(nullable: true),
-                    ItemMetaDateId = table.Column<int>(nullable: true),
                     LocationId = table.Column<int>(nullable: true),
                     ServiceRegionId = table.Column<int>(nullable: true),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    Name = table.Column<string>(nullable: true),
-                    NativeCurrencyId = table.Column<int>(nullable: false),
-                    TagLine = table.Column<string>(nullable: true),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    UserId = table.Column<int>(nullable: false)
+                    ItemMetaDateId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1025,6 +1030,12 @@ namespace Stellmart.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Services_AspNetUsers_UserId1",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
                         name: "FK_Services_Locations_LocationId",
                         column: x => x.LocationId,
                         principalTable: "Locations",
@@ -1034,6 +1045,18 @@ namespace Stellmart.Api.Migrations
                         name: "FK_Services_Regions_ServiceRegionId",
                         column: x => x.ServiceRegionId,
                         principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_AspNetUsers_UserId2",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_AspNetUsers_UserId3",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
@@ -1050,17 +1073,17 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
                     PreTransactionId = table.Column<int>(nullable: false),
                     Signed = table.Column<bool>(nullable: false),
                     SignedOn = table.Column<DateTime>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false),
                     SignerId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -1110,12 +1133,12 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Body = table.Column<string>(nullable: true),
                     IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     MessageThreadId = table.Column<int>(nullable: false),
-                    PostedOn = table.Column<DateTime>(nullable: false),
                     PosterId = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    PostedOn = table.Column<DateTime>(nullable: false),
+                    Body = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -1140,25 +1163,25 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ContractId = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    DeliveredOn = table.Column<DateTime>(nullable: false),
-                    DeliveryRequestId = table.Column<int>(nullable: true),
-                    FulfilledInternally = table.Column<bool>(nullable: false),
-                    FulfillmentStateId = table.Column<int>(nullable: false),
-                    Internal = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
-                    OrderDate = table.Column<DateTime>(nullable: false),
-                    ReceiverId = table.Column<int>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
                     SenderId = table.Column<int>(nullable: true),
+                    ReceiverId = table.Column<int>(nullable: true),
+                    OrderDate = table.Column<DateTime>(nullable: false),
                     ShippedOn = table.Column<DateTime>(nullable: false),
-                    ShippingCarrierId = table.Column<int>(nullable: true),
-                    ShippingManifestId = table.Column<int>(nullable: false),
+                    DeliveredOn = table.Column<DateTime>(nullable: false),
+                    FulfilledInternally = table.Column<bool>(nullable: false),
+                    Internal = table.Column<bool>(nullable: false),
                     TradeIn = table.Column<bool>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    ShippingCarrierId = table.Column<int>(nullable: true),
+                    DeliveryRequestId = table.Column<int>(nullable: true),
+                    ShippingManifestId = table.Column<int>(nullable: false),
+                    ContractId = table.Column<int>(nullable: false),
+                    FulfillmentStateId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1207,20 +1230,20 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CreatedBy = table.Column<string>(nullable: true),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     CreatedDate = table.Column<DateTime>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    ServiceId = table.Column<int>(nullable: false),
+                    Title = table.Column<string>(nullable: false),
                     Description = table.Column<string>(nullable: true),
                     Flagged = table.Column<bool>(nullable: false),
-                    Internal = table.Column<bool>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    ItemMetaDataId = table.Column<int>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ServiceId = table.Column<int>(nullable: false),
                     ThreadId = table.Column<int>(nullable: true),
-                    Title = table.Column<string>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    Internal = table.Column<bool>(nullable: false),
+                    ItemMetaDataId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1275,18 +1298,18 @@ namespace Stellmart.Api.Migrations
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    ContractId = table.Column<int>(nullable: false),
-                    CreatedBy = table.Column<string>(nullable: true),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false),
-                    FulfillmentStateId = table.Column<int>(nullable: false),
-                    IsActive = table.Column<bool>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    ModifiedBy = table.Column<string>(nullable: true),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
+                    CreatedBy = table.Column<string>(nullable: true),
+                    ModifiedBy = table.Column<string>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
                     ServiceId = table.Column<int>(nullable: false),
                     ServiceRequestId = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false)
+                    ContractId = table.Column<int>(nullable: false),
+                    FulfillmentStateId = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1619,6 +1642,11 @@ namespace Stellmart.Api.Migrations
                 column: "RequestorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ServiceRequests_RequestorId1",
+                table: "ServiceRequests",
+                column: "RequestorId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ServiceRequests_DestinationId",
                 table: "ServiceRequests",
                 column: "DestinationId",
@@ -1643,6 +1671,11 @@ namespace Stellmart.Api.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Services_UserId1",
+                table: "Services",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Services_LocationId",
                 table: "Services",
                 column: "LocationId",
@@ -1655,6 +1688,16 @@ namespace Stellmart.Api.Migrations
                 column: "ServiceRegionId",
                 unique: true,
                 filter: "[ServiceRegionId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_UserId2",
+                table: "Services",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Services_UserId3",
+                table: "Services",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Services_NativeCurrencyId",

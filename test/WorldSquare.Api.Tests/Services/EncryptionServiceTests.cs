@@ -11,9 +11,10 @@ namespace Stellmart.Api.Tests
     {
         private IEncryptionService _encryptionService;
 
-        private byte[] IV => new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+        private byte[] _iv => new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
                                            0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 
+        private string _key => "SAV76USXIJOBMEQXPANUOQM6F5LIOTLPDIDVRJBFFE2MDJXG24TAPUU7";
 
         [SetUp]
         public void Init()
@@ -24,44 +25,52 @@ namespace Stellmart.Api.Tests
         [Test]
         public void TestEncryptDecryptRecoveryKey()
         {
-            var key = "SAV76USXIJOBMEQXPANUOQM6F5LIOTLPDIDVRJBFFE2MDJXG24TAPUU7";
             var answers =
             new List<SecurityAnswerViewModel>()
             {
                 new SecurityAnswerViewModel()
                 {
                     Answer = "lollipop",
-                    IV = IV,
+                    IV = _iv,
                     Order = 1
                 },
                 new SecurityAnswerViewModel()
                 {
                     Answer = "popsicle",
-                    IV = IV,
+                    IV = _iv,
                     Order = 2
                 },
                 new SecurityAnswerViewModel()
                 {
                     Answer = "america",
-                    IV = IV,
+                    IV = _iv,
                     Order = 3
                 },
                 new SecurityAnswerViewModel()
                 {
                     Answer = "purple",
-                    IV = IV,
+                    IV = _iv,
                     Order = 4
                 },
                 new SecurityAnswerViewModel()
                 {
                     Answer = "witchitah",
-                    IV = IV,
+                    IV = _iv,
                     Order = 5
                 }
             };
-            var encrypted = _encryptionService.EncryptRecoveryKey(key, answers);
+            var encrypted = _encryptionService.EncryptRecoveryKey(_key, answers);
             var decrypted = _encryptionService.DecryptRecoveryKey(encrypted, answers);
-            Assert.AreEqual(key, decrypted);
+            Assert.AreEqual(_key, decrypted);
+        }
+
+        [Test]
+        public void TestEncryptDecryptSecretKey()
+        {
+            var password = "ksdjf*KAJSDF123";
+            var encrypted = _encryptionService.EncryptSecretKey(_key, _iv, password);
+            var decrypted = _encryptionService.DecryptSecretKey(encrypted, _iv, password);
+            Assert.AreEqual(_key, decrypted);
         }
 
     }
