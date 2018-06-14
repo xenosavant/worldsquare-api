@@ -12,16 +12,19 @@ namespace Stellmart.Services.Contract
     {
 	/* Create and fund escrow account.
 	   Add signer as destination, stellmart and change threshold weights.
-	   Returns Escrow account id */
+	   Returns Escrow account id
+         */
 	HorizonKeyPairModel SetupContract(HorizonKeyPairModel SourceAccount, string DestAccount,
 						string Amount);
-	/* Create Pre Transactions and returns txn_1 and txn_2 XDR.
-	   ContractModel to be stored in database.
-	   TBD: Add data model parameter to support delivery date, waiting days etc to determine time bounds*/
-	ContractModel CreateContract(HorizonKeyPairModel EscrowAccount, HorizonKeyPairModel DestAccount);
+	/* Based on the Contract Parameters, Contract will be created.
+	   Contract escrow and destination accounts are necessary inputs.
+	   Returns Contract with one pre transaction added to the contract list
+	 */
+	ContractModel CreateContract(ContractModel Contract,
+					ContractParamModel ContractParam);
 
 	string SignContract(HorizonKeyPairModel Account, ContractModel Contract);
 	/*Submits the transaction to the network, returns the hash of transaction*/
-	string ExecuteContract(XdrTransaction PreTxn);
+	string ExecuteContract(ContractModel Contract);
     }
 }

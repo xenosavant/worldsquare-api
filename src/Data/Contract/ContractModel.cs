@@ -1,11 +1,16 @@
-﻿using Transaction = stellar_dotnetcore_sdk.Transaction;
-using XdrTransaction = stellar_dotnetcore_sdk.xdr.Transaction;
+﻿using System;
+using System.Collections.Generic;
+using Stellmart.Api.Data.Horizon;
+
 namespace Stellmart.Api.Data.Contract
 {
     public class ContractModel
     {
-        public XdrTransaction PreTxn1 { get; set; }
-        public XdrTransaction PreTxn2 { get; set; }
-	/* TBD: Add more fields to define contract */
+	HorizonKeyPairModel EscrowAccount { get; set; }
+	HorizonKeyPairModel DestAccount { get; set; }
+	HorizonKeyPairModel WorldSquareAccount { get; set; }
+	int state { get; set; }
+
+	public ICollection<ContractPreTxnModel> Transactions { get; set; }
     }
 }
