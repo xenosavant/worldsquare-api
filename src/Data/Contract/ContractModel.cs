@@ -6,11 +6,18 @@ namespace Stellmart.Api.Data.Contract
 {
     public class ContractModel
     {
-	HorizonKeyPairModel EscrowAccount { get; set; }
-	HorizonKeyPairModel DestAccount { get; set; }
-	HorizonKeyPairModel WorldSquareAccount { get; set; }
-	int state { get; set; }
+	public HorizonKeyPairModel EscrowAccount { get; set; }
+	public HorizonKeyPairModel DestAccount { get; set; }
+	public HorizonKeyPairModel WorldSquareAccount { get; set; }
 
-	public ICollection<ContractPreTxnModel> Transactions { get; set; }
+	public HorizonAssetModel Asset { get; set; }
+	public long ContractSequence { get; set; }
+	public int ContractState { get; set; }
+
+	public ICollection<ContractPhaseModel> Phases { get; set; }
+
+	/*Total list of all pre transactions and signatures irrespective of phases*/
+	public ICollection<ContractPreTxnModel> PreTransactions { get; set; }
+	public ICollection<String> Signatures { get; set; }
     }
 }

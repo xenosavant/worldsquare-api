@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using Transaction = stellar_dotnetcore_sdk.Transaction;
-using XdrTransaction = stellar_dotnetcore_sdk.xdr.Transaction;
+
 namespace Stellmart.Api.Data.Contract
 {
     public class ContractPreTxnModel
     {
 	public long Sequence { get; set; }
+
+	/*ToDo: Revisit Param model here*/
 	public ContractParamModel Param { get; set; }
-       public XdrTransaction Xdr { get; set; }
+
+	public String XdrString { get; set; }
+	public ICollection<String> Signatures { get; set; }
     }
 }
