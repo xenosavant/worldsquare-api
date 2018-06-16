@@ -69,16 +69,14 @@ namespace Stellmart.Api.Services
 
         public byte [] EncryptSecretKey(string text, byte[] iv, string password)
         {
-            var downCased = password.ToLower();
-            var key = KeyToSixteenBytes(downCased);
+            var key = KeyToSixteenBytes(password);
             var bytes = Encoding.UTF8.GetBytes(text);
             return EncryptBytesToBytes(bytes, key, iv);
         }
 
         public string DecryptSecretKey(byte[] bytes, byte[] iv, string password)
         {
-            var downCased = password.ToLower();
-            var key = KeyToSixteenBytes(downCased);
+            var key = KeyToSixteenBytes(password);
             return Encoding.UTF8.GetString(DecryptBytesFromBytes(bytes, key, iv));
         }
 
