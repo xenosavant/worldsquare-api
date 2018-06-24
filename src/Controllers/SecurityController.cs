@@ -60,8 +60,5 @@ namespace Stellmart.Api.Controllers
         public void Delete(int id)
         {
         }
-
-
-
     }
 }
