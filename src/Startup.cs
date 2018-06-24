@@ -69,6 +69,7 @@ namespace Stellmart
                 });
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
+            services.Configure<YotiSettings>(Configuration.GetSection("YotiSettings"));
 
             // Add di framework
             var container = new Container(new DependencyInjectionRegistry(Configuration));
