@@ -130,6 +130,14 @@ namespace Stellmart.Context
         {
             base.OnModelCreating(modelBuilder);
 
+            // Properties
+
+            modelBuilder.Entity<CurrencyAmount>(entity =>
+            {
+                entity.Property(p => p.Amount)
+                   .HasColumnType("decimal(14, 2)");
+            });
+
             //  Many to Many relationships
 
             modelBuilder.Entity<ShippingManifestLineItem>()

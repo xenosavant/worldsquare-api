@@ -17,11 +17,11 @@ namespace Stellmart.Api.Context
             // ensure database exists and migration applied
             context.Database.Migrate();
 
-            // Look for any users.
+            //  Look for any users.
             if (context.Users.Any())
-            {
-                return; // DB has been seeded
-            }
+                {
+                    return; // DB has been seeded
+                }
 
             using (var transaction = context.Database.BeginTransaction())
             {

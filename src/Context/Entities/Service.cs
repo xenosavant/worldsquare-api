@@ -27,7 +27,6 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         public int NativeCurrencyId { get; set; }
 
-        [ForeignKey("UserId")]
         public virtual ApplicationUser User { get; set; }
 
         [ForeignKey("NativeCurrencyId")]

@@ -8,6 +8,12 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Services
 {
+    public interface IHorizonService
+    {
+        HorizonKeyPairModel CreateAccount();
+        Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
+    }
+
     public class HorizonService : IHorizonService
     {
         private readonly Server _server;

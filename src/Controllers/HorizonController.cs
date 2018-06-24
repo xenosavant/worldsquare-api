@@ -19,7 +19,6 @@ namespace Stellmart.Api.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/user/get
         [HttpGet]
         public async Task<ActionResult> CreateAccount()
         {
