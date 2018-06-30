@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Data.Kyc;
 using Stellmart.Api.Services;
 using System.Net;
@@ -17,17 +18,23 @@ namespace Stellmart.Api.Controllers
             _kycService = kycService;
         }
 
-        [HttpGet]
-        [Route("create")]
+        [HttpPost]
+        [Route(template: "")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(KycProfileModel), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(KycProfileModel), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(KycProfileModel), (int)HttpStatusCode.NotFound)]
-        public async Task<IActionResult> Create([FromQuery]string token)
+        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Create([FromBody]YotiRequest request)
         {
-            var test = await _kycService.GetUserProfileAsync(token);
+            var test = await _kycService.GetUserProfileAsync(request.Token);
 
-            return Content(test.FirstName + ", " + test.LastName);
+            if(test != null)
+            {
+                return Ok(new YotiResponse { IsVerified = true });
+            }
+
+            return Ok(new YotiResponse { IsVerified = false });
         }
     }
 }

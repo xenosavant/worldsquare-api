@@ -53,19 +53,24 @@ namespace Stellmart
             services.AddMvcCore();
             services.AddMvc();
 
-            services.AddAuthentication(o =>
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            services.AddAuthentication(options =>
             {
-                o.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-                o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultScheme = "Cookies";
+                options.DefaultChallengeScheme = "oidc";
             })
-                .AddIdentityServerAuthentication(o =>
+                .AddCookie("Cookies")
+                .AddOpenIdConnect("oidc", options =>
                 {
-                    o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-                    o.ApiName = "api1";
-                    o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
-                    o.EnableCaching = true;
-                    o.RequireHttpsMetadata = false;
-                    o.SupportedTokens = SupportedTokens.Both;
+                    options.SignInScheme = "Cookies";
+
+                    options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+                    options.RequireHttpsMetadata = false;
+
+                    options.ClientId = "implicitclient";
+                    options.SaveTokens = true;
+                    options.ResponseType = "id_token token";
                 });
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
