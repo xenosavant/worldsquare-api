@@ -1,6 +1,6 @@
 ﻿namespace Stellmart.Api.Data.Kyc
 {
-    public class YotiResponse
+    public class KycResponse
     {
         public bool IsVerified { get; set; }
     }

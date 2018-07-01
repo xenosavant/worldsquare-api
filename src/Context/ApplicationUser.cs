@@ -48,6 +48,9 @@ namespace Stellmart.Api.Context
 
         public string SecurityQuestions { get; set; }
 
+        [ForeignKey("CountryId")]
+        public virtual Country Country { get; set; }
+
         public virtual Location PrimaryShippingLocation { get; set; }
 
         public virtual RewardsLevel RewardsLevel { get; set; }

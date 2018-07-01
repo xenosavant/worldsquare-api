@@ -10,8 +10,8 @@ using Stellmart.Context;
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180630223817_Kyc")]
-    partial class Kyc
+    [Migration("20180701134612_Initial2")]
+    partial class Initial2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -140,6 +140,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<int?>("CountryId");
+
                     b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
@@ -219,6 +221,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<int>("VerificationLevelId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("NativeCurrencyId");
 
@@ -357,15 +361,11 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("Code");
 
-                    b.Property<bool>("IsDeleted");
-
                     b.Property<string>("Name");
 
                     b.Property<int>("OrderNo");
 
                     b.Property<string>("PhonePrefix");
-
-                    b.Property<Guid>("UniqueId");
 
                     b.HasKey("Id");
 
@@ -486,6 +486,10 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("CountryId");
 
+                    b.Property<int>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
                     b.Property<DateTime>("DateOfBirth");
 
                     b.Property<string>("Email");
@@ -500,11 +504,15 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("MobileNumber");
 
+                    b.Property<int?>("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
                     b.Property<string>("Nationality");
 
                     b.Property<Guid>("UniqueId");
 
-                    b.Property<int?>("UserId");
+                    b.Property<int>("UserId");
 
                     b.HasKey("Id");
 
@@ -1621,6 +1629,10 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.ApplicationUser", b =>
                 {
+                    b.HasOne("Stellmart.Api.Context.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId");
+
                     b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.Currency", "NativeCurrency")
                         .WithMany("Users")
                         .HasForeignKey("NativeCurrencyId")
@@ -1709,7 +1721,8 @@ namespace Stellmart.Api.Migrations
 
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "User")
                         .WithMany("KycDatas")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.LineItem", b =>

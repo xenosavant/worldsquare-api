@@ -138,6 +138,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<int?>("CountryId");
+
                     b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
@@ -217,6 +219,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<int>("VerificationLevelId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("NativeCurrencyId");
 
@@ -347,6 +351,25 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("ContractPhases");
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.Country", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Code");
+
+                    b.Property<string>("Name");
+
+                    b.Property<int>("OrderNo");
+
+                    b.Property<string>("PhonePrefix");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Countries");
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.CurrencyAmount", b =>
                 {
                     b.Property<int>("Id")
@@ -441,6 +464,61 @@ namespace Stellmart.Api.Migrations
                     b.HasIndex("UnitTypeId");
 
                     b.ToTable("InventoryItems");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.KycData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AddressLine1");
+
+                    b.Property<string>("AddressLine2");
+
+                    b.Property<string>("AddressLine3");
+
+                    b.Property<string>("AddressLine4");
+
+                    b.Property<string>("AddressLine5");
+
+                    b.Property<int>("CountryId");
+
+                    b.Property<int>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
+                    b.Property<DateTime>("DateOfBirth");
+
+                    b.Property<string>("Email");
+
+                    b.Property<string>("FirstName");
+
+                    b.Property<string>("Gender");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("LastName");
+
+                    b.Property<string>("MobileNumber");
+
+                    b.Property<int?>("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<string>("Nationality");
+
+                    b.Property<Guid>("UniqueId");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("KycDatas");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.LineItem", b =>
@@ -1549,6 +1627,10 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.ApplicationUser", b =>
                 {
+                    b.HasOne("Stellmart.Api.Context.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId");
+
                     b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.Currency", "NativeCurrency")
                         .WithMany("Users")
                         .HasForeignKey("NativeCurrencyId")
@@ -1626,6 +1708,19 @@ namespace Stellmart.Api.Migrations
                         .WithMany("InventoryItems")
                         .HasForeignKey("UnitTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.KycData", b =>
+                {
+                    b.HasOne("Stellmart.Api.Context.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Stellmart.Api.Context.ApplicationUser", "User")
+                        .WithMany("KycDatas")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.LineItem", b =>

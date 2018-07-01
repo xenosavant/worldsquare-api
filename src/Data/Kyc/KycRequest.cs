@@ -1,6 +1,6 @@
 ﻿namespace Stellmart.Api.Data.Kyc
 {
-    public class YotiRequest
+    public class KycRequest
     {
         public string Token { get; set; }
     }

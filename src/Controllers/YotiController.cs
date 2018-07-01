@@ -9,6 +9,7 @@ namespace Stellmart.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[Authorize]
     public class YotiController : ControllerBase
     {
         private readonly IKycService _kycService;
@@ -21,20 +22,13 @@ namespace Stellmart.Api.Controllers
         [HttpPost]
         [Route(template: "")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(YotiResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IActionResult> Create([FromBody]YotiRequest request)
+        [ProducesResponseType(typeof(KycResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(KycResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(KycResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(KycResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IActionResult> Create([FromBody]KycRequest request)
         {
-            var test = await _kycService.GetUserProfileAsync(request.Token);
-
-            if(test != null)
-            {
-                return Ok(new YotiResponse { IsVerified = true });
-            }
-
-            return Ok(new YotiResponse { IsVerified = false });
+            return Ok(new KycResponse { IsVerified = await _kycService.VerifyAsync(request) });
         }
     }
 }

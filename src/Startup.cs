@@ -44,7 +44,7 @@ namespace Stellmart
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins(Configuration.GetSection("HostSettings:AppUrl").Value.ToString())
+                    builder => builder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
@@ -55,23 +55,20 @@ namespace Stellmart
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthentication(options =>
+            services.AddAuthentication(o =>
             {
-                options.DefaultScheme = "Cookies";
-                options.DefaultChallengeScheme = "oidc";
+                o.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
+                o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
             })
-                .AddCookie("Cookies")
-                .AddOpenIdConnect("oidc", options =>
-                {
-                    options.SignInScheme = "Cookies";
-
-                    options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-                    options.RequireHttpsMetadata = false;
-
-                    options.ClientId = "implicitclient";
-                    options.SaveTokens = true;
-                    options.ResponseType = "id_token token";
-                });
+                            .AddIdentityServerAuthentication(o =>
+                            {
+                                o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+                                o.ApiName = "api1";
+                                o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
+                                o.EnableCaching = true;
+                                o.RequireHttpsMetadata = false;
+                                o.SupportedTokens = SupportedTokens.Both;
+                            });
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
             services.Configure<YotiSettings>(Configuration.GetSection("YotiSettings"));

@@ -10,8 +10,8 @@ using Stellmart.Context;
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180630224256_Kyc_update")]
-    partial class Kyc_update
+    [Migration("20180701130753_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -140,6 +140,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
+                    b.Property<int?>("CountryId");
+
                     b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
@@ -219,6 +221,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<int>("VerificationLevelId");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("NativeCurrencyId");
 
@@ -357,15 +361,11 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("Code");
 
-                    b.Property<bool>("IsDeleted");
-
                     b.Property<string>("Name");
 
                     b.Property<int>("OrderNo");
 
                     b.Property<string>("PhonePrefix");
-
-                    b.Property<Guid>("UniqueId");
 
                     b.HasKey("Id");
 
@@ -1621,6 +1621,10 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.ApplicationUser", b =>
                 {
+                    b.HasOne("Stellmart.Api.Context.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId");
+
                     b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.Currency", "NativeCurrency")
                         .WithMany("Users")
                         .HasForeignKey("NativeCurrencyId")

@@ -6,6 +6,6 @@ namespace Stellmart.Api.Services
 {
     public interface IKycService
     {
-        Task<KycProfileModel> GetUserProfileAsync(string token);
+        Task<bool> VerifyAsync(KycRequest request);
     }
 }
