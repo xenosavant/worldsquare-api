@@ -1,5 +1,7 @@
 using AutoMapper;
 using IdentityServer4.AccessTokenValidation;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -22,21 +24,33 @@ namespace Stellmart
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            Hosting = hostingEnvironment;
         }
 
         public IConfiguration Configuration { get; }
+        public IHostingEnvironment Hosting { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            if (Hosting.IsDevelopment())
+            {
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=stellmart-dev-db;Trusted_Connection=True;"));
+            }
+            else
+            {
+                services.AddDbContext<ApplicationDbContext>(options =>
+                    options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+            }
 
-            services.AddIdentity<ApplicationUser, ApplicationRole>()
+            services.AddIdentityCore<ApplicationUser>(options => { })
+                .AddRoles<ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddSignInManager<SignInManager<ApplicationUser>>()
                 .AddDefaultTokenProviders();
 
             services.AddOptions();
@@ -50,25 +64,15 @@ namespace Stellmart
                         .AllowCredentials());
             });
 
-            services.AddMvcCore();
+            services.AddMvcCore()
+                .AddAuthorization()
+                .AddJsonFormatters();
+
             services.AddMvc();
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            services.AddAuthentication(o =>
-            {
-                o.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-                o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
-            })
-                            .AddIdentityServerAuthentication(o =>
-                            {
-                                o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-                                o.ApiName = "api1";
-                                o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
-                                o.EnableCaching = true;
-                                o.RequireHttpsMetadata = false;
-                                o.SupportedTokens = SupportedTokens.Both;
-                            });
+            services
+            .AddAuthentication(GetAuthenticationOptions)
+            .AddJwtBearer(GetJwtBearerOptions);
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
             services.Configure<YotiSettings>(Configuration.GetSection("YotiSettings"));
@@ -81,6 +85,18 @@ namespace Stellmart
             Mapper.AssertConfigurationIsValid();
 
             return container.GetInstance<IServiceProvider>();
+        }
+
+        private void GetAuthenticationOptions(AuthenticationOptions options)
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }
+
+        private void GetJwtBearerOptions(JwtBearerOptions options)
+        {
+            options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+            options.RequireHttpsMetadata = false;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
