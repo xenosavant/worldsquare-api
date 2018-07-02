@@ -20,6 +20,8 @@ namespace Stellmart.Context
 
         public DbSet<ContractPhase> ContractPhases { get; set; }
 
+        public DbSet<Country> Countries { get; set; }
+
         public DbSet<CurrencyAmount> CurrencyAmounts { get; set; }
 
         public DbSet<DistributionCenter> DistributionCenters { get; set; }
@@ -29,6 +31,8 @@ namespace Stellmart.Context
         public DbSet<InventoryItem> InventoryItems { get; set; }
 
         public DbSet<ItemMetaData> ItemMetaDatas { get; set; }
+
+        public DbSet<KycData> KycDatas { get; set; }
 
         public DbSet<LineItem> LineItems { get; set; }
 

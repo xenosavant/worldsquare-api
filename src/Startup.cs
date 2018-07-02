@@ -44,7 +44,7 @@ namespace Stellmart
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins(Configuration.GetSection("HostSettings:AppUrl").Value.ToString())
+                    builder => builder.AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader()
                         .AllowCredentials());
@@ -53,22 +53,25 @@ namespace Stellmart
             services.AddMvcCore();
             services.AddMvc();
 
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
             services.AddAuthentication(o =>
             {
                 o.DefaultScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
                 o.DefaultAuthenticateScheme = IdentityServerAuthenticationDefaults.AuthenticationScheme;
             })
-                .AddIdentityServerAuthentication(o =>
-                {
-                    o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-                    o.ApiName = "api1";
-                    o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
-                    o.EnableCaching = true;
-                    o.RequireHttpsMetadata = false;
-                    o.SupportedTokens = SupportedTokens.Both;
-                });
+                            .AddIdentityServerAuthentication(o =>
+                            {
+                                o.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+                                o.ApiName = "api1";
+                                o.ApiSecret = Configuration.GetSection("IdentityServerSettings:ClientSecret").Value;
+                                o.EnableCaching = true;
+                                o.RequireHttpsMetadata = false;
+                                o.SupportedTokens = SupportedTokens.Both;
+                            });
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
+            services.Configure<YotiSettings>(Configuration.GetSection("YotiSettings"));
 
             // Add di framework
             var container = new Container(new DependencyInjectionRegistry(Configuration));

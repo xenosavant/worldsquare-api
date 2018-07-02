@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
+using Stellmart.Api.Context;
 using Stellmart.Api.DataAccess;
-using Stellmart.Api.Context.Entities;
 using Stellmart.Data;
 using Stellmart.Data.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Stellmart.Api.Context;
 
 namespace Stellmart.Api.Business.Logic
 {
