@@ -9,7 +9,7 @@ namespace Stellmart.Api.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class YotiController : ControllerBase
     {
         private readonly IKycService _kycService;
