@@ -96,6 +96,7 @@ namespace Stellmart
         private void GetJwtBearerOptions(JwtBearerOptions options)
         {
             options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+            options.Audience = "api1";
             options.RequireHttpsMetadata = false;
         }
 
