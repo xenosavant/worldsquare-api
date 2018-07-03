@@ -17,12 +17,12 @@ namespace Stellmart
     {
         public static void Main(string[] args)
         {
-            var host = BuildWebHost(args).Migrate();
+            var host = CreateWebHostBuilder(args).Build().Migrate();
 
             host.Run();
         }
 
-        public static IWebHost BuildWebHost(string[] args) =>
+        public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
@@ -38,7 +38,6 @@ namespace Stellmart
                         builtConfig["KeyVault:ClientSecret"]);
                 })
                 .UseStartup<Startup>()
-                .UseApplicationInsights()
-                .Build();
+                .UseApplicationInsights();
     }
 }
