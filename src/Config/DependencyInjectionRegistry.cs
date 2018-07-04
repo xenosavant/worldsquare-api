@@ -35,6 +35,7 @@ namespace Stellmart.Api.Config
             For<IHttpContextAccessor>().Singleton().Use<HttpContextAccessor>();
             For<IMapper>().Use(() => Mapper.Instance);
             For<IHorizonService>().Singleton().Use<HorizonService>();
+            For<IContractService>().Singleton().Use<ContractService>();
 
             var horizonServer = configuration["HorizonSettings:Server"];
 
