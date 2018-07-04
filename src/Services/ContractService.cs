@@ -1,6 +1,7 @@
-﻿using Stellmart.Api.Data.Contract;
-using Stellmart.Api.Data.Horizon;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Stellmart.Api.Data.Horizon;
+using Stellmart.Api.Data.Contract;
 using stellar_dotnetcore_sdk;
 
 
@@ -14,11 +15,30 @@ namespace Stellmart.Services
 	{
 		_horizon = horizon;
 	}
+	//TBD: Add WorldSquare account as signer
+	//TBD: Add async and await
 	public HorizonKeyPairModel SetupContract(HorizonKeyPairModel SourceAccount, string DestAccount,
 						string Amount)
 	{
-		HorizonKeyPairModel kp =  new HorizonKeyPairModel();
-		return kp;
+		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
+		HorizonKeyPairModel escrow = _horizon.CreateAccount();
+		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
+
+		//TBD: dest account needs to be Keypair in Horizon which is wrong
+		//_horizon.TransferNativeFund(SourceAccount, DestAccount, Amount);
+
+		weight.Signers = new List<HorizonAccountSignerModel>();
+		weight.LowThreshold = 2;
+		weight.MediumThreshold = 2;
+		weight.HighThreshold = 2;
+		//TBD: dest account needs to be Keypair in Horizon which is wrong
+		//dest_account.Signer = DestAccount;
+		dest_account.Weight = 1;
+		weight.Signers.Add(dest_account);
+
+		//TBT: catch the return param
+		_horizon.SetWeightSigner(escrow, weight);
+		return escrow;
 	}
 	public ContractModel CreateContract(ContractParamModel ContractParam)
 	{
