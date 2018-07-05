@@ -39,13 +39,14 @@ namespace Stellmart.Services
             //See our newly created account.
             return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
          }
+
 	public async Task <response.SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
-				HorizonKeyPairModel destAccount, String amount)
+				String destAccount, String amount)
 	{
 	    var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
 	    Asset native = new AssetTypeNative();
 
-           var operation = new PaymentOperation.Builder(KeyPair.FromSecretSeed(destAccount.SecretKey), native, amount)
+           var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destAccount), native, amount)
                 .SetSourceAccount(source)
                 .Build();
 	    var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(sourceAccount.PublicKey));
@@ -68,8 +69,7 @@ namespace Stellmart.Services
 
 	   /*BUG: Second signer is not getting added */
 	   foreach(HorizonAccountSignerModel SignerAccount in Weights.Signers) {
-			operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromSecretSeed
-				(SignerAccount.Signer.SecretKey)), SignerAccount.Weight);
+			operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromAccountId(SignerAccount.Signer)), SignerAccount.Weight);
 		}
 	   operation.SetSourceAccount(source);
 	   var opBuild = operation.Build();

@@ -24,15 +24,13 @@ namespace Stellmart.Services
 		HorizonKeyPairModel escrow = _horizon.CreateAccount();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
 
-		//TBD: dest account needs to be Keypair in Horizon which is wrong
-		//_horizon.TransferNativeFund(SourceAccount, DestAccount, Amount);
+		_horizon.TransferNativeFund(SourceAccount, DestAccount, Amount);
 
 		weight.Signers = new List<HorizonAccountSignerModel>();
 		weight.LowThreshold = 2;
 		weight.MediumThreshold = 2;
 		weight.HighThreshold = 2;
-		//TBD: dest account needs to be Keypair in Horizon which is wrong
-		//dest_account.Signer = DestAccount;
+		dest_account.Signer = DestAccount;
 		dest_account.Weight = 1;
 		weight.Signers.Add(dest_account);
 
