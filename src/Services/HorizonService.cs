@@ -40,6 +40,12 @@ namespace Stellmart.Services
             return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
          }
 
+	public async Task<long> GetSequenceNumber(string PublicKey)
+	{
+	    var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(PublicKey));
+	    return accountRes.SequenceNumber;
+	}
+
 	public async Task <response.SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
 				String destAccount, String amount)
 	{
