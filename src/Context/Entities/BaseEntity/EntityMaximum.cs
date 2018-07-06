@@ -1,6 +1,12 @@
-﻿namespace Stellmart.Api.Context.Entities.BaseEntity
+﻿
+namespace Stellmart.Api.Context.Entities.Entity
 {
-    public class EntityMaximum : Entity<int>
+    public interface IEntityMaximum
+    {
+        bool IsActive { get; set; }
+    }
+
+    public class EntityMaximum : AuditableEntity<int>
     {
         public bool IsActive { get; set; }
     }

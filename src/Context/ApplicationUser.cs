@@ -1,23 +1,127 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Context.Entities.Entity;
+using Stellmart.Api.Context.Entities.ReadOnly;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stellmart.Api.Context
 {
-    public class ApplicationUser : IdentityUser
+    public class ApplicationUser : IdentityUser<int>, IAuditableEntity, IEntityMaximum
     {
-        //public string FirstName { get; set; }
 
-        //public string LastName { get; set; }
+        [MaxLength(50)]
+        public string FirstName { get; set; }
 
-        //public bool MustRecoverKey { get; set; }
+        [MaxLength(50)]
+        public string LastName { get; set; }
 
-        //public bool MustResetPassword { get; set; }
+        public bool MustRecoverKey { get; set; }
 
-        //public string StellarPublicKey { get; set; }
+        public bool MustResetKey { get; set; }
 
-        //public string StellarPrivateKey { get; set; }
+        public string StellarPublicKey { get; set; }
 
-        //public string StellarRecoveryKey { get; set; }
+        public byte [] StellarEncryptedSecretKey { get; set; }
 
-        //public ICollection<KeyRecoveryStep> KeyRecoverySteps { get; set; }
+        public byte [] StellarRecoveryKey { get; set; }
+
+        public byte[] StellarSecretKeyIv { get; set; }
+
+        public bool ManagedAccount { get; set; }
+
+        public int PrimaryShippingLocationId { get; set; }
+
+        public int RewardsLevelId { get; set; }
+
+        public int TwoFactorTypeId { get; set; }
+
+        public int NativeCurrencyId { get; set; }
+
+        public int VerificationLevelId { get; set; }
+
+        public bool Flagged { get; set; }
+
+        public bool UseTwoFactorForLogin { get; set; }
+
+        public string SecurityQuestions { get; set; }
+
+        [ForeignKey("CountryId")]
+        public virtual Country Country { get; set; }
+
+        public virtual Location PrimaryShippingLocation { get; set; }
+
+        public virtual RewardsLevel RewardsLevel { get; set; }
+
+        public virtual VerificationLevel VerificationLevel { get; set; }
+
+        public virtual TwoFactorAuthenticationType TwoFactorAuthenticationType { get; set; }
+
+        public virtual Currency NativeCurrency { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<OnlineStore> OnlineStores { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<DeliveryService> DeliveryServices { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<DistributionCenter> DistributionCenters { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<RideService> RideServices { get; set; }
+
+        [ForeignKey("RequestorId")]
+        public virtual ICollection<DeliveryRequest> DeliveryRequests { get; set; }
+
+        [ForeignKey("RequestorId")]
+        public virtual ICollection<RideRequest> RideRequests { get; set; }
+
+        [ForeignKey("SignerId")]
+        public virtual ICollection<UserSignature> Signatures { get; set; }
+
+        public virtual ICollection<TradeItem> TradeItems { get; set; }
+
+        public virtual ICollection<Review> Reviews { get; set; }
+
+        public virtual ICollection<ProductShipment> SentShipments { get; set; }
+
+        public virtual ICollection<ProductShipment> ReceivedShipments { get; set; }
+
+        public virtual ICollection<MessageThread> Threads { get; set; }
+
+        public virtual ICollection<Message> Messages { get; set; }
+        public virtual ICollection<KycData> KycDatas { get; set; }
+
+
+        // IEntity
+
+        public Guid UniqueId { get; set; }
+
+        public bool IsDeleted { get; set; }
+
+        private DateTime? _createdDate;
+        [DataType(DataType.DateTime)]
+        public DateTime CreatedDate
+        {
+            get => _createdDate ?? DateTime.UtcNow;
+            set => _createdDate = value;
+        }
+
+        public int CreatedBy { get; set; }
+
+        [DataType(DataType.DateTime)]
+        public DateTime? ModifiedDate { get; set; }
+
+        public int? ModifiedBy { get; set; }
+
+        object IEntity.Id
+        {
+            get { return this.Id; }
+        }
+
+        public bool IsActive { get; set; }
     }
 }

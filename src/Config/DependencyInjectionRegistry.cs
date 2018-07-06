@@ -4,14 +4,17 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using stellar_dotnetcore_sdk;
-using Stellmart.Api.Business.Constants;
+using Stellmart.Api.Business.Helpers;
 using Stellmart.Api.Context;
 using Stellmart.Api.DataAccess;
+using Stellmart.Api.Services;
 using Stellmart.Context;
 using Stellmart.Services;
 using StructureMap;
 using System;
+using System.IO;
 using System.Net.Http;
+using Yoti.Auth;
 
 namespace Stellmart.Api.Config
 {
@@ -22,13 +25,13 @@ namespace Stellmart.Api.Config
             Scan(x =>
             {
                 x.AssemblyContainingType<Startup>();
-                x.Assembly("Stellmart.Api");
                 x.LookForRegistries();
                 x.AddAllTypesOf<Profile>();
+                x.AddAllTypesOf<IKycService>();
                 x.WithDefaultConventions();
             });
 
-            For<IUserStore<ApplicationUser>>().Use<UserStore<ApplicationUser>>();
+            For<IUserStore<ApplicationUser>>().Use<ApplicationUserStore>();
             For<UserManager<ApplicationUser>>().Use<UserManager<ApplicationUser>>();
             For<IRepository>().Use<Repository<ApplicationDbContext>>();
 
@@ -36,8 +39,6 @@ namespace Stellmart.Api.Config
             For<IMapper>().Use(() => Mapper.Instance);
             For<IHorizonService>().Singleton().Use<HorizonService>();
             For<IContractService>().Singleton().Use<ContractService>();
-
-            var horizonServer = configuration["HorizonSettings:Server"];
 
             For<Server>()
                 .Singleton()
@@ -49,9 +50,9 @@ namespace Stellmart.Api.Config
                     }
                 });
 
-            For<Network>()
+            For<YotiClient>()
                 .Singleton()
-                .Use(horizonServer.Contains("testnet") ? new Network(Horizon.NetworkPassphraseTestnet) : new Network(Horizon.NetworkPassphrasePublic));
+                .Use(new YotiClient(configuration["YotiSettings:SdkId"], PemHelper.LoadPemFromString(configuration["YotiSettings:Pem"])));
         }
     }
 }
