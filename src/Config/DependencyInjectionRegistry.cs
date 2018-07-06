@@ -42,11 +42,11 @@ namespace Stellmart.Api.Config
 
             For<Server>()
                 .Singleton()
-                .Use(new Server(horizonServer)
+                .Use(new Server(configuration["HorizonSettings:Server"])
                 {
                     HttpClient = new HttpClient
                     {
-                        BaseAddress = new Uri(horizonServer)
+			BaseAddress = new Uri(configuration["HorizonSettings:Server"])
                     }
                 });
 
