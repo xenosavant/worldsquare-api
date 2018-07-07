@@ -38,6 +38,7 @@ namespace Stellmart.Api.Config
             For<IHttpContextAccessor>().Singleton().Use<HttpContextAccessor>();
             For<IMapper>().Use(() => Mapper.Instance);
             For<IHorizonService>().Singleton().Use<HorizonService>();
+            For<IContractService>().Singleton().Use<ContractService>();
 
             For<Server>()
                 .Singleton()
@@ -45,7 +46,7 @@ namespace Stellmart.Api.Config
                 {
                     HttpClient = new HttpClient
                     {
-                        BaseAddress = new Uri(configuration["HorizonSettings:Server"])
+			BaseAddress = new Uri(configuration["HorizonSettings:Server"])
                     }
                 });
 
