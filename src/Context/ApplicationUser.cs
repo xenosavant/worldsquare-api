@@ -46,7 +46,24 @@ namespace Stellmart.Api.Context
 
         public bool UseTwoFactorForLogin { get; set; }
 
+        public string TotpSecret { get; set; }
+
+        public string TwoFactorCode { get; set; }
+
         public string SecurityQuestions { get; set; }
+
+        public virtual Location PrimaryShippingLocation { get; set; }
+
+        public virtual RewardsLevel RewardsLevel { get; set; }
+
+        public virtual VerificationLevel VerificationLevel { get; set; }
+
+        public virtual TwoFactorAuthenticationType TwoFactorAuthenticationType { get; set; }
+
+        public virtual Currency NativeCurrency { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<OnlineStore> OnlineStores { get; set; }
 
         [ForeignKey("CountryId")]
         public virtual Country Country { get; set; }

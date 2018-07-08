@@ -205,6 +205,10 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<byte[]>("StellarSecretKeyIv");
 
+                    b.Property<string>("TotpSecret");
+
+                    b.Property<string>("TwoFactorCode");
+
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<int>("TwoFactorTypeId");
