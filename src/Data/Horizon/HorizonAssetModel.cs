@@ -5,6 +5,6 @@
 	public bool IsNative { get; set; }
         public string Code { get; set; }
         public string Issuer { get; set; }
-	public float Amount { get; set; }
+	public string Amount { get; set; }
     }
 }

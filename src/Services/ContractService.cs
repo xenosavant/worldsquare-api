@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Contract;
 using stellar_dotnetcore_sdk;
-
+using stellar_dotnetcore_sdk.responses;
 
 namespace Stellmart.Services
 {
@@ -18,34 +18,37 @@ namespace Stellmart.Services
 	}
 	//TBD: Add WorldSquare account as signer
 	//TBD: Add async and await
-	public async Task<HorizonKeyPairModel> SetupContract(HorizonKeyPairModel SourceAccount, string DestAccount,
-						string Amount)
+	public async Task<ContractModel> SetupContract(ContractParamModel ContractParam)
 	{
 		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
 		weight.Signers = new List<HorizonAccountSignerModel>();
+		ContractModel Contract = new ContractModel();
 
+		Contract.Txn = new List<SubmitTransactionResponse>();
 		HorizonKeyPairModel escrow = _horizon.CreateAccount();
-		//TBT: catch the return param
-		await _horizon.TransferNativeFund(SourceAccount, escrow.PublicKey, Amount);
+		//TBD: consider other assets too
+		Contract.Txn.Add(await _horizon.TransferNativeFund(ContractParam.SourceAccount, escrow.PublicKey,
+			ContractParam.Asset.Amount));
 
 		weight.LowThreshold = 2;
 		weight.MediumThreshold = 2;
 		weight.HighThreshold = 2;
-		dest_account.Signer = DestAccount;
+		dest_account.Signer = ContractParam.DestAccount;
 		dest_account.Weight = 1;
 		weight.Signers.Add(dest_account);
 
-		//TBT: catch the return param
-		await _horizon.SetWeightSigner(escrow, weight);
+		Contract.Txn.Add(await _horizon.SetWeightSigner(escrow, weight));
 		_sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
-
-		return escrow;
+		Contract.EscrowAccount = escrow;
+		Contract.DestAccount = ContractParam.DestAccount;
+		Contract.Sequence = _sequence;
+		Contract.State = ContractState.Initial;
+		return Contract;
 	}
-	public ContractModel CreateContract(ContractParamModel ContractParam)
-	{
-		ContractModel model = new ContractModel();
-		return model;
+	public async Task<ContractModel> CreateContract(ContractParamModel ContractParam, ContractModel Contract)
+	{		
+		return Contract;
 	}
 	public string SignContract(HorizonKeyPairModel Account, ContractModel Contract)
 	{
