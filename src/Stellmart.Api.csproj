@@ -58,6 +58,7 @@
 
   <ItemGroup>
     <Folder Include="Data\Responses\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 

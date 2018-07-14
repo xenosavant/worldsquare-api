@@ -68,19 +68,6 @@ namespace Stellmart.Api.Context
         [ForeignKey("CountryId")]
         public virtual Country Country { get; set; }
 
-        public virtual Location PrimaryShippingLocation { get; set; }
-
-        public virtual RewardsLevel RewardsLevel { get; set; }
-
-        public virtual VerificationLevel VerificationLevel { get; set; }
-
-        public virtual TwoFactorAuthenticationType TwoFactorAuthenticationType { get; set; }
-
-        public virtual Currency NativeCurrency { get; set; }
-
-        [ForeignKey("UserId")]
-        public virtual ICollection<OnlineStore> OnlineStores { get; set; }
-
         [ForeignKey("UserId")]
         public virtual ICollection<DeliveryService> DeliveryServices { get; set; }
 
