@@ -10,19 +10,12 @@ namespace Stellmart.Api.Context.Entities
     public class OnlineStore : Service
     {
         [Required]
-        public bool Global { get; set; }
-
-        [Required]
-        public int LocationId { get; set; }
+        public bool Global { get; set; } 
 
         public int ServiceRegionId { get; set;  }
 
-        public int ItemMetaDateId { get; set; }
-
         [NotMapped]
         public IEnumerable<Review> Reviews => OnlineStoreReviews?.Select(o => o.Review);
-
-        public virtual Location Location { get; set; }
 
         public virtual Region ServiceRegion { get; set; }
 

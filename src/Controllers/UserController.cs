@@ -29,6 +29,7 @@ namespace Stellmart.Controllers
 
         // GET: api/user/get
         [HttpGet]
+        [Route("")]
         public async Task<IEnumerable<ApplicationUserViewModel>> Get()
         {
             return _mapper.Map<List<ApplicationUserViewModel>>(await _userLogic.GetAllAsync());
@@ -36,8 +37,8 @@ namespace Stellmart.Controllers
 
         // GET: api/user/get/5
         [HttpGet]
-        [Route("{id:int}", Name = nameof(Get))]
-        public async Task<ApplicationUserViewModel> Get(int id)
+        [Route("{id:int}")]
+        public async Task<ApplicationUserViewModel> GetSingle(int id)
         {
             return _mapper.Map<ApplicationUserViewModel>(await _userLogic.GetByIdAsync(id));
         }

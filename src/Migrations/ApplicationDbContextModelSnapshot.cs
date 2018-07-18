@@ -15,7 +15,7 @@ namespace Stellmart.Api.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.1.0-rtm-30799")
+                .HasAnnotation("ProductVersion", "2.1.1-rtm-30846")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -1110,16 +1110,11 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int>("LocationId");
-
-                    b.Property<string>("Name");
+                    b.Property<string>("LocationComponents");
 
                     b.Property<Guid>("UniqueId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LocationId")
-                        .IsUnique();
 
                     b.ToTable("Regions");
                 });
@@ -1179,6 +1174,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<Guid>("UniqueId");
 
                     b.Property<int>("UserId");
+
+                    b.Property<bool>("Verified");
 
                     b.HasKey("Id");
 
@@ -1397,6 +1394,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("PlaceId");
 
+                    b.Property<int?>("RegionId");
+
                     b.Property<Guid>("UniqueId");
 
                     b.Property<bool>("Verified");
@@ -1405,6 +1404,8 @@ namespace Stellmart.Api.Migrations
 
                     b.HasIndex("GeoLocationId")
                         .IsUnique();
+
+                    b.HasIndex("RegionId");
 
                     b.ToTable("Locations");
                 });
@@ -1487,15 +1488,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("Global");
 
-                    b.Property<int>("ItemMetaDateId");
-
-                    b.Property<int>("LocationId");
-
                     b.Property<int>("ServiceRegionId");
-
-                    b.HasIndex("LocationId")
-                        .IsUnique()
-                        .HasFilter("[LocationId] IS NOT NULL");
 
                     b.HasIndex("ServiceRegionId")
                         .IsUnique()
@@ -1862,14 +1855,6 @@ namespace Stellmart.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.Region", b =>
-                {
-                    b.HasOne("Stellmart.Api.Context.Location", "Location")
-                        .WithOne("Region")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.Region", "LocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Review", b =>
                 {
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "Reviewer")
@@ -1972,6 +1957,10 @@ namespace Stellmart.Api.Migrations
                         .WithOne("Location")
                         .HasForeignKey("Stellmart.Api.Context.Location", "GeoLocationId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.Entities.Region", "Region")
+                        .WithMany()
+                        .HasForeignKey("RegionId");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.TradeItem", b =>
@@ -2021,11 +2010,6 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.OnlineStore", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Location", "Location")
-                        .WithOne("OnlineStore")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.OnlineStore", "LocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Stellmart.Api.Context.Entities.Region", "ServiceRegion")
                         .WithOne("OnlineStore")
                         .HasForeignKey("Stellmart.Api.Context.Entities.OnlineStore", "ServiceRegionId")

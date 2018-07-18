@@ -4,7 +4,7 @@ using Stellmart.Api.ViewModels.Horizon;
 using Stellmart.Services;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Controllers
+namespace Stellmart.Api.Controllers.Helpers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]

@@ -1,0 +1,120 @@
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Stellmart.Api.Business.Logic;
+using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Data.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Stellmart.Api.Controllers.Helpers;
+
+namespace Stellmart.Api.Controllers
+{
+    [Produces("application/json")]
+    [Route("api/[controller]")]
+    [Authorize]
+    public class OnlineStoreController : Controller
+    {
+        private readonly IOnlineStoreLogic _storeLogic;
+        private readonly IMapper _mapper;
+
+        public OnlineStoreController(IOnlineStoreLogic storeLogic, IMapper mapper)
+        {
+            _storeLogic = storeLogic;
+            _mapper = mapper;
+        }
+
+        public int UserId
+        {
+            get
+            {
+                var principal = User as ClaimsPrincipal;
+                Claim cl = principal.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
+                Int32.TryParse(cl?.Value, out int id);
+                return id;
+            }
+        }
+
+        //GET: api/onlinestore
+       [HttpGet]
+       [Route("")]
+       [ProducesResponseType(200)]
+       public async Task<ActionResult<IEnumerable<OnlineStoreViewModel>>> Get()
+       {
+            return _mapper.Map<List<OnlineStoreViewModel>>(await _storeLogic.GetAllAsync());
+       }
+
+        //GET: api/onlinestore/1
+        [HttpGet]
+        [Route("{id:int}", Name = "GetOnlineStore")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
+        public async Task<ActionResult<OnlineStoreViewModel>> GetSingle(int id)
+        {
+            var store = await _storeLogic.GetByIdAsync(id);
+            if (store == null)
+            {
+                return NotFound();
+            }
+            return _mapper.Map<OnlineStoreViewModel>(store);
+        }
+
+        //POST: api/onlinestore
+        [HttpPost]
+        [Route("")]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<OnlineStoreViewModel>> Post([FromBody] OnlineStoreViewModel viewModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var store = await _storeLogic.CreateAsync(UserId, viewModel);
+            return CreatedAtRoute("GetOnlineStore", new { id = store.Id }, _mapper.Map<OnlineStoreViewModel>(store));
+        }
+
+        //PUT: api/onlinestore
+        [HttpPut]
+        [Route("")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult<OnlineStoreViewModel>> Put([FromBody] OnlineStoreViewModel vm)
+        {
+            var onlineStore = await _storeLogic.GetByIdAsync(vm.Id);
+            if (onlineStore.Verified != vm.Verified)
+            {
+                return BadRequest();
+            }
+            if (onlineStore.UserId != UserId)
+            {
+                return Unauthorized();
+            }
+            return Ok(_mapper.Map<OnlineStoreViewModel>(await _storeLogic.UpdateAsync(vm, onlineStore)));
+        }
+
+        //DELETE: api/onlinestore/1
+        [HttpDelete]
+        [Route("{id:int}")]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult> Delete(int id)
+        {
+            var onlineStore = await _storeLogic.GetByIdAsync(id);
+            if (onlineStore.UserId != UserId)
+            {
+                return Unauthorized();
+            }
+            if (onlineStore.IsActive == true)
+            {
+                return BadRequest();
+            }
+            await _storeLogic.DeleteAsync(onlineStore);
+            return NoContent();
+        }
+    }
+}

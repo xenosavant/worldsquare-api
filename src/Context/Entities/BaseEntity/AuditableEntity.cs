@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Stellmart.Api.Context.Entities.BaseEntity;
+using System;
 using System.ComponentModel.DataAnnotations;
 
 namespace Stellmart.Api.Context.Entities.Entity
 {
 
-    public interface IAuditableEntity : IEntity
+    public interface IAuditableEntity : IEntity, IMutableEntity
     {
         DateTime CreatedDate { get; set; }
         DateTime? ModifiedDate { get; set; }
