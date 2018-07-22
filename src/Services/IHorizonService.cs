@@ -1,5 +1,4 @@
-﻿using stellar_dotnetcore_sdk;
-using stellar_dotnetcore_sdk.responses;
+﻿using stellar_dotnet_sdk.responses;
 using Stellmart.Api.Data.Horizon;
 using System.Threading.Tasks;
 

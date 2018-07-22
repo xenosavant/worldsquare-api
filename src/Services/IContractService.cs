@@ -1,7 +1,6 @@
 ﻿using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
 using System.Threading.Tasks;
-using stellar_dotnetcore_sdk;
 
 
 namespace Stellmart.Services

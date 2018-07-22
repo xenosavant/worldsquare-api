@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using stellar_dotnet_sdk.responses;
 using Stellmart.Api.Data.Horizon;
-using stellar_dotnetcore_sdk;
-using stellar_dotnetcore_sdk.responses;
+using System;
+using System.Collections.Generic;
 
 namespace Stellmart.Api.Data.Contract
 {
-	public enum ContractState
+    public enum ContractState
 	{
 		Initial,
 		Preliminary,

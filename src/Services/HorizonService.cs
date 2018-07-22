@@ -1,9 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
-using stellar_dotnetcore_sdk;
-using stellar_dotnetcore_sdk.responses;
-using xdr = stellar_dotnetcore_sdk.xdr;
-using Signer = stellar_dotnetcore_sdk.Signer;
+using stellar_dotnet_sdk;
+using stellar_dotnet_sdk.responses;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using System;
@@ -45,60 +43,61 @@ namespace Stellmart.Services
 
             //See our newly created account.
             return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
-         }
+        }
 
-	public async Task<long> GetSequenceNumber(string PublicKey)
-	{
-	    var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(PublicKey));
-	    return accountRes.SequenceNumber;
-	}
+        public async Task<long> GetSequenceNumber(string PublicKey)
+        {
+            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(PublicKey));
+            return accountRes.SequenceNumber;
+        }
 
-	public async Task <SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
-				String destAccount, String amount)
-	{
-	    var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
-	    Asset native = new AssetTypeNative();
+        public async Task<SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
+                    String destAccount, String amount)
+        {
+            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+            Asset native = new AssetTypeNative();
 
-           var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destAccount), native, amount)
-                .SetSourceAccount(source)
-                .Build();
-	    var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(sourceAccount.PublicKey));
-	    var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-                .AddOperation(operation)
-                .Build();
-           transaction.Sign(source);
+            var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destAccount), native, amount)
+                 .SetSourceAccount(source)
+                 .Build();
+            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(sourceAccount.PublicKey));
+            var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+                    .AddOperation(operation)
+                    .Build();
+            transaction.Sign(source);
 
-	    return await _server.SubmitTransaction(transaction);
-	}
+            return await _server.SubmitTransaction(transaction);
+        }
 
-	public async Task <SubmitTransactionResponse> SetWeightSigner(HorizonKeyPairModel SourceAccount,
-		HorizonAccountWeightModel Weights) {
-	   var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
-	   var operation = new SetOptionsOperation.Builder();
-	   operation.SetMasterKeyWeight(Weights.MasterWeight);
-	   operation.SetLowThreshold(Weights.LowThreshold);
-	   operation.SetMediumThreshold(Weights.MediumThreshold);
-	   operation.SetHighThreshold(Weights.HighThreshold);
+        public async Task<SubmitTransactionResponse> SetWeightSigner(HorizonKeyPairModel SourceAccount,
+            HorizonAccountWeightModel Weights)
+        {
+            var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
+            var operation = new SetOptionsOperation.Builder();
+            operation.SetMasterKeyWeight(Weights.MasterWeight);
+            operation.SetLowThreshold(Weights.LowThreshold);
+            operation.SetMediumThreshold(Weights.MediumThreshold);
+            operation.SetHighThreshold(Weights.HighThreshold);
 
-	   /*BUG: Second signer is not getting added */
-	   foreach(HorizonAccountSignerModel SignerAccount in Weights.Signers) {
-			operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromAccountId(SignerAccount.Signer)), SignerAccount.Weight);
-		}
-	   operation.SetSourceAccount(source);
-	   var opBuild = operation.Build();
+            /*BUG: Second signer is not getting added */
+            foreach (HorizonAccountSignerModel SignerAccount in Weights.Signers)
+            {
+                operation.SetSigner(stellar_dotnet_sdk.Signer.Ed25519PublicKey(KeyPair.FromAccountId(SignerAccount.Signer)), SignerAccount.Weight);
+            }
+            operation.SetSourceAccount(source);
+            var opBuild = operation.Build();
 
-	   var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
-	   var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-		.AddOperation(opBuild)
-		.Build();
-	   transaction.Sign(source);
+            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
+            var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+             .AddOperation(opBuild)
+             .Build();
+            transaction.Sign(source);
 
-       string txnstr = transaction.ToEnvelopeXdrBase64();
-       var bytes = Convert.FromBase64String(txnstr);
-       var transactionEnvelope = xdr.TransactionEnvelope.Decode(new xdr.XdrDataInputStream(bytes));
+            string txnstr = transaction.ToEnvelopeXdrBase64();
+            var bytes = Convert.FromBase64String(txnstr);
+            var transactionEnvelope = stellar_dotnet_sdk.xdr.TransactionEnvelope.Decode(new stellar_dotnet_sdk.xdr.XdrDataInputStream(bytes));
 
-	   return await _server.SubmitTransaction(transaction);
-	}
-
+            return await _server.SubmitTransaction(transaction);
+        }
     }
 }

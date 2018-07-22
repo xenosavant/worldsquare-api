@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Stellmart.Api.Data.Horizon;
+﻿using stellar_dotnet_sdk.responses;
 using Stellmart.Api.Data.Contract;
-using stellar_dotnetcore_sdk;
-using stellar_dotnetcore_sdk.responses;
+using Stellmart.Api.Data.Horizon;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Stellmart.Services
 {
