@@ -51,7 +51,7 @@ namespace Stellmart.Services
             return accountRes.SequenceNumber;
         }
 
-        public async Task<SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
+        public async Task<string> TransferNativeFund(HorizonKeyPairModel sourceAccount,
                     String destAccount, String amount)
         {
             var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
@@ -66,10 +66,10 @@ namespace Stellmart.Services
                     .Build();
             transaction.Sign(source);
 
-            return await _server.SubmitTransaction(transaction);
+            return transaction.ToEnvelopeXdrBase64();
         }
 
-        public async Task<SubmitTransactionResponse> SetWeightSigner(HorizonKeyPairModel SourceAccount,
+        public async Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
             HorizonAccountWeightModel Weights)
         {
             var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
@@ -93,11 +93,14 @@ namespace Stellmart.Services
              .Build();
             transaction.Sign(source);
 
-            string txnstr = transaction.ToEnvelopeXdrBase64();
+            return transaction.ToEnvelopeXdrBase64();
+        }
+        public async Task<SubmitTransactionResponse> SubmitTxn(string txnstr)
+        {
             var bytes = Convert.FromBase64String(txnstr);
             var transactionEnvelope = stellar_dotnet_sdk.xdr.TransactionEnvelope.Decode(new stellar_dotnet_sdk.xdr.XdrDataInputStream(bytes));
-
-            return await _server.SubmitTransaction(transaction);
+            var txn = Transaction.FromEnvelope(transactionEnvelope);
+            return await _server.SubmitTransaction(txn);
         }
     }
 }

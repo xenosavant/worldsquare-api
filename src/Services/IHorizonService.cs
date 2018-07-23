@@ -8,10 +8,11 @@ namespace Stellmart.Services
     {
         HorizonKeyPairModel CreateAccount();
         Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
-	Task<long> GetSequenceNumber(string PublicKey);
-        Task<SubmitTransactionResponse> TransferNativeFund(HorizonKeyPairModel sourceAccount,
+	    Task<long> GetSequenceNumber(string PublicKey);
+        Task<string> TransferNativeFund(HorizonKeyPairModel sourceAccount,
 			string destAccount, string amount);
-	 Task <SubmitTransactionResponse> SetWeightSigner(HorizonKeyPairModel SourceAccount,
+	    Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
 			HorizonAccountWeightModel Weights);
+        Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
     }
 }

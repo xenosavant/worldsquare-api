@@ -26,9 +26,10 @@ namespace Stellmart.Services
 
 		Contract.Txn = new List<SubmitTransactionResponse>();
 		HorizonKeyPairModel escrow = _horizon.CreateAccount();
-		//TBD: consider other assets too
-		Contract.Txn.Add(await _horizon.TransferNativeFund(ContractParam.SourceAccount, escrow.PublicKey,
-			ContractParam.Asset.Amount));
+            //TBD: consider other assets too
+        string txnxdr = await _horizon.TransferNativeFund(ContractParam.SourceAccount, escrow.PublicKey,
+                ContractParam.Asset.Amount);
+        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
 
 		weight.LowThreshold = 2;
 		weight.MediumThreshold = 2;
@@ -37,7 +38,8 @@ namespace Stellmart.Services
 		dest_account.Weight = 1;
 		weight.Signers.Add(dest_account);
 
-		Contract.Txn.Add(await _horizon.SetWeightSigner(escrow, weight));
+        txnxdr = await _horizon.SetWeightSigner(escrow, weight);
+        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
 		_sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
 		Contract.EscrowAccount = escrow;
 		Contract.DestAccount = ContractParam.DestAccount;
