@@ -73,24 +73,21 @@ namespace Stellmart.Api.Context
                         {
                             Active = true,
                             Description = "Email",
-                            DisplayOrder = 1,
-                            Id = 1
+                            DisplayOrder = 1
                         },
 
                         new TwoFactorAuthenticationType()
                         {
                             Active = true,
                             Description = "SMS",
-                            DisplayOrder = 2,
-                            Id = 2
+                            DisplayOrder = 2
                         },
 
                         new TwoFactorAuthenticationType()
                         {
                             Active = true,
                             Description = "Google Authenticator",
-                            DisplayOrder = 3,
-                            Id = 3
+                            DisplayOrder = 3
                         }
                     };
 
@@ -105,6 +102,7 @@ namespace Stellmart.Api.Context
 
                     context.VerificationLevels.Add(verificationLevel);
 
+                    
                     context.SaveChanges();
 
                     var user = new ApplicationUser

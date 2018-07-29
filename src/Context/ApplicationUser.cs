@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
 
 namespace Stellmart.Api.Context
 {
@@ -51,6 +52,14 @@ namespace Stellmart.Api.Context
         public string TwoFactorCode { get; set; }
 
         public string SecurityQuestions { get; set; }
+
+        public int TwoFactorFailedCount { get; set; }
+
+        [DefaultValue(5)]
+        public int MaxTwoFactorFailedAccessAttempts { get; set; }
+
+        [DefaultValue(5)]
+        public int DefaultTwoFatorLockoutMinutes{ get; set; }
 
         public virtual Location PrimaryShippingLocation { get; set; }
 
