@@ -13,6 +13,9 @@ namespace Stellmart.Services
 			string destAccount, string amount);
 	    Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
 			HorizonAccountWeightModel Weights);
+        Task<string> AccountMerge(HorizonKeyPairModel SourceAccount,
+            string destAccount);
+
         Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
     }
 }

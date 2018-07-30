@@ -95,6 +95,23 @@ namespace Stellmart.Services
 
             return transaction.ToEnvelopeXdrBase64();
         }
+        public async Task<string> AccountMerge(HorizonKeyPairModel SourceAccount,
+            string DestAccount)
+        {
+            var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
+
+            var operation = new AccountMergeOperation.Builder(KeyPair.FromAccountId(DestAccount))
+                 .SetSourceAccount(source)
+                 .Build();
+            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
+            var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+                    .AddOperation(operation)
+                    .Build();
+            transaction.Sign(source);
+
+            return transaction.ToEnvelopeXdrBase64();
+        }
+
         public async Task<SubmitTransactionResponse> SubmitTxn(string txnstr)
         {
             var bytes = Convert.FromBase64String(txnstr);
