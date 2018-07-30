@@ -11,14 +11,14 @@ namespace Stellmart.Services
 	   Add signer as destination, stellmart and change threshold weights.
 	   Returns Escrow account id
          */
-	Task<ContractModel> SetupContract(ContractParamModel ContractParam);
+	Task<int> SetupContract(ContractParamModel ContractParam);
 	/* Based on the Contract Parameters, Contract will be created.
 	   Returns Contract with one pre transaction added to the contract list
 	 */
-	Task<ContractModel> CreateContract(ContractParamModel ContractParam, ContractModel Contract);
+	Task<int> CreateContract(ContractParamModel ContractParam);
 
-	string SignContract(HorizonKeyPairModel Account, ContractModel Contract);
+	string SignContract(HorizonKeyPairModel Account);
 	/*Submits the transaction to the network, returns the hash of transaction*/
-	string ExecuteContract(ContractModel Contract);
+	string ExecuteContract();
     }
 }

@@ -9,7 +9,7 @@ namespace Stellmart.Services
     public class ContractService : IContractService
     {
 	private readonly IHorizonService _horizon;
-	private long _sequence;
+	public ContractModel Contract {get; private set;}
 
 	public ContractService(IHorizonService horizon)
 	{
@@ -17,12 +17,11 @@ namespace Stellmart.Services
 	}
 	//TBD: Add WorldSquare account as signer
 	//TBD: Add async and await
-	public async Task<ContractModel> SetupContract(ContractParamModel ContractParam)
+	public async Task<int> SetupContract(ContractParamModel ContractParam)
 	{
 		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
 		weight.Signers = new List<HorizonAccountSignerModel>();
-		ContractModel Contract = new ContractModel();
 
 		Contract.Txn = new List<SubmitTransactionResponse>();
 		HorizonKeyPairModel escrow = _horizon.CreateAccount();
@@ -40,23 +39,22 @@ namespace Stellmart.Services
 
         txnxdr = await _horizon.SetWeightSigner(escrow, weight);
         Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
-		_sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
+		Contract.Sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
 		Contract.EscrowAccount = escrow;
 		Contract.DestAccount = ContractParam.DestAccount;
-		Contract.Sequence = _sequence;
 		Contract.State = ContractState.Initial;
-		return Contract;
+		return 1;
 	}
-	public async Task<ContractModel> CreateContract(ContractParamModel ContractParam, ContractModel Contract)
+	public async Task<int> CreateContract(ContractParamModel ContractParam)
 	{		
-		return Contract;
+		return 1;
 	}
-	public string SignContract(HorizonKeyPairModel Account, ContractModel Contract)
+	public string SignContract(HorizonKeyPairModel Account)
 	{
 		string hash = "";
 		return hash;
 	}
-	public string ExecuteContract(ContractModel Contract)
+	public string ExecuteContract()
 	{
 		string hash = "";
 		return hash;
