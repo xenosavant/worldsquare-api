@@ -13,7 +13,7 @@ namespace Stellmart.Api.Business.Logic
         Task<IEnumerable<OnlineStore>> GetAllAsync();
         Task<OnlineStore> GetByIdAsync(int id);
         Task<OnlineStore> CreateAsync(int userId, OnlineStoreViewModel store);
-        Task<OnlineStore> UpdateAsync(OnlineStoreViewModel vm, OnlineStore store);
+        Task<OnlineStore> UpdateAsync(OnlineStore store);
         Task DeleteAsync(OnlineStore store);
     }
 }

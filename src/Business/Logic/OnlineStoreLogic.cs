@@ -41,7 +41,8 @@ namespace Stellmart.Api.Business.Logic
                 Name = viewModel.Name,
                 Description = viewModel.Description,
                 TagLine = viewModel.TagLine,
-                UserId = userId,
+                Verified = false,
+                UserId = 1,
                 NativeCurrencyId = viewModel.NativeCurrency.Id
             };
             if (viewModel.ServiceRegion != null)
@@ -52,39 +53,20 @@ namespace Stellmart.Api.Business.Logic
                         LocationComponents = viewModel.ServiceRegion.LocationComponents
                     };
             }
+            if (viewModel.NativeCurrency != null)
+            {
+                onlineStore.NativeCurrencyId = viewModel.NativeCurrency.Id;
+            }
             _repository.Create(onlineStore);
             await _repository.SaveAsync();
             return await _repository.GetOneAsync<OnlineStore>(o => o.Id == onlineStore.Id, NavigationProperties);
         }
 
-        public async Task<OnlineStore> UpdateAsync(OnlineStoreViewModel vm, OnlineStore store)
+        public async Task<OnlineStore> UpdateAsync(OnlineStore store)
         {
-            store.Name = vm.Name;
-            store.Description = vm.Description;
-            store.TagLine = vm.TagLine;
-            var serviceRegionViewModel = _mapper.Map<RegionViewModel>(store.ServiceRegion);
-            var regionDiff = Validation.GetPropertyDiff(vm.ServiceRegion, serviceRegionViewModel);
-            if (regionDiff.Count() > 0)
-            {
-                store.ServiceRegion.LocationComponents = vm.ServiceRegion.LocationComponents;
-                _repository.Update(store.ServiceRegion);
-            }
-
-            var currencyViewModel = _mapper.Map<CurrencyViewModel>(store.NativeCurrency);
-            var currencyDiff = Validation.GetPropertyDiff(vm.NativeCurrency, currencyViewModel);
-            if (currencyDiff.Count() > 0)
-            {
-                store.NativeCurrencyId = vm.NativeCurrency.Id;
-                store.NativeCurrency = null;
-            }
-
             _repository.Update(store);
             await _repository.SaveAsync();
-            if (store.NativeCurrency == null)
-            {
-                store.NativeCurrency = await _repository.GetByIdAsync<Currency>(store.NativeCurrencyId);
-            }
-            return store;
+            return await _repository.GetOneAsync<OnlineStore>(o => o.Id == store.Id, NavigationProperties);
         }
 
         public async Task DeleteAsync(OnlineStore store)

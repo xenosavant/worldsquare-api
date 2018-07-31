@@ -11,6 +11,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Stellmart.Api.Controllers.Helpers;
+using Stellmart.Api.Data;
 
 namespace Stellmart.Api.Controllers
 {
@@ -78,15 +79,15 @@ namespace Stellmart.Api.Controllers
             return CreatedAtRoute("GetOnlineStore", new { id = store.Id }, _mapper.Map<OnlineStoreViewModel>(store));
         }
 
-        //PUT: api/onlinestore
-        [HttpPut]
-        [Route("")]
-        [ProducesResponseType(200)]
+        //PATCH: api/onlinestore/1
+        [HttpPatch]
+        [Route("{id:int}")]
+        [ProducesResponseType(204)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult<OnlineStoreViewModel>> Put([FromBody] OnlineStoreViewModel vm)
+        public async Task<ActionResult<OnlineStoreViewModel>> Patch(int id, [FromBody] Delta<OnlineStore> delta)
         {
-            var onlineStore = await _storeLogic.GetByIdAsync(vm.Id);
-            if (onlineStore.Verified != vm.Verified)
+            var onlineStore = await _storeLogic.GetByIdAsync(id);
+            if (delta.ContainsKey("Verified"))
             {
                 return BadRequest();
             }
@@ -94,7 +95,8 @@ namespace Stellmart.Api.Controllers
             {
                 return Unauthorized();
             }
-            return Ok(_mapper.Map<OnlineStoreViewModel>(await _storeLogic.UpdateAsync(vm, onlineStore)));
+            delta.Patch(onlineStore);
+            return _mapper.Map<OnlineStoreViewModel>(await _storeLogic.UpdateAsync(onlineStore));
         }
 
         //DELETE: api/onlinestore/1
