@@ -36,15 +36,8 @@ namespace Stellmart.Api.Business.Logic
 
         public async Task<OnlineStore> CreateAsync(int userId, OnlineStoreViewModel viewModel)
         {
-            var onlineStore = new OnlineStore()
-            {
-                Name = viewModel.Name,
-                Description = viewModel.Description,
-                TagLine = viewModel.TagLine,
-                Verified = false,
-                UserId = userId,
-                NativeCurrencyId = viewModel.NativeCurrency.Id
-            };
+            var onlineStore = _mapper.Map<OnlineStore>(viewModel);
+            onlineStore.UserId = userId;
             if (viewModel.ServiceRegion != null)
             {
                 onlineStore.ServiceRegion =
