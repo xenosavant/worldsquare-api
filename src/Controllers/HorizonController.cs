@@ -8,15 +8,13 @@ namespace Stellmart.Api.Controllers.Helpers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
-    public class HorizonController : Controller
+    public class HorizonController : BaseController
     {
         private readonly IHorizonService _horizonService;
-        private readonly IMapper _mapper;
 
-        public HorizonController(IHorizonService horizonService, IMapper mapper)
+        public HorizonController(IHorizonService horizonService, IMapper mapper) : base(mapper)
         {
             _horizonService = horizonService;
-            _mapper = mapper;
         }
 
         [HttpGet]

@@ -36,15 +36,8 @@ namespace Stellmart.Api.Business.Logic
 
         public async Task<OnlineStore> CreateAsync(int userId, OnlineStoreViewModel viewModel)
         {
-            var onlineStore = new OnlineStore()
-            {
-                Name = viewModel.Name,
-                Description = viewModel.Description,
-                TagLine = viewModel.TagLine,
-                Verified = false,
-                UserId = 1,
-                NativeCurrencyId = viewModel.NativeCurrency.Id
-            };
+            var onlineStore = _mapper.Map<OnlineStore>(viewModel);
+            onlineStore.UserId = userId;
             if (viewModel.ServiceRegion != null)
             {
                 onlineStore.ServiceRegion =
@@ -62,8 +55,9 @@ namespace Stellmart.Api.Business.Logic
             return await _repository.GetOneAsync<OnlineStore>(o => o.Id == onlineStore.Id, NavigationProperties);
         }
 
-        public async Task<OnlineStore> UpdateAsync(OnlineStore store)
+        public async Task<OnlineStore> UpdateAsync(OnlineStore store, Delta<OnlineStore> delta)
         {
+            delta.Patch(store);
             _repository.Update(store);
             await _repository.SaveAsync();
             return await _repository.GetOneAsync<OnlineStore>(o => o.Id == store.Id, NavigationProperties);

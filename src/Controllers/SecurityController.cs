@@ -17,14 +17,13 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class SecurityController : Controller
+    public class SecurityController : BaseController
     {
-        private readonly IMapper _mapper;
         private readonly ISecurityLogic _securityLogic;
 
-        public SecurityController(IMapper mapper)
+        public SecurityController(IMapper mapper, ISecurityLogic securityLogic) : base(mapper)
         {
-            _mapper = mapper;
+            _securityLogic = securityLogic;
         }
 
         public string UserName
