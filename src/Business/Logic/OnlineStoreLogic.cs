@@ -42,7 +42,7 @@ namespace Stellmart.Api.Business.Logic
                 Description = viewModel.Description,
                 TagLine = viewModel.TagLine,
                 Verified = false,
-                UserId = 1,
+                UserId = userId,
                 NativeCurrencyId = viewModel.NativeCurrency.Id
             };
             if (viewModel.ServiceRegion != null)
@@ -62,8 +62,9 @@ namespace Stellmart.Api.Business.Logic
             return await _repository.GetOneAsync<OnlineStore>(o => o.Id == onlineStore.Id, NavigationProperties);
         }
 
-        public async Task<OnlineStore> UpdateAsync(OnlineStore store)
+        public async Task<OnlineStore> UpdateAsync(OnlineStore store, Delta<OnlineStore> delta)
         {
+            delta.Patch(store);
             _repository.Update(store);
             await _repository.SaveAsync();
             return await _repository.GetOneAsync<OnlineStore>(o => o.Id == store.Id, NavigationProperties);

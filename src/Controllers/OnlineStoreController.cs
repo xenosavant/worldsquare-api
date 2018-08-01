@@ -18,26 +18,13 @@ namespace Stellmart.Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [Authorize]
-    public class OnlineStoreController : Controller
+    public class OnlineStoreController : BaseController
     {
         private readonly IOnlineStoreLogic _storeLogic;
-        private readonly IMapper _mapper;
 
-        public OnlineStoreController(IOnlineStoreLogic storeLogic, IMapper mapper)
+        public OnlineStoreController(IOnlineStoreLogic storeLogic, IMapper mapper) : base(mapper)
         {
             _storeLogic = storeLogic;
-            _mapper = mapper;
-        }
-
-        public int UserId
-        {
-            get
-            {
-                var principal = User as ClaimsPrincipal;
-                Claim cl = principal.Claims.FirstOrDefault(c => c.Type == System.Security.Claims.ClaimTypes.NameIdentifier);
-                Int32.TryParse(cl?.Value, out int id);
-                return id;
-            }
         }
 
         //GET: api/onlinestore
@@ -95,8 +82,7 @@ namespace Stellmart.Api.Controllers
             {
                 return Unauthorized();
             }
-            delta.Patch(onlineStore);
-            return _mapper.Map<OnlineStoreViewModel>(await _storeLogic.UpdateAsync(onlineStore));
+            return _mapper.Map<OnlineStoreViewModel>(await _storeLogic.UpdateAsync(onlineStore, delta));
         }
 
         //DELETE: api/onlinestore/1
