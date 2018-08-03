@@ -12,9 +12,9 @@ namespace Stellmart.Services
         Task<string> TransferNativeFund(HorizonKeyPairModel sourceAccount,
 			string destAccount, string amount);
 	    Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
-			HorizonAccountWeightModel Weights);
+			HorizonAccountWeightModel Weights, HorizonTimeBoundModel Time);
         Task<string> AccountMerge(HorizonKeyPairModel SourceAccount,
-            string destAccount);
+            string destAccount, HorizonTimeBoundModel Time);
 
         Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
     }

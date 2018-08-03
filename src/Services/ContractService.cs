@@ -37,7 +37,7 @@ namespace Stellmart.Services
 		dest_account.Weight = 1;
 		weight.Signers.Add(dest_account);
 
-        txnxdr = await _horizon.SetWeightSigner(escrow, weight);
+        txnxdr = await _horizon.SetWeightSigner(escrow, weight, null);
         Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
 		Contract.Sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
 		Contract.EscrowAccount = escrow;

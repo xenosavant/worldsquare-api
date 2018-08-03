@@ -70,10 +70,12 @@ namespace Stellmart.Services
         }
 
         public async Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
-            HorizonAccountWeightModel Weights)
+            HorizonAccountWeightModel Weights, HorizonTimeBoundModel Time)
         {
             var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
             var operation = new SetOptionsOperation.Builder();
+            Transaction transaction;
+
             operation.SetMasterKeyWeight(Weights.MasterWeight);
             operation.SetLowThreshold(Weights.LowThreshold);
             operation.SetMediumThreshold(Weights.MediumThreshold);
@@ -88,27 +90,41 @@ namespace Stellmart.Services
             var opBuild = operation.Build();
 
             var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
-            var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-             .AddOperation(opBuild)
-             .Build();
+            if(Time == null) {
+                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+                    .AddOperation(opBuild)
+                    .Build();
+            } else {
+                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+                    .AddOperation(opBuild)
+                    .AddTimeBounds(new TimeBounds(Time.MinTime, Time.MaxTime))
+                    .Build();
+            }
             transaction.Sign(source);
-
             return transaction.ToEnvelopeXdrBase64();
         }
         public async Task<string> AccountMerge(HorizonKeyPairModel SourceAccount,
-            string DestAccount)
+            string DestAccount, HorizonTimeBoundModel Time)
         {
             var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
+            Transaction transaction;
 
             var operation = new AccountMergeOperation.Builder(KeyPair.FromAccountId(DestAccount))
                  .SetSourceAccount(source)
                  .Build();
+
             var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
-            var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+            if(Time == null) {
+                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
                     .AddOperation(operation)
                     .Build();
+            } else {
+                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
+                    .AddOperation(operation)
+                    .AddTimeBounds(new TimeBounds(Time.MinTime, Time.MaxTime))
+                    .Build();
+            }
             transaction.Sign(source);
-
             return transaction.ToEnvelopeXdrBase64();
         }
 
