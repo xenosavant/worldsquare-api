@@ -4,8 +4,15 @@ using Stellmart.Api.Data.Horizon;
 
 namespace Stellmart.Api.Data.Contract
 {
+	public enum ContractType
+	{
+		Setup,
+		PreTxnAccountMerge,
+		PreTxnSetWeight
+	}
     public class ContractParamModel
     {
+	public ContractType Type { get; set; }
 	public HorizonKeyPairModel SourceAccount {get; set; }
 	public HorizonKeyPairModel EscrowAccount { get; set; }
 	public String DestAccount { get; set; }
