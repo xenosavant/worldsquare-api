@@ -90,7 +90,7 @@ namespace Stellmart.Context
 
         public DbSet<SystemSignature> OracleSignatures { get; set; }
 
-        public DbSet<SystemSignature> Userignatures { get; set; }
+        public DbSet<SystemSignature> UserSignatures { get; set; }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
