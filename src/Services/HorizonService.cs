@@ -128,12 +128,21 @@ namespace Stellmart.Services
             return transaction.ToEnvelopeXdrBase64();
         }
 
-        public async Task<SubmitTransactionResponse> SubmitTxn(string txnstr)
+        private Transaction XdrStrtoTxn(string txnstr) 
         {
             var bytes = Convert.FromBase64String(txnstr);
             var transactionEnvelope = stellar_dotnet_sdk.xdr.TransactionEnvelope.Decode(new stellar_dotnet_sdk.xdr.XdrDataInputStream(bytes));
-            var txn = Transaction.FromEnvelope(transactionEnvelope);
-            return await _server.SubmitTransaction(txn);
+            return Transaction.FromEnvelope(transactionEnvelope);
+        }
+        public string SignTxn(HorizonKeyPairModel Account, string txnstr)
+        {
+            var txn = XdrStrtoTxn(txnstr);
+            txn.Sign(KeyPair.FromSecretSeed(Account.SecretKey));
+            return txn.ToEnvelopeXdrBase64();
+        }
+        public async Task<SubmitTransactionResponse> SubmitTxn(string txnstr)
+        {
+            return await _server.SubmitTransaction(XdrStrtoTxn(txnstr));
         }
     }
 }

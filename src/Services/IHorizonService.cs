@@ -15,7 +15,7 @@ namespace Stellmart.Services
 			HorizonAccountWeightModel Weights, HorizonTimeBoundModel Time);
         Task<string> AccountMerge(HorizonKeyPairModel SourceAccount,
             string destAccount, HorizonTimeBoundModel Time);
-
+        string SignTxn(HorizonKeyPairModel Account, string txnstr);
         Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
     }
 }
