@@ -10,4 +10,12 @@ namespace Stellmart.Api.Data.Enumerations
     {
         Unauthorized = 401
     }
+
+    public enum TwoFactorTypes
+    {
+        None = 0,
+        Email = 1,
+        Sms = 2,
+        Totp = 3
+    }
 }
