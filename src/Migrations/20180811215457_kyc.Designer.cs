@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Stellmart.Context;
 
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180811215457_kyc")]
+    partial class kyc
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -492,7 +494,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("AddressLine5");
 
-                    b.Property<string>("AddressLine6");
+                    b.Property<int>("CountryId");
 
                     b.Property<int>("CreatedBy");
 
@@ -525,6 +527,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("UserIdentifier");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CountryId");
 
                     b.HasIndex("UserId");
 
@@ -1722,6 +1726,11 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.KycData", b =>
                 {
+                    b.HasOne("Stellmart.Api.Context.Entities.Country", "Country")
+                        .WithMany()
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "User")
                         .WithMany("KycDatas")
                         .HasForeignKey("UserId")

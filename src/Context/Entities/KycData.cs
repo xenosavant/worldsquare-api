@@ -6,6 +6,7 @@ namespace Stellmart.Api.Context.Entities
 {
     public class KycData : AuditableEntity<int>
     {
+        public string UserIdentifier { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -16,11 +17,9 @@ namespace Stellmart.Api.Context.Entities
         public string AddressLine3 { get; set; }
         public string AddressLine4 { get; set; }
         public string AddressLine5 { get; set; }
+        public string AddressLine6 { get; set; }
         public string Gender { get; set; }
         public string Nationality { get; set; }
-        [ForeignKey("CountryId")]
-        public int CountryId { get; set; }
-        public virtual Country Country { get; set; }
         [ForeignKey("UserId")]
         public int UserId { get; set; }
         public virtual ApplicationUser User { get; set; }

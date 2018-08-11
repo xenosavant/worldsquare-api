@@ -7,10 +7,12 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Controllers
 {
+    /// <summary>
+    ///     Yoti kyc
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
-    public class YotiController : ControllerBase
+    public class YotiController : AuthorizedController
     {
         private readonly IKycService _kycService;
 
@@ -19,6 +21,11 @@ namespace Stellmart.Api.Controllers
             _kycService = kycService;
         }
 
+        /// <summary>
+        /// Verification of customer and storing customer data
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route(template: "")]
         [Produces("application/json")]
@@ -28,7 +35,7 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(KycResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IActionResult> Create([FromBody]KycRequest request)
         {
-            return Ok(new KycResponse { IsVerified = await _kycService.VerifyAsync(request) });
+            return Ok(new KycResponse { IsVerified = await _kycService.VerifyAsync(request, UserId) });
         }
     }
 }

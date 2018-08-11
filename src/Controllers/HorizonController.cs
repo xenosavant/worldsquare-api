@@ -20,7 +20,7 @@ namespace Stellmart.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> CreateAccount()
+        public IActionResult CreateAccount()
         {
             return Ok(_mapper.Map<HorizonKeyPairViewModel>(_horizonService.CreateAccount()));
         }

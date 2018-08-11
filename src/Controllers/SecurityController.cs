@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using AutoMapper;
-using Stellmart.Api.Data;
-using System.Net;
-using Stellmart.Api.Data.ViewModels;
-using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using Stellmart.Api.Business.Logic;
+using Stellmart.Api.Data.ViewModels;
+using System.Collections.Generic;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -22,9 +15,10 @@ namespace Stellmart.Api.Controllers
         private readonly IMapper _mapper;
         private readonly ISecurityLogic _securityLogic;
 
-        public SecurityController(IMapper mapper)
+        public SecurityController(IMapper mapper, ISecurityLogic securityLogic)
         {
             _mapper = mapper;
+            _securityLogic = securityLogic;
         }
 
         public string UserName
