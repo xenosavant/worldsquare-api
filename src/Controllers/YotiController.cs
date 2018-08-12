@@ -11,7 +11,6 @@ namespace Stellmart.Api.Controllers
     ///     Yoti kyc
     /// </summary>
     [Route("api/[controller]")]
-    [ApiController]
     public class YotiController : AuthorizedController
     {
         private readonly IKycService _kycService;

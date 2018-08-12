@@ -8,7 +8,8 @@
 
         public string LastName { get; set; }
 
-        public string UsernName { get; set; }
+        public string UserName { get; set; }
+        public int VerificationLevelId { get; set; }
 
     }
 }

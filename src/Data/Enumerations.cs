@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-
-namespace Stellmart.Api.Data.Enumerations
+﻿namespace Stellmart.Api.Data.Enumerations
 {
     public enum HttpResponseCodes
     {
@@ -17,5 +11,12 @@ namespace Stellmart.Api.Data.Enumerations
         Email = 1,
         Sms = 2,
         Totp = 3
+    }
+
+    public enum VerificationLevelTypes
+    {
+        NonVerified = 1,
+        LevelOne = 2,
+        LevelTwo = 3
     }
 }

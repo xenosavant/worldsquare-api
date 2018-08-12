@@ -6,6 +6,7 @@ using System.Security.Claims;
 
 namespace Stellmart.Api.Controllers
 {
+    [ApiController]
     [Authorize]
     public class AuthorizedController : ControllerBase
     {

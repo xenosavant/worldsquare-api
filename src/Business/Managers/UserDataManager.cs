@@ -7,21 +7,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Business.Logic
+namespace Stellmart.Api.Business.Managers
 {
-    public interface IUserLogic
+    public interface IUserDataManager
     {
         Task<int> SignupAsync(SignupRequest request);
         Task<IReadOnlyCollection<ApplicationUserViewModel>> GetAllAsync();
         Task<ApplicationUserViewModel> GetByIdAsync(int id);
     }
 
-    public class UserLogic : IUserLogic
+    public class UserDataManager : IUserDataManager
     {
         private readonly IRepository _repository;
         private readonly IMapper _mapper;
 
-        public UserLogic(IRepository repository, IMapper mapper)
+        public UserDataManager(IRepository repository, IMapper mapper)
         {
             _repository = repository;
             _mapper = mapper;
