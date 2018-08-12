@@ -22,7 +22,7 @@ namespace Stellmart.Api.Context.Entities
         bool Flagged { get; set; }
 
         [Required]
-        bool Verified { get; set; }
+        public bool Verified { get; set; }
 
         [Required]
         public int NativeCurrencyId { get; set; }

@@ -176,6 +176,21 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Regions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    LocationComponents = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Regions", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RewardsLevels",
                 columns: table => new
                 {
@@ -435,7 +450,8 @@ namespace Stellmart.Api.Migrations
                     GeoLocationId = table.Column<int>(nullable: false),
                     LocationComponents = table.Column<string>(nullable: true),
                     PlaceId = table.Column<string>(nullable: true),
-                    Verified = table.Column<bool>(nullable: false)
+                    Verified = table.Column<bool>(nullable: false),
+                    RegionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -444,6 +460,12 @@ namespace Stellmart.Api.Migrations
                         name: "FK_Locations_GeoLocations_GeoLocationId",
                         column: x => x.GeoLocationId,
                         principalTable: "GeoLocations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Locations_Regions_RegionId",
+                        column: x => x.RegionId,
+                        principalTable: "Regions",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -652,12 +674,7 @@ namespace Stellmart.Api.Migrations
                     VerificationLevelId = table.Column<int>(nullable: false),
                     Flagged = table.Column<bool>(nullable: false),
                     UseTwoFactorForLogin = table.Column<bool>(nullable: false),
-                    TotpSecret = table.Column<string>(nullable: true),
-                    TwoFactorCode = table.Column<string>(nullable: true),
                     SecurityQuestions = table.Column<string>(nullable: true),
-                    TwoFactorFailedCount = table.Column<int>(nullable: false),
-                    MaxTwoFactorFailedAccessAttempts = table.Column<int>(nullable: false),
-                    DefaultTwoFatorLockoutMinutes = table.Column<int>(nullable: false),
                     CountryId = table.Column<int>(nullable: true),
                     UniqueId = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
@@ -704,28 +721,6 @@ namespace Stellmart.Api.Migrations
                         name: "FK_AspNetUsers_VerificationLevels_VerificationLevelId",
                         column: x => x.VerificationLevelId,
                         principalTable: "VerificationLevels",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Regions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    LocationId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Regions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Regions_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1014,6 +1009,78 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Services",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedBy = table.Column<int>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    NativeCurrencyId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false),
+                    Verified = table.Column<bool>(nullable: false),
+                    Name = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
+                    TagLine = table.Column<string>(nullable: true),
+                    Discriminator = table.Column<string>(nullable: false),
+                    ServiceAreaId = table.Column<int>(nullable: true),
+                    Internal = table.Column<bool>(nullable: true),
+                    Global = table.Column<bool>(nullable: true),
+                    ServiceRegionId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Services", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Services_Areas_ServiceAreaId",
+                        column: x => x.ServiceAreaId,
+                        principalTable: "Areas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_AspNetUsers_UserId1",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_Regions_ServiceRegionId",
+                        column: x => x.ServiceRegionId,
+                        principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_AspNetUsers_UserId2",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_AspNetUsers_UserId3",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Services_Currencies_NativeCurrencyId",
+                        column: x => x.NativeCurrencyId,
+                        principalTable: "Currencies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "TradeItems",
                 columns: table => new
                 {
@@ -1056,85 +1123,6 @@ namespace Stellmart.Api.Migrations
                         name: "FK_TradeItems_CurrencyAmounts_TradeInValueId",
                         column: x => x.TradeInValueId,
                         principalTable: "CurrencyAmounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Services",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false),
-                    NativeCurrencyId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    Name = table.Column<string>(nullable: true),
-                    Description = table.Column<string>(nullable: true),
-                    TagLine = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
-                    ServiceAreaId = table.Column<int>(nullable: true),
-                    Internal = table.Column<bool>(nullable: true),
-                    Global = table.Column<bool>(nullable: true),
-                    LocationId = table.Column<int>(nullable: true),
-                    ServiceRegionId = table.Column<int>(nullable: true),
-                    ItemMetaDateId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Services", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Services_Areas_ServiceAreaId",
-                        column: x => x.ServiceAreaId,
-                        principalTable: "Areas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Services_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Services_AspNetUsers_UserId1",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Services_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Services_Regions_ServiceRegionId",
-                        column: x => x.ServiceRegionId,
-                        principalTable: "Regions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Services_AspNetUsers_UserId2",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Services_AspNetUsers_UserId3",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Services_Currencies_NativeCurrencyId",
-                        column: x => x.NativeCurrencyId,
-                        principalTable: "Currencies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1611,6 +1599,11 @@ namespace Stellmart.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Locations_RegionId",
+                table: "Locations",
+                column: "RegionId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Messages_MessageThreadId",
                 table: "Messages",
                 column: "MessageThreadId");
@@ -1692,12 +1685,6 @@ namespace Stellmart.Api.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Regions_LocationId",
-                table: "Regions",
-                column: "LocationId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Reviews_ReviewerId",
                 table: "Reviews",
                 column: "ReviewerId");
@@ -1761,13 +1748,6 @@ namespace Stellmart.Api.Migrations
                 name: "IX_Services_UserId1",
                 table: "Services",
                 column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Services_LocationId",
-                table: "Services",
-                column: "LocationId",
-                unique: true,
-                filter: "[LocationId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Services_ServiceRegionId",
@@ -1940,9 +1920,6 @@ namespace Stellmart.Api.Migrations
                 name: "Areas");
 
             migrationBuilder.DropTable(
-                name: "Regions");
-
-            migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
@@ -1983,6 +1960,9 @@ namespace Stellmart.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "GeoLocations");
+
+            migrationBuilder.DropTable(
+                name: "Regions");
         }
     }
 }

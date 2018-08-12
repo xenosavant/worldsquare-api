@@ -10,15 +10,8 @@ using Stellmart.Api.Services;
 
 namespace Stellmart.Api.Business.Logic
 {
-
-    public interface ISecurityLogic
-    {
-        Task<List<SecurityQuestionViewModel>> GetQuestions(string userName);
-    }
-
     public class SecurityLogic
     {
-
         private readonly IRepository _repository;
         private readonly IEncryptionService _encryptionService;
 

@@ -4,19 +4,17 @@ using Stellmart.Api.ViewModels.Horizon;
 using Stellmart.Services;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Controllers
+namespace Stellmart.Api.Controllers.Helpers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
-    public class HorizonController : Controller
+    public class HorizonController : BaseController
     {
         private readonly IHorizonService _horizonService;
-        private readonly IMapper _mapper;
 
-        public HorizonController(IHorizonService horizonService, IMapper mapper)
+        public HorizonController(IHorizonService horizonService, IMapper mapper) : base(mapper)
         {
             _horizonService = horizonService;
-            _mapper = mapper;
         }
 
         [HttpGet]

@@ -8,27 +8,25 @@ using Stellmart.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Stellmart.Controllers
+namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
     [Authorize]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         private readonly IUserLogic _userLogic;
-
-        private readonly IMapper _mapper;
         private readonly IHorizonService _horizonService;
 
-        public UserController(IUserLogic userLogic, IMapper mapper, IHorizonService horizonService)
+        public UserController(IUserLogic userLogic, IHorizonService horizonService, IMapper mapper) : base(mapper)
         {
             _userLogic = userLogic;
-            _mapper = mapper;
             _horizonService = horizonService;
         }
 
         // GET: api/user/get
         [HttpGet]
+        [Route("")]
         public async Task<IEnumerable<ApplicationUserViewModel>> Get()
         {
             return _mapper.Map<List<ApplicationUserViewModel>>(await _userLogic.GetAllAsync());
@@ -36,8 +34,8 @@ namespace Stellmart.Controllers
 
         // GET: api/user/get/5
         [HttpGet]
-        [Route("{id:int}", Name = nameof(Get))]
-        public async Task<ApplicationUserViewModel> Get(int id)
+        [Route("{id:int}")]
+        public async Task<ApplicationUserViewModel> GetSingle(int id)
         {
             return _mapper.Map<ApplicationUserViewModel>(await _userLogic.GetByIdAsync(id));
         }
