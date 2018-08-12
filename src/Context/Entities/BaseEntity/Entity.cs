@@ -7,8 +7,6 @@ namespace Stellmart.Api.Context.Entities.Entity
     public interface IEntity
     {
         object Id { get; }
-        Guid UniqueId { get; set; }
-        bool IsDeleted { get; set; }
     }
     
     public interface IEntity<T> : IEntity

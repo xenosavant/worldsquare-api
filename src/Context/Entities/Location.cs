@@ -27,8 +27,6 @@ namespace Stellmart.Api.Context
 
         public virtual ServiceRequest ServiceRequestLocation { get; set; }
 
-        public virtual OnlineStore OnlineStore { get; set; }
-
         public virtual ApplicationUser User { get; set; }
 
         public virtual Region Region { get; set; }

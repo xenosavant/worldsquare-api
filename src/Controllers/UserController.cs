@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace Stellmart.Controllers
+namespace Stellmart.Api.Controllers
 {
     /// <summary>
     ///     Users
