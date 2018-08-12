@@ -144,6 +144,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<DateTime>("CreatedDate");
 
+                    b.Property<int>("DefaultTwoFatorLockoutMinutes");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
@@ -166,6 +168,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
                     b.Property<bool>("ManagedAccount");
+
+                    b.Property<int>("MaxTwoFactorFailedAccessAttempts");
 
                     b.Property<int?>("ModifiedBy");
 
@@ -205,7 +209,13 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<byte[]>("StellarSecretKeyIv");
 
+                    b.Property<string>("TotpSecret");
+
+                    b.Property<string>("TwoFactorCode");
+
                     b.Property<bool>("TwoFactorEnabled");
+
+                    b.Property<int>("TwoFactorFailedCount");
 
                     b.Property<int>("TwoFactorTypeId");
 

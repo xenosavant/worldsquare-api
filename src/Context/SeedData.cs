@@ -67,14 +67,31 @@ namespace Stellmart.Api.Context
 
                     context.Currencies.Add(currency);
 
-                    var twoFactor = new TwoFactorAuthenticationType()
+                    var twoFactors = new TwoFactorAuthenticationType[]
                     {
-                        Active = true,
-                        Description = "Google",
-                        DisplayOrder = 1
+                        new TwoFactorAuthenticationType
+                        {
+                            Active = true,
+                            Description = "Email",
+                            DisplayOrder = 1
+                        },
+
+                        new TwoFactorAuthenticationType()
+                        {
+                            Active = true,
+                            Description = "SMS",
+                            DisplayOrder = 2
+                        },
+
+                        new TwoFactorAuthenticationType()
+                        {
+                            Active = true,
+                            Description = "Google Authenticator",
+                            DisplayOrder = 3
+                        }
                     };
 
-                    context.TwoFactorAuthenticationTypes.Add(twoFactor);
+                    context.TwoFactorAuthenticationTypes.AddRange(twoFactors);
 
                     var verificationLevel = new VerificationLevel()
                     {
@@ -85,6 +102,7 @@ namespace Stellmart.Api.Context
 
                     context.VerificationLevels.Add(verificationLevel);
 
+                    
                     context.SaveChanges();
 
                     var user = new ApplicationUser
@@ -94,7 +112,7 @@ namespace Stellmart.Api.Context
                         NativeCurrency = currency,
                         PrimaryShippingLocation = location,
                         RewardsLevel = rewardsLevel,
-                        TwoFactorAuthenticationType = twoFactor,
+                        TwoFactorAuthenticationType = twoFactors[2],
                         VerificationLevel = verificationLevel,
                         CreatedBy = 1,
                         EmailConfirmed = true,
@@ -103,7 +121,7 @@ namespace Stellmart.Api.Context
                         IsActive = true,
                         IsDeleted = false,
                         LockoutEnabled = false,
-                        PhoneNumber = "00443239923023",
+                        PhoneNumber = "+14349899872",
                         PhoneNumberConfirmed = true,
                         UniqueId = Guid.NewGuid()
                     };
