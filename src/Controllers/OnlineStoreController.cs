@@ -17,14 +17,15 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    [Authorize]
-    public class OnlineStoreController : BaseController
+    public class OnlineStoreController: AuthorizedController
     {
         private readonly IOnlineStoreLogic _storeLogic;
+        private readonly IMapper _mapper;
 
-        public OnlineStoreController(IOnlineStoreLogic storeLogic, IMapper mapper) : base(mapper)
+        public OnlineStoreController(IOnlineStoreLogic storeLogic, IMapper mapper)
         {
             _storeLogic = storeLogic;
+            _mapper = mapper;
         }
 
         //GET: api/onlinestore

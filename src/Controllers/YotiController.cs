@@ -16,7 +16,7 @@ namespace Stellmart.Api.Controllers
     {
         private readonly IKycService _kycService;
 
-        public YotiController(IKycService kycService, IMapper mapper) : base(mapper)
+        public YotiController(IKycService kycService, IMapper mapper)
         {
             _kycService = kycService;
         }
