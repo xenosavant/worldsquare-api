@@ -56,13 +56,5 @@ namespace Stellmart.Api.Controllers
         {
             return _mapper.Map<ApplicationUserViewModel>(await _userDataManager.GetByIdAsync(UserId));
         }
-        
-        // POST: api/user/signup
-        [HttpPost]
-        public async Task<ApplicationUserViewModel> Signup([FromBody]SignupRequest request)
-        {
-            return _mapper.Map<ApplicationUserViewModel>(await _userDataManager.SignupAsync(request));
-        }
-       
     }
 }

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Stellmart.Api.Context;
 using Stellmart.Api.DataAccess;
-using Stellmart.Data;
+using Stellmart.Data.Account;
 using Stellmart.Data.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
