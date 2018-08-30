@@ -17,13 +17,11 @@ namespace Stellmart.Api.Controllers
     [Route("api/[controller]")]
     public class AccountController : AuthorizedController
     {
-        private readonly IUserDataManager _userDataManager;
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
 
-        public AccountController(IUserDataManager userDataManager, IMapper mapper, IAccountService accountService)
+        public AccountController(IMapper mapper, IAccountService accountService)
         {
-            _userDataManager = userDataManager;
             _mapper = mapper;
             _accountService = accountService;
         }
@@ -41,9 +39,9 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<SignupResponse> Signup([FromBody]SignupRequest request)
+        public async Task Signup([FromBody]SignupRequest request)
         {
-            return _mapper.Map<SignupResponse>(await _userDataManager.SignupAsync(request));
+            await _accountService.SignupAsync(request);
         }
 
         /// <summary>

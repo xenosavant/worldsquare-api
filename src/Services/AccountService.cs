@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Account;
+using Stellmart.Data.Account;
 using System.Threading.Tasks;
 
 namespace Stellmart.Api.Services
@@ -16,6 +17,11 @@ namespace Stellmart.Api.Services
             _userDataManager = userDataManager;
             _securityQuestionDataManager = securityQuestionDataManager;
             _mapper = mapper;
+        }
+
+        public async Task SignupAsync(SignupRequest request)
+        {
+            await _userDataManager.SignupAsync(request);
         }
 
         public async Task<SignupResponse> GetSignupResponseAsync()
