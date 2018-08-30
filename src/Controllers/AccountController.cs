@@ -3,9 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Account;
-using Stellmart.Api.Services;
 using Stellmart.Data.Account;
-using Stellmart.Data.ViewModels;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -15,15 +14,18 @@ namespace Stellmart.Api.Controllers
     /// Account controller
     /// </summary>
     [Route("api/[controller]")]
+    [ApiController]
     public class AccountController : AuthorizedController
     {
         private readonly IMapper _mapper;
-        private readonly IAccountService _accountService;
+        private readonly IUserDataManager _userDataManager;
+        private readonly ISecurityQuestionDataManager _securityQuestionDataManager;
 
-        public AccountController(IMapper mapper, IAccountService accountService)
+        public AccountController(IMapper mapper, IUserDataManager userDataManager, ISecurityQuestionDataManager securityQuestionDataManager)
         {
             _mapper = mapper;
-            _accountService = accountService;
+            _userDataManager = userDataManager;
+            _securityQuestionDataManager = securityQuestionDataManager;
         }
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task Signup([FromBody]SignupRequest request)
         {
-            await _accountService.SignupAsync(request);
+            await _userDataManager.SignupAsync(request);
         }
 
         /// <summary>
@@ -51,15 +53,15 @@ namespace Stellmart.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet]
-        [Route(template: "")]
+        [Route(template: "securityquestions")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<SignupResponse> Signup()
+        public async Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestions()
         {
-            return _mapper.Map<SignupResponse>(await _accountService.GetSignupResponseAsync());
+            return await _securityQuestionDataManager.GetSecurityQuestionsAsync();
         }
     }
 }

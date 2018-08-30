@@ -6,6 +6,6 @@ namespace Stellmart.Api.Business.Managers.Interfaces
 {
     public interface ISecurityQuestionDataManager
     {
-        Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestions();
+        Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync();
     }
 }
