@@ -995,6 +995,23 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("RewardsLevels");
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.SecurityQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("DisplayOrder");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityQuestions");
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ShippingCarrier", b =>
                 {
                     b.Property<int>("Id")
@@ -1558,6 +1575,18 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("DeliveryRequestFulfillment");
 
                     b.HasDiscriminator().HasValue("DeliveryRequestFulfillment");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.OracleSignature", b =>
+                {
+                    b.HasBaseType("Stellmart.Api.Context.Entities.Signature");
+
+                    b.Property<string>("OracleId")
+                        .IsRequired();
+
+                    b.ToTable("OracleSignature");
+
+                    b.HasDiscriminator().HasValue("OracleSignature");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.SystemSignature", b =>

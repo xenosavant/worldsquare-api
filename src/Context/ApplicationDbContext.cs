@@ -53,7 +53,6 @@ namespace Stellmart.Context
         public DbSet<OracleSignature> OracleSignatures { get; set; }
         public DbSet<UserSignature> UserSignatures { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
-        public DbSet<SecurityAnswer> SecurityAnswers { get; set; }
 
         // Read Only Data
 

@@ -10,8 +10,8 @@ using Stellmart.Context;
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180811215457_kyc")]
-    partial class kyc
+    [Migration("20180830203053_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -494,7 +494,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("AddressLine5");
 
-                    b.Property<int>("CountryId");
+                    b.Property<string>("AddressLine6");
 
                     b.Property<int>("CreatedBy");
 
@@ -527,8 +527,6 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("UserIdentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
 
                     b.HasIndex("UserId");
 
@@ -999,6 +997,23 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("RewardsLevels");
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.SecurityQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("DisplayOrder");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityQuestions");
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ShippingCarrier", b =>
                 {
                     b.Property<int>("Id")
@@ -1124,16 +1139,11 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int>("LocationId");
-
-                    b.Property<string>("Name");
+                    b.Property<string>("LocationComponents");
 
                     b.Property<Guid>("UniqueId");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LocationId")
-                        .IsUnique();
 
                     b.ToTable("Regions");
                 });
@@ -1193,6 +1203,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<Guid>("UniqueId");
 
                     b.Property<int>("UserId");
+
+                    b.Property<bool>("Verified");
 
                     b.HasKey("Id");
 
@@ -1411,6 +1423,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("PlaceId");
 
+                    b.Property<int?>("RegionId");
+
                     b.Property<Guid>("UniqueId");
 
                     b.Property<bool>("Verified");
@@ -1419,6 +1433,8 @@ namespace Stellmart.Api.Migrations
 
                     b.HasIndex("GeoLocationId")
                         .IsUnique();
+
+                    b.HasIndex("RegionId");
 
                     b.ToTable("Locations");
                 });
@@ -1501,15 +1517,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("Global");
 
-                    b.Property<int>("ItemMetaDateId");
-
-                    b.Property<int>("LocationId");
-
                     b.Property<int>("ServiceRegionId");
-
-                    b.HasIndex("LocationId")
-                        .IsUnique()
-                        .HasFilter("[LocationId] IS NOT NULL");
 
                     b.HasIndex("ServiceRegionId")
                         .IsUnique()
@@ -1569,6 +1577,18 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("DeliveryRequestFulfillment");
 
                     b.HasDiscriminator().HasValue("DeliveryRequestFulfillment");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.OracleSignature", b =>
+                {
+                    b.HasBaseType("Stellmart.Api.Context.Entities.Signature");
+
+                    b.Property<string>("OracleId")
+                        .IsRequired();
+
+                    b.ToTable("OracleSignature");
+
+                    b.HasDiscriminator().HasValue("OracleSignature");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.SystemSignature", b =>
@@ -1726,11 +1746,6 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.KycData", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Entities.Country", "Country")
-                        .WithMany()
-                        .HasForeignKey("CountryId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "User")
                         .WithMany("KycDatas")
                         .HasForeignKey("UserId")
@@ -1876,14 +1891,6 @@ namespace Stellmart.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.Region", b =>
-                {
-                    b.HasOne("Stellmart.Api.Context.Location", "Location")
-                        .WithOne("Region")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.Region", "LocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Review", b =>
                 {
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "Reviewer")
@@ -1986,6 +1993,10 @@ namespace Stellmart.Api.Migrations
                         .WithOne("Location")
                         .HasForeignKey("Stellmart.Api.Context.Location", "GeoLocationId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.Entities.Region", "Region")
+                        .WithMany()
+                        .HasForeignKey("RegionId");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.TradeItem", b =>
@@ -2035,11 +2046,6 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.OnlineStore", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Location", "Location")
-                        .WithOne("OnlineStore")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.OnlineStore", "LocationId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Stellmart.Api.Context.Entities.Region", "ServiceRegion")
                         .WithOne("OnlineStore")
                         .HasForeignKey("Stellmart.Api.Context.Entities.OnlineStore", "ServiceRegionId")
