@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Stellmart.Api.Business.Managers;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Kyc;
 using System.Threading.Tasks;
 using Yoti.Auth;
