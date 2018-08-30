@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Stellmart.Api.Business.Managers;
-using Stellmart.Api.Controllers;
-using Stellmart.Data;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Data.ViewModels;
 using System.Collections.Generic;
 using System.Net;
