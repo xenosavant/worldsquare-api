@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stellmart.Api.Business.Managers;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Account;
+using Stellmart.Api.Services;
 using Stellmart.Data.Account;
 using Stellmart.Data.ViewModels;
 using System.Net;
@@ -18,11 +19,13 @@ namespace Stellmart.Api.Controllers
     {
         private readonly IUserDataManager _userDataManager;
         private readonly IMapper _mapper;
+        private readonly IAccountService _accountService;
 
-        public AccountController(IUserDataManager userDataManager, IMapper mapper)
+        public AccountController(IUserDataManager userDataManager, IMapper mapper, IAccountService accountService)
         {
-            this._userDataManager = userDataManager;
-            this._mapper = mapper;
+            _userDataManager = userDataManager;
+            _mapper = mapper;
+            _accountService = accountService;
         }
 
         /// <summary>
@@ -38,9 +41,27 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<ApplicationUserViewModel> Signup([FromBody]SignupRequest request)
+        public async Task<SignupResponse> Signup([FromBody]SignupRequest request)
         {
-            return _mapper.Map<ApplicationUserViewModel>(await _userDataManager.SignupAsync(request));
+            return _mapper.Map<SignupResponse>(await _userDataManager.SignupAsync(request));
+        }
+
+        /// <summary>
+        /// Creating new account
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route(template: "")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<SignupResponse> Signup()
+        {
+            return _mapper.Map<SignupResponse>(await _accountService.GetSignupResponseAsync());
         }
     }
 }
