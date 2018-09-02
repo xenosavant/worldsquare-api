@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Account;
+using Stellmart.Api.Services.Interfaces;
 using Stellmart.Data.Account;
 using System.Collections.Generic;
 using System.Net;
@@ -18,14 +19,12 @@ namespace Stellmart.Api.Controllers
     public class AccountController : AuthorizedController
     {
         private readonly IMapper _mapper;
-        private readonly IUserDataManager _userDataManager;
-        private readonly ISecurityQuestionDataManager _securityQuestionDataManager;
+        private readonly IAccountService _accountService;
 
-        public AccountController(IMapper mapper, IUserDataManager userDataManager, ISecurityQuestionDataManager securityQuestionDataManager)
+        public AccountController(IMapper mapper, IAccountService accountService)
         {
             _mapper = mapper;
-            _userDataManager = userDataManager;
-            _securityQuestionDataManager = securityQuestionDataManager;
+            _accountService = accountService;
         }
 
         /// <summary>
@@ -35,7 +34,7 @@ namespace Stellmart.Api.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpPost]
-        [Route(template: "")]
+        [Route(template: "signup")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
@@ -43,7 +42,7 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task Signup([FromBody]SignupRequest request)
         {
-            await _userDataManager.SignupAsync(request);
+            await _accountService.SignupAsync(_mapper.Map<ApplicationUserModel>(request));
         }
 
         /// <summary>
@@ -61,7 +60,7 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestions()
         {
-            return await _securityQuestionDataManager.GetSecurityQuestionsAsync();
+            return await _accountService.GetSecurityQuestionsAsync();
         }
     }
 }
