@@ -1,50 +1,67 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stellmart.Api.Business.Logic;
+using Stellmart.Api.Business.Managers;
+using Stellmart.Api.Controllers;
 using Stellmart.Data;
 using Stellmart.Data.ViewModels;
-using Stellmart.Services;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Stellmart.Api.Controllers
 {
-    [Produces("application/json")]
-    [Route("api/[controller]/[action]")]
-    [Authorize]
-    public class UserController : BaseController
+    /// <summary>
+    ///     Users
+    /// </summary>
+    [Route("api/[controller]")]
+    public class UserController : AuthorizedController
     {
-        private readonly IUserLogic _userLogic;
-        private readonly IHorizonService _horizonService;
+        private readonly IUserDataManager _userDataManager;
+        private readonly IMapper _mapper;
 
-        public UserController(IUserLogic userLogic, IHorizonService horizonService, IMapper mapper) : base(mapper)
+        public UserController(IUserDataManager userDataManager, IMapper mapper)
         {
-            _userLogic = userLogic;
-            _horizonService = horizonService;
+            _userDataManager = userDataManager;
+            _mapper = mapper;
         }
 
-        // GET: api/user/get
+        /// <summary>
+        /// Get all users
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        [Route("")]
-        public async Task<IEnumerable<ApplicationUserViewModel>> Get()
+        [Route(template: "")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IEnumerable<ApplicationUserViewModel>> GetAll()
         {
-            return _mapper.Map<List<ApplicationUserViewModel>>(await _userLogic.GetAllAsync());
+            return _mapper.Map<List<ApplicationUserViewModel>>(await _userDataManager.GetAllAsync());
         }
 
-        // GET: api/user/get/5
+        /// <summary>
+        /// Get current logged user
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
-        [Route("{id:int}")]
-        public async Task<ApplicationUserViewModel> GetSingle(int id)
+        [Route(template: "me")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ApplicationUserViewModel), (int)HttpStatusCode.InternalServerError)]
+        public async Task<ApplicationUserViewModel> Get()
         {
-            return _mapper.Map<ApplicationUserViewModel>(await _userLogic.GetByIdAsync(id));
+            return _mapper.Map<ApplicationUserViewModel>(await _userDataManager.GetByIdAsync(UserId));
         }
         
         // POST: api/user/signup
         [HttpPost]
         public async Task<ApplicationUserViewModel> Signup([FromBody]SignupRequest request)
         {
-            return _mapper.Map<ApplicationUserViewModel>(await _userLogic.SignupAsync(request));
+            return _mapper.Map<ApplicationUserViewModel>(await _userDataManager.SignupAsync(request));
         }
        
     }

@@ -19,9 +19,9 @@ namespace Stellmart.Api.Context
 
             //  Look for any users.
             if (context.Users.Any())
-                {
-                    return; // DB has been seeded
-                }
+            {
+                return; // DB has been seeded
+            }
 
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -93,16 +93,30 @@ namespace Stellmart.Api.Context
 
                     context.TwoFactorAuthenticationTypes.AddRange(twoFactors);
 
-                    var verificationLevel = new VerificationLevel()
+                    var verificationLevels = new VerificationLevel[]
                     {
-                        Active = true,
-                        Description = "Level 1",
-                        DisplayOrder = 1
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Non verified",
+                            DisplayOrder = 1
+                        },
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Level 1",
+                            DisplayOrder = 2
+                        },
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Level 2",
+                            DisplayOrder = 3
+                        }
                     };
 
-                    context.VerificationLevels.Add(verificationLevel);
+                    context.VerificationLevels.AddRange(verificationLevels);
 
-                    
                     context.SaveChanges();
 
                     var user = new ApplicationUser
@@ -113,7 +127,7 @@ namespace Stellmart.Api.Context
                         PrimaryShippingLocation = location,
                         RewardsLevel = rewardsLevel,
                         TwoFactorAuthenticationType = twoFactors[2],
-                        VerificationLevel = verificationLevel,
+                        VerificationLevel = verificationLevels[0],
                         CreatedBy = 1,
                         EmailConfirmed = true,
                         FirstName = "Elton",
@@ -133,7 +147,7 @@ namespace Stellmart.Api.Context
                     var obj2 = userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin")).Result;
                     transaction.Commit();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                     throw new Exception(e.Message);

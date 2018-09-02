@@ -6,6 +6,6 @@ namespace Stellmart.Api.Business.Managers
 {
     public interface IKycDataManager
     {
-        Task<int> CreateAsync(KycProfileModel model, int createdBy);
+        Task CreateAsync(KycProfileModel model, int createdBy);
     }
 }
