@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using stellar_dotnetcore_sdk;
-using response = stellar_dotnetcore_sdk.responses;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
+using Stellmart.Api.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
+using response = stellar_dotnetcore_sdk.responses;
 
 namespace Stellmart.Services
 {
