@@ -4,11 +4,11 @@ using Stellmart.Api.ViewModels.Horizon;
 using Stellmart.Services;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Controllers
+namespace Stellmart.Api.Controllers.Helpers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
-    public class HorizonController : Controller
+    public class HorizonController: ControllerBase
     {
         private readonly IHorizonService _horizonService;
         private readonly IMapper _mapper;
@@ -20,7 +20,7 @@ namespace Stellmart.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> CreateAccount()
+        public IActionResult CreateAccount()
         {
             return Ok(_mapper.Map<HorizonKeyPairViewModel>(_horizonService.CreateAccount()));
         }

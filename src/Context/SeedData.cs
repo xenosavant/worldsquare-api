@@ -19,9 +19,9 @@ namespace Stellmart.Api.Context
 
             //  Look for any users.
             if (context.Users.Any())
-                {
-                    return; // DB has been seeded
-                }
+            {
+                return; // DB has been seeded
+            }
 
             using (var transaction = context.Database.BeginTransaction())
             {
@@ -67,23 +67,55 @@ namespace Stellmart.Api.Context
 
                     context.Currencies.Add(currency);
 
-                    var twoFactor = new TwoFactorAuthenticationType()
+                    var twoFactors = new TwoFactorAuthenticationType[]
                     {
-                        Active = true,
-                        Description = "Google",
-                        DisplayOrder = 1
+                        new TwoFactorAuthenticationType
+                        {
+                            Active = true,
+                            Description = "Email",
+                            DisplayOrder = 1
+                        },
+
+                        new TwoFactorAuthenticationType()
+                        {
+                            Active = true,
+                            Description = "SMS",
+                            DisplayOrder = 2
+                        },
+
+                        new TwoFactorAuthenticationType()
+                        {
+                            Active = true,
+                            Description = "Google Authenticator",
+                            DisplayOrder = 3
+                        }
                     };
 
-                    context.TwoFactorAuthenticationTypes.Add(twoFactor);
+                    context.TwoFactorAuthenticationTypes.AddRange(twoFactors);
 
-                    var verificationLevel = new VerificationLevel()
+                    var verificationLevels = new VerificationLevel[]
                     {
-                        Active = true,
-                        Description = "Level 1",
-                        DisplayOrder = 1
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Non verified",
+                            DisplayOrder = 1
+                        },
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Level 1",
+                            DisplayOrder = 2
+                        },
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Level 2",
+                            DisplayOrder = 3
+                        }
                     };
 
-                    context.VerificationLevels.Add(verificationLevel);
+                    context.VerificationLevels.AddRange(verificationLevels);
 
                     context.SaveChanges();
 
@@ -94,8 +126,8 @@ namespace Stellmart.Api.Context
                         NativeCurrency = currency,
                         PrimaryShippingLocation = location,
                         RewardsLevel = rewardsLevel,
-                        TwoFactorAuthenticationType = twoFactor,
-                        VerificationLevel = verificationLevel,
+                        TwoFactorAuthenticationType = twoFactors[2],
+                        VerificationLevel = verificationLevels[0],
                         CreatedBy = 1,
                         EmailConfirmed = true,
                         FirstName = "Elton",
@@ -103,7 +135,7 @@ namespace Stellmart.Api.Context
                         IsActive = true,
                         IsDeleted = false,
                         LockoutEnabled = false,
-                        PhoneNumber = "00443239923023",
+                        PhoneNumber = "+14349899872",
                         PhoneNumberConfirmed = true,
                         UniqueId = Guid.NewGuid()
                     };
@@ -115,7 +147,7 @@ namespace Stellmart.Api.Context
                     var obj2 = userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin")).Result;
                     transaction.Commit();
                 }
-                catch(Exception e)
+                catch (Exception e)
                 {
                     transaction.Rollback();
                     throw new Exception(e.Message);

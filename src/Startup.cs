@@ -19,6 +19,7 @@ using StructureMap;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Threading.Tasks;
+using Stellmart.Api.Context.Entities;
 
 namespace Stellmart
 {
@@ -39,7 +40,7 @@ namespace Stellmart
             if (Hosting.IsDevelopment())
             {
                 services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer("Server=localhost\\SQLEXPRESS;Database=stellmart-dev-db;Trusted_Connection=True;"));
+                    options.UseSqlServer("Server=.;Database=stellmart-dev-db;Trusted_Connection=True;"));
             }
             else
             {
@@ -95,7 +96,14 @@ namespace Stellmart
 
         private void GetJwtBearerOptions(JwtBearerOptions options)
         {
-            options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+            if (Hosting.IsDevelopment())
+            {
+                options.Authority = "http://localhost:5001/";
+            }
+            else
+            {
+                options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
+            }
             options.Audience = "api1";
             options.RequireHttpsMetadata = false;
         }

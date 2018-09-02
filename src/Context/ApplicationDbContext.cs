@@ -90,7 +90,7 @@ namespace Stellmart.Context
 
         public DbSet<SystemSignature> OracleSignatures { get; set; }
 
-        public DbSet<SystemSignature> Userignatures { get; set; }
+        public DbSet<SystemSignature> UserSignatures { get; set; }
 
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
@@ -316,12 +316,6 @@ namespace Stellmart.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OnlineStore>()
-                .HasOne(s => s.Location)
-                .WithOne(u => u.OnlineStore)
-                .HasForeignKey<OnlineStore>(s => s.LocationId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<OnlineStore>()
                 .HasOne(s => s.ServiceRegion)
                 .WithOne(u => u.OnlineStore)
                 .HasForeignKey<OnlineStore>(s => s.ServiceRegionId)
@@ -427,12 +421,6 @@ namespace Stellmart.Context
                .HasOne(u => u.TimeUnit)
                .WithMany(d => d.PricePerTimes)
                .HasForeignKey(l => l.TimeUnitId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Region>()
-               .HasOne(r => r.Location)
-               .WithOne(l => l.Region)
-               .HasForeignKey<Region>(r => r.LocationId)
                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ContractPhase>()
