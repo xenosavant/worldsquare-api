@@ -49,7 +49,7 @@ namespace Stellmart.Api.Services
 
             var stellarRecoveryKey = _encryptionService.EncryptRecoveryKey(stellarKeyPair.SecretKey, model.Answers, stellarSecretKeyIv);
 
-            // to-do: set up mapper slack branch test
+            // to-do: set up mapper
 
             var user = new ApplicationUser
             {
