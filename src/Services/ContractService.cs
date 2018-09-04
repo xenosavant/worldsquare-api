@@ -1,4 +1,5 @@
-﻿using stellar_dotnet_sdk.responses;
+﻿using stellar_dotnet_sdk;
+using stellar_dotnet_sdk.responses;
 using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
 using System.Collections.Generic;
@@ -24,17 +25,18 @@ namespace Stellmart.Services
 		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
 		HorizonAccountSignerModel ws_account = new HorizonAccountSignerModel();
-
 		weight.Signers = new List<HorizonAccountSignerModel>();
-
 		Contract.Txn = new List<SubmitTransactionResponse>();
+		var ops = new List<Operation>();
 		//Create Escrow Account
 		HorizonKeyPairModel escrow = _horizon.CreateAccount();
 		//Transfer funds tp Escrow
         //TBD: consider other assets too
 		//TBD: transfer 1 % to WorldSquare 
-        string txnxdr = await _horizon.TransferNativeFund(ContractParam.SourceAccount, escrow.PublicKey,
+		var PaymentOp = _horizon.CreatePaymentOps(ContractParam.SourceAccount, escrow.PublicKey,
                 ContractParam.Asset.Amount);
+		ops.Add(PaymentOp);
+		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops);
         Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
 		//Escrow threshold weights are 4
 		weight.LowThreshold = 4;

@@ -6,6 +6,7 @@ using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Stellmart.Services
 {
@@ -51,8 +52,8 @@ namespace Stellmart.Services
             return accountRes.SequenceNumber;
         }
 
-        public async Task<string> TransferNativeFund(HorizonKeyPairModel sourceAccount,
-                    String destAccount, String amount)
+        public Operation CreatePaymentOps(HorizonKeyPairModel sourceAccount,
+                    String destAccount, String amount) 
         {
             var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
             Asset native = new AssetTypeNative();
@@ -60,15 +61,8 @@ namespace Stellmart.Services
             var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destAccount), native, amount)
                  .SetSourceAccount(source)
                  .Build();
-            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(sourceAccount.PublicKey));
-            var transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-                    .AddOperation(operation)
-                    .Build();
-            transaction.Sign(source);
-
-            return transaction.ToEnvelopeXdrBase64();
+            return operation;
         }
-
         public async Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
             HorizonAccountWeightModel Weights, HorizonTimeBoundModel Time)
         {
@@ -133,6 +127,21 @@ namespace Stellmart.Services
             var bytes = Convert.FromBase64String(txnstr);
             var transactionEnvelope = stellar_dotnet_sdk.xdr.TransactionEnvelope.Decode(new stellar_dotnet_sdk.xdr.XdrDataInputStream(bytes));
             return Transaction.FromEnvelope(transactionEnvelope);
+        }
+        
+        public async Task<string> CreateTxn(HorizonKeyPairModel SourceAccount,
+                                                List<Operation> ops)
+        {
+            var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
+            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
+            var txn_builder = new Transaction.Builder(new Account(source, accountRes.SequenceNumber));
+            foreach(Operation op in ops) {
+                txn_builder.AddOperation(op);
+            }
+            var transaction = txn_builder.Build();
+            transaction.Sign(source);
+
+            return transaction.ToEnvelopeXdrBase64();
         }
         public string SignTxn(HorizonKeyPairModel Account, string txnstr)
         {
