@@ -11,9 +11,6 @@ namespace Stellmart.Api.Tests
     {
         private IEncryptionService _encryptionService;
 
-        private byte[] _iv => new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
-                                           0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
-
         private string _key => "SAV76USXIJOBMEQXPANUOQM6F5LIOTLPDIDVRJBFFE2MDJXG24TAPUU7";
 
         [SetUp]
@@ -25,6 +22,8 @@ namespace Stellmart.Api.Tests
         [Test]
         public void TestEncryptDecryptRecoveryKey()
         {
+            byte[] iv = _encryptionService.GenerateIv();
+
             var answers =
             new List<string>()
             {
@@ -34,17 +33,18 @@ namespace Stellmart.Api.Tests
                 "purple",
                 "witchitah"
             };
-            var encrypted = _encryptionService.EncryptRecoveryKey(_key, answers, _iv);
-            var decrypted = _encryptionService.DecryptRecoveryKey(encrypted, answers, _iv);
+            var encrypted = _encryptionService.EncryptRecoveryKey(_key, answers, iv);
+            var decrypted = _encryptionService.DecryptRecoveryKey(encrypted, answers, iv);
             Assert.AreEqual(_key, decrypted);
         }
 
         [Test]
         public void TestEncryptDecryptSecretKey()
         {
+            byte[] iv = _encryptionService.GenerateIv();
             var password = "ksdjf*KAJSDF123ksdjf*KAJSDF123";
-            var encrypted = _encryptionService.EncryptSecretKey(_key, _iv, password);
-            var decrypted = _encryptionService.DecryptSecretKey(encrypted, _iv, password);
+            var encrypted = _encryptionService.EncryptSecretKey(_key, iv, password);
+            var decrypted = _encryptionService.DecryptSecretKey(encrypted, iv, password);
             Assert.AreEqual(_key, decrypted);
         }
 

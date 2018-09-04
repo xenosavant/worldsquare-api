@@ -73,7 +73,7 @@ namespace Stellmart.Api.Services
         // Generate a random Initialization Vector
         public byte[] GenerateIv()
         {
-            var array = new byte[32];
+            var array = new byte[16];
             var rng = new RNGCryptoServiceProvider();
             rng.GetBytes(array);
             return array;
