@@ -46,7 +46,7 @@ namespace Stellmart.Api.Controllers
         }
 
         /// <summary>
-        /// Creating new account
+        /// Get security questions
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
