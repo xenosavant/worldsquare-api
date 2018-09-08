@@ -4,6 +4,7 @@ using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Stellmart.Api.Services.Interfaces;
 
 namespace Stellmart.Services
 {
