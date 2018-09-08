@@ -37,16 +37,8 @@ namespace Stellmart
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            if (Hosting.IsDevelopment())
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer("Server=.;Database=stellmart-dev-db;Trusted_Connection=True;"));
-            }
-            else
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
-            }
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
 
             services.AddIdentityCore<ApplicationUser>(options => { })
                 .AddRoles<ApplicationRole>()
