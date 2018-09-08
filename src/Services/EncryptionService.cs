@@ -1,23 +1,14 @@
-﻿using System;
+﻿using Stellmart.Api.Data.ViewModels;
+using Stellmart.Api.Services.Interfaces;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
-using Stellmart.Api.Data.ViewModels;
-using System.Text;
 using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Stellmart.Api.Services
 {
-
-    public interface IEncryptionService
-    {
-        byte [] EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
-        string DecryptRecoveryKey(byte [] text, List<SecurityAnswerViewModel> answers);
-        byte [] EncryptSecretKey(string text, byte[] iv, string password);
-        string DecryptSecretKey(byte [] bytes, byte[] iv, string password);
-    }
-
     public class EncryptionService : IEncryptionService
     {
 
@@ -42,41 +33,40 @@ namespace Stellmart.Api.Services
             }
         }
 
-        public string DecryptRecoveryKey(byte [] bytes, List<SecurityAnswerViewModel> answers)
+        public string DecryptRecoveryKey(byte [] bytes, IReadOnlyCollection<string> answers, byte[] IV)
         {
-            var sortedAnswers = answers.OrderByDescending(a => a.Order);
-            foreach (var answer in sortedAnswers)
+            var reversedAnswers = answers.Reverse();
+            foreach (var answer in reversedAnswers)
             {
-                var downCased = answer.Answer.ToLower();
-                var key = KeyToSixteenBytes(downCased);
-                bytes = DecryptBytesFromBytes(bytes, key, answer.IV);
+                var downCased = answer.ToLower();
+                var key = KeyToThirtyTwoBytes(downCased);
+                bytes = DecryptBytesFromBytes(bytes, key, IV);
             }
             return Encoding.UTF8.GetString(bytes);
         }
 
-        public byte[] EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers)
+        public byte[] EncryptRecoveryKey(string text, IReadOnlyCollection<string> answers, byte[] IV)
         {
-            var sortedAnswers = answers.OrderBy(a => a.Order);
             var textAsBytes = Encoding.UTF8.GetBytes(text);
-            foreach (var answer in sortedAnswers)
+            foreach (var answer in answers)
             {
-                var downCased = answer.Answer.ToLower();
-                var key = KeyToSixteenBytes(downCased);
-                textAsBytes = EncryptBytesToBytes(textAsBytes, key, answer.IV);
+                var downCased = answer.ToLower();
+                var key = KeyToThirtyTwoBytes(downCased);
+                textAsBytes = EncryptBytesToBytes(textAsBytes, key, IV);
             }
             return textAsBytes;
         }
 
         public byte [] EncryptSecretKey(string text, byte[] iv, string password)
         {
-            var key = KeyToSixteenBytes(password);
+            var key = KeyToThirtyTwoBytes(password);
             var bytes = Encoding.UTF8.GetBytes(text);
             return EncryptBytesToBytes(bytes, key, iv);
         }
 
         public string DecryptSecretKey(byte[] bytes, byte[] iv, string password)
         {
-            var key = KeyToSixteenBytes(password);
+            var key = KeyToThirtyTwoBytes(password);
             return Encoding.UTF8.GetString(DecryptBytesFromBytes(bytes, key, iv));
         }
 
@@ -89,15 +79,15 @@ namespace Stellmart.Api.Services
             return array;
         }
 
-        // This method fits the key to 16 bytes so it can be used in AES
-        public byte[] KeyToSixteenBytes(string key)
+        // This method fits the key to 32 bytes so it can be used in AES
+        public byte[] KeyToThirtyTwoBytes(string key)
         {
             var keyAsBytes = Encoding.UTF8.GetBytes(key);
-            if (keyAsBytes.Length < 16)
+            if (keyAsBytes.Length < 32)
             {
-                var buffer = new byte[16];
+                var buffer = new byte[32];
                 var keyIndex = 0;
-                for (var i = 0; i < 16; i++)
+                for (var i = 0; i < 32; i++)
                 {
                     if (keyIndex == keyAsBytes.Length)
                     {

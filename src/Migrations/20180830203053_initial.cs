@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Stellmart.Api.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -203,6 +203,21 @@ namespace Stellmart.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_RewardsLevels", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SecurityQuestions",
+                columns: table => new
+                {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Description = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SecurityQuestions", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -674,7 +689,12 @@ namespace Stellmart.Api.Migrations
                     VerificationLevelId = table.Column<int>(nullable: false),
                     Flagged = table.Column<bool>(nullable: false),
                     UseTwoFactorForLogin = table.Column<bool>(nullable: false),
+                    TotpSecret = table.Column<string>(nullable: true),
+                    TwoFactorCode = table.Column<string>(nullable: true),
                     SecurityQuestions = table.Column<string>(nullable: true),
+                    TwoFactorFailedCount = table.Column<int>(nullable: false),
+                    MaxTwoFactorFailedAccessAttempts = table.Column<int>(nullable: false),
+                    DefaultTwoFatorLockoutMinutes = table.Column<int>(nullable: false),
                     CountryId = table.Column<int>(nullable: true),
                     UniqueId = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
@@ -879,6 +899,7 @@ namespace Stellmart.Api.Migrations
                     CreatedBy = table.Column<int>(nullable: false),
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     ModifiedBy = table.Column<int>(nullable: true),
+                    UserIdentifier = table.Column<string>(nullable: true),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
                     Email = table.Column<string>(nullable: true),
@@ -889,20 +910,14 @@ namespace Stellmart.Api.Migrations
                     AddressLine3 = table.Column<string>(nullable: true),
                     AddressLine4 = table.Column<string>(nullable: true),
                     AddressLine5 = table.Column<string>(nullable: true),
+                    AddressLine6 = table.Column<string>(nullable: true),
                     Gender = table.Column<string>(nullable: true),
                     Nationality = table.Column<string>(nullable: true),
-                    CountryId = table.Column<int>(nullable: false),
                     UserId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_KycDatas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_KycDatas_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_KycDatas_AspNetUsers_UserId",
                         column: x => x.UserId,
@@ -1021,12 +1036,12 @@ namespace Stellmart.Api.Migrations
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     ModifiedBy = table.Column<int>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
-                    NativeCurrencyId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    Verified = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     TagLine = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false),
+                    Verified = table.Column<bool>(nullable: false),
+                    NativeCurrencyId = table.Column<int>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     ServiceAreaId = table.Column<int>(nullable: true),
                     Internal = table.Column<bool>(nullable: true),
@@ -1144,6 +1159,7 @@ namespace Stellmart.Api.Migrations
                     Signed = table.Column<bool>(nullable: false),
                     SignedOn = table.Column<DateTime>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
+                    OracleId = table.Column<string>(nullable: true),
                     SignerId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -1556,11 +1572,6 @@ namespace Stellmart.Api.Migrations
                 column: "SuperCategoryId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_KycDatas_CountryId",
-                table: "KycDatas",
-                column: "CountryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_KycDatas_UserId",
                 table: "KycDatas",
                 column: "UserId");
@@ -1843,6 +1854,9 @@ namespace Stellmart.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "ProductShipments");
+
+            migrationBuilder.DropTable(
+                name: "SecurityQuestions");
 
             migrationBuilder.DropTable(
                 name: "ServiceRequestFulfillments");

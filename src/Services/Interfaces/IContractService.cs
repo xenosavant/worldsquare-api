@@ -3,7 +3,7 @@ using Stellmart.Api.Data.Horizon;
 using System.Threading.Tasks;
 
 
-namespace Stellmart.Services
+namespace Stellmart.Api.Services.Interfaces
 {
     public interface IContractService
     {

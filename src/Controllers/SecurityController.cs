@@ -10,7 +10,7 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class SecurityController : Controller
+    public class SecurityController : AuthorizedController
     {
         private readonly IMapper _mapper;
         private readonly ISecurityLogic _securityLogic;

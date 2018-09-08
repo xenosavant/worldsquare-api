@@ -7,6 +7,7 @@ using Stellmart.Api.Business.Helpers;
 using Stellmart.Api.Context;
 using Stellmart.Api.DataAccess;
 using Stellmart.Api.Services;
+using Stellmart.Api.Services.Interfaces;
 using Stellmart.Context;
 using Stellmart.Services;
 using StructureMap;

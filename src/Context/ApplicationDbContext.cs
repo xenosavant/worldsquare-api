@@ -13,85 +13,45 @@ namespace Stellmart.Context
         { }
 
         // Entities
-
         public DbSet<Area> Areas { get; set; }
-
         public DbSet<Contract> Contracts { get; set; }
-
         public DbSet<ContractPhase> ContractPhases { get; set; }
-
         public DbSet<Country> Countries { get; set; }
-
         public DbSet<CurrencyAmount> CurrencyAmounts { get; set; }
-
         public DbSet<DistributionCenter> DistributionCenters { get; set; }
-
         public DbSet<GeoLocation> GeoLocations { get; set; }
-
         public DbSet<InventoryItem> InventoryItems { get; set; }
-
         public DbSet<ItemMetaData> ItemMetaDatas { get; set; }
-
         public DbSet<KycData> KycDatas { get; set; }
-
         public DbSet<LineItem> LineItems { get; set; }
-
         public DbSet<Listing> Listings { get; set; }
-
         public DbSet<Location> Locations { get; set; }
-
         public DbSet<ListingInventoryItem> ListingInventoryItems { get; set; }
-
         public DbSet<Message> Messages { get; set; }
-
         public DbSet<MessageThread> MessageThreads { get; set; }
-
         public DbSet<PreTransaction> PreTransactions { get; set; }
-
         public DbSet<PricePerDistance> PricePerDistances { get; set; }
-
         public DbSet<PricePerTime> PricePerTimes { get; set; }
-
         public DbSet<ProductShipment> ProductShipments { get; set; }
-
         public DbSet<Region> Regions { get; set; }
-
         public DbSet<Review> Reviews { get; set; }
-
         public DbSet<Service> Services { get; set; }
-
         public DbSet<OnlineStore> OnlineStores { get; set; }
-
         public DbSet<RideService> RideServices { get; set; }
-
         public DbSet<DeliveryService> DeliveryServices { get; set; }
-
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
-
         public DbSet<DeliveryRequest> DeliveryRequests { get; set; }
-
         public DbSet<RideRequest> RideRequests { get; set; }
-
         public DbSet<ServiceRequestFulfillment> ServiceRequestFulfillments { get; set; }
-
         public DbSet<DeliveryRequestFulfillment> DeliveryRequestFulfillments { get; set; }
-
         public DbSet<ShippingManifest> ShippingManifests { get; set; }
-
         public DbSet<TradeItem> TradeItems { get; set; }
-
         public DbSet<ShippingManifestLineItem> ShippingManifestLineItems { get; set; }
-
         public DbSet<OnlineStoreReview> OnlineStoreReviews { get; set; }
-
         public DbSet<Signature> Signatures { get; set; }
-
         public DbSet<SystemSignature> SystemSignatures { get; set; }
-
-        public DbSet<SystemSignature> OracleSignatures { get; set; }
-
-        public DbSet<SystemSignature> UserSignatures { get; set; }
-
+        public DbSet<OracleSignature> OracleSignatures { get; set; }
+        public DbSet<UserSignature> UserSignatures { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         // Read Only Data
@@ -127,6 +87,7 @@ namespace Stellmart.Context
         public DbSet<TwoFactorAuthenticationType> TwoFactorAuthenticationTypes { get; set; }
 
         public DbSet<VerificationLevel> VerificationLevels { get; set; }
+        public DbSet<SecurityQuestion> SecurityQuestions { get; set; }
 
 
 

@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data.Enumerations;
 using Stellmart.Api.Data.Kyc;
 using Stellmart.Api.DataAccess;
+using System;
+using System.Threading.Tasks;
 
 namespace Stellmart.Api.Business.Managers
 {

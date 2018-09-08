@@ -58,7 +58,9 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Helpers\" />
+    <Folder Include="Data\Requests\" />
     <Folder Include="Data\Responses\" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 

@@ -1,4 +1,6 @@
-﻿namespace Stellmart.Api.Data.Enumerations
+﻿using System.ComponentModel;
+
+namespace Stellmart.Api.Data.Enumerations
 {
     public enum HttpResponseCodes
     {
@@ -18,5 +20,11 @@
         NonVerified = 1,
         LevelOne = 2,
         LevelTwo = 3
+    }
+
+    public enum RolesEnum
+    {
+        [Description("member")]
+        Member = 1
     }
 }

@@ -27,6 +27,24 @@ namespace Stellmart.Api.Context
             {
                 try
                 {
+                    var securityQuestions = new SecurityQuestion[]
+                    {
+                        new SecurityQuestion
+                        {
+                            DisplayOrder = 1,
+                            Description = "Who was your childhood hero?",
+                            Active = true
+                        },
+                        new SecurityQuestion
+                        {
+                            DisplayOrder = 2,
+                            Description = "What is your oldest cousin's first and last name?",
+                            Active = true
+                        }
+                    };
+
+                    context.SecurityQuestions.AddRange(securityQuestions);
+
                     var geolocation = new GeoLocation()
                     {
                         Latitude = 51.5073509,
@@ -137,12 +155,13 @@ namespace Stellmart.Api.Context
                         LockoutEnabled = false,
                         PhoneNumber = "+14349899872",
                         PhoneNumberConfirmed = true,
-                        UniqueId = Guid.NewGuid()
+                        UniqueId = Guid.NewGuid(),
+                        SecurityQuestions = "[{\"order\":1,\"question\":\"Who was your childhood hero?\"},{\"order\":2,\"question\":\"What is your oldest cousin's first and last name?\"}]"
                     };
 
                     var password = configuration["SeedData:InitialAdminPassword"];
 
-                    // Result used to avoid "The connection does not support MultipleActiveResultSets" since usermanager doesn't have non asynch method
+                    // Result used to avoid "The connection does not support MultipleActiveResultSets" since usermanager doesn't have synchronous method
                     var obj = userManager.CreateAsync(user, password).Result;
                     var obj2 = userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin")).Result;
                     transaction.Commit();

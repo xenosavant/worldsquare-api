@@ -179,7 +179,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("MustResetKey");
 
-                    b.Property<int>("NativeCurrencyId");
+                    b.Property<int?>("NativeCurrencyId");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256);
@@ -193,9 +193,9 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("PhoneNumberConfirmed");
 
-                    b.Property<int>("PrimaryShippingLocationId");
+                    b.Property<int?>("PrimaryShippingLocationId");
 
-                    b.Property<int>("RewardsLevelId");
+                    b.Property<int?>("RewardsLevelId");
 
                     b.Property<string>("SecurityQuestions");
 
@@ -217,7 +217,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("TwoFactorFailedCount");
 
-                    b.Property<int>("TwoFactorTypeId");
+                    b.Property<int?>("TwoFactorTypeId");
 
                     b.Property<Guid>("UniqueId");
 
@@ -226,7 +226,7 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("UserName")
                         .HasMaxLength(256);
 
-                    b.Property<int>("VerificationLevelId");
+                    b.Property<int?>("VerificationLevelId");
 
                     b.HasKey("Id");
 
@@ -243,7 +243,8 @@ namespace Stellmart.Api.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.HasIndex("PrimaryShippingLocationId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[PrimaryShippingLocationId] IS NOT NULL");
 
                     b.HasIndex("RewardsLevelId");
 
@@ -995,6 +996,23 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("RewardsLevels");
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.SecurityQuestion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("DisplayOrder");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecurityQuestions");
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ShippingCarrier", b =>
                 {
                     b.Property<int>("Id")
@@ -1558,6 +1576,18 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("DeliveryRequestFulfillment");
 
                     b.HasDiscriminator().HasValue("DeliveryRequestFulfillment");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.OracleSignature", b =>
+                {
+                    b.HasBaseType("Stellmart.Api.Context.Entities.Signature");
+
+                    b.Property<string>("OracleId")
+                        .IsRequired();
+
+                    b.ToTable("OracleSignature");
+
+                    b.HasDiscriminator().HasValue("OracleSignature");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.SystemSignature", b =>

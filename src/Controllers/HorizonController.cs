@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Stellmart.Api.Services.Interfaces;
 using Stellmart.Api.ViewModels.Horizon;
-using Stellmart.Services;
 using System.Threading.Tasks;
 
 namespace Stellmart.Api.Controllers.Helpers

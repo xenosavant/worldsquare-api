@@ -33,15 +33,15 @@ namespace Stellmart.Api.Context
 
         public bool ManagedAccount { get; set; }
 
-        public int PrimaryShippingLocationId { get; set; }
+        public int? PrimaryShippingLocationId { get; set; }
 
-        public int RewardsLevelId { get; set; }
+        public int? RewardsLevelId { get; set; }
 
-        public int TwoFactorTypeId { get; set; }
+        public int? TwoFactorTypeId { get; set; }
 
-        public int NativeCurrencyId { get; set; }
+        public int? NativeCurrencyId { get; set; }
 
-        public int VerificationLevelId { get; set; }
+        public int? VerificationLevelId { get; set; }
 
         public bool Flagged { get; set; }
 
