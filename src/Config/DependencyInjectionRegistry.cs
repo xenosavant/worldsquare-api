@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using stellar_dotnetcore_sdk;
+using stellar_dotnet_sdk;
 using Stellmart.Api.Business.Helpers;
 using Stellmart.Api.Context;
 using Stellmart.Api.DataAccess;
@@ -13,7 +12,6 @@ using Stellmart.Context;
 using Stellmart.Services;
 using StructureMap;
 using System;
-using System.IO;
 using System.Net.Http;
 using Yoti.Auth;
 

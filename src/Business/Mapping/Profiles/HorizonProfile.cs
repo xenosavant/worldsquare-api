@@ -1,9 +1,8 @@
 ﻿using AutoMapper;
-using stellar_dotnetcore_sdk;
-using stellar_dotnetcore_sdk.responses;
+using stellar_dotnet_sdk;
+using stellar_dotnet_sdk.responses;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.ViewModels.Horizon;
-using System.Collections.Generic;
 
 namespace Stellmart.Api.Business.Mapping.Profiles
 {
