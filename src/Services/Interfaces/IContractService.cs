@@ -1,7 +1,6 @@
 ﻿using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
 using System.Threading.Tasks;
-using stellar_dotnetcore_sdk;
 
 
 namespace Stellmart.Api.Services.Interfaces
@@ -12,15 +11,14 @@ namespace Stellmart.Api.Services.Interfaces
 	   Add signer as destination, stellmart and change threshold weights.
 	   Returns Escrow account id
          */
-	Task<HorizonKeyPairModel> SetupContract(HorizonKeyPairModel SourceAccount, string DestAccount,
-						string Amount);
+	Task<int> SetupContract(ContractParamModel ContractParam);
 	/* Based on the Contract Parameters, Contract will be created.
 	   Returns Contract with one pre transaction added to the contract list
 	 */
-	ContractModel CreateContract(ContractParamModel ContractParam);
+	Task<int> CreateContract(ContractParamModel ContractParam);
 
-	string SignContract(HorizonKeyPairModel Account, ContractModel Contract);
+	string SignContract(HorizonKeyPairModel Account);
 	/*Submits the transaction to the network, returns the hash of transaction*/
-	string ExecuteContract(ContractModel Contract);
+	string ExecuteContract();
     }
 }

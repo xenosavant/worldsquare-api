@@ -15,7 +15,7 @@ namespace Stellmart.Api.Context
         public static void Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             // ensure database exists and migration applied
-            // context.Database.Migrate();
+            context.Database.Migrate();
 
             //  Look for any users.
             if (context.Users.Any())

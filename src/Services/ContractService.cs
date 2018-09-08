@@ -1,15 +1,17 @@
-﻿using Stellmart.Api.Data.Contract;
+﻿using stellar_dotnet_sdk;
+using stellar_dotnet_sdk.responses;
+using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
-using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Stellmart.Api.Services.Interfaces;
 
 namespace Stellmart.Services
 {
     public class ContractService : IContractService
     {
 	private readonly IHorizonService _horizon;
-	private long _sequence;
+	public ContractModel Contract {get; private set;}
 
 	public ContractService(IHorizonService horizon)
 	{
@@ -17,41 +19,80 @@ namespace Stellmart.Services
 	}
 	//TBD: Add WorldSquare account as signer
 	//TBD: Add async and await
-	public async Task<HorizonKeyPairModel> SetupContract(HorizonKeyPairModel SourceAccount, string DestAccount,
-						string Amount)
+	public async Task<int> SetupContract(ContractParamModel ContractParam)
 	{
+		if (ContractParam.Type != ContractType.Setup)
+			return 0;
 		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
+		HorizonAccountSignerModel ws_account = new HorizonAccountSignerModel();
 		weight.Signers = new List<HorizonAccountSignerModel>();
-
+		Contract.Txn = new List<SubmitTransactionResponse>();
+		var ops = new List<Operation>();
+		//Create Escrow Account
 		HorizonKeyPairModel escrow = _horizon.CreateAccount();
-		//TBT: catch the return param
-		await _horizon.TransferNativeFund(SourceAccount, escrow.PublicKey, Amount);
-
-		weight.LowThreshold = 2;
-		weight.MediumThreshold = 2;
-		weight.HighThreshold = 2;
-		dest_account.Signer = DestAccount;
+		//Transfer funds tp Escrow
+        //TBD: consider other assets too
+		//TBD: transfer 1 % to WorldSquare 
+		var PaymentOp = _horizon.CreatePaymentOps(ContractParam.SourceAccount, escrow.PublicKey,
+                ContractParam.Asset.Amount);
+		ops.Add(PaymentOp);
+		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops);
+        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
+		//Escrow threshold weights are 4
+		weight.LowThreshold = 4;
+		weight.MediumThreshold = 4;
+		weight.HighThreshold = 4;
+		//escrow master weight (1) + dest weight (1) + WorldSquare (2)
+		//dest account has weight 1
+		dest_account.Signer = ContractParam.DestAccount;
 		dest_account.Weight = 1;
 		weight.Signers.Add(dest_account);
+		//Make sure that WorldSquare weight is added as 2
+		ws_account.Signer = Contract.WorldSquareAccount.PublicKey;
+		ws_account.Weight = 2;
+		weight.Signers.Add(ws_account);
 
-		//TBT: catch the return param
-		await _horizon.SetWeightSigner(escrow, weight);
-		_sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
+        txnxdr = await _horizon.SetWeightSigner(escrow, weight, null);
+        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
 
-		return escrow;
+		Contract.Sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
+		Contract.EscrowAccount = escrow;
+		Contract.DestAccount = ContractParam.DestAccount;
+		Contract.State = ContractState.Initial;
+		return 1;
 	}
-	public ContractModel CreateContract(ContractParamModel ContractParam)
+	public async Task<int> CreateContract(ContractParamModel ContractParam)
 	{
-		ContractModel model = new ContractModel();
-		return model;
+		if (ContractParam.Type == ContractType.PreTxnAccountMerge) {
+			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
+			Time.MinTime = ContractParam.MinTime;
+			Time.MaxTime = ContractParam.MaxTime;
+			//save the xdr
+			await _horizon.AccountMerge(Contract.EscrowAccount, Contract.DestAccount, Time);
+		} else if (ContractParam.Type == ContractType.PreTxnSetWeight) {
+			HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
+			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
+			//make escrow threshold weights as 3, 
+			//WorldSquare (2) + Buyer (1) or WorldSquare (2) + Seller (1)
+			weight.LowThreshold = 3;
+			weight.MediumThreshold = 3;
+			weight.HighThreshold = 3;
+			Time.MinTime = ContractParam.MinTime;
+			Time.MaxTime = ContractParam.MaxTime;
+			//save the xdr
+			await _horizon.SetWeightSigner(Contract.EscrowAccount, weight, Time);
+		} else {
+			return 0;
+		}
+		return 1;
 	}
-	public string SignContract(HorizonKeyPairModel Account, ContractModel Contract)
+	public string SignContract(HorizonKeyPairModel Account)
 	{
 		string hash = "";
 		return hash;
 	}
-	public string ExecuteContract(ContractModel Contract)
+	public string ExecuteContract()
 	{
 		string hash = "";
 		return hash;
