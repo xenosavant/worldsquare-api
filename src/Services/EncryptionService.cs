@@ -21,7 +21,7 @@ namespace Stellmart.Api.Services
                 {
                     var aes = Aes.Create();
                     aes.BlockSize = 128;
-                    aes.KeySize = 128;
+                    aes.KeySize = 256;
                     aes.Padding = PaddingMode.PKCS7;
                     aes.Mode = CipherMode.CBC;
                     return _aes = aes;
