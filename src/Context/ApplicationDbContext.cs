@@ -320,8 +320,8 @@ namespace Stellmart.Context
 
             modelBuilder.Entity<ApplicationUser>()
                 .HasOne(u => u.PrimaryShippingLocation)
-                .WithOne(c => c.User)
-                .HasForeignKey<ApplicationUser>(s => s.PrimaryShippingLocationId)
+                .WithMany(c => c.Users)
+                .HasForeignKey(s => s.PrimaryShippingLocationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ApplicationUser>()
