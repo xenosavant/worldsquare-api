@@ -88,14 +88,7 @@ namespace Stellmart
 
         private void GetJwtBearerOptions(JwtBearerOptions options)
         {
-            if (Hosting.IsDevelopment())
-            {
-                options.Authority = "http://localhost:5001/";
-            }
-            else
-            {
-                options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-            }
+            options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
             options.Audience = "api1";
             options.RequireHttpsMetadata = false;
         }
