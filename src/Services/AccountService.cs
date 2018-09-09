@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Claims;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using ServiceStack;
 using Stellmart.Api.Business.Helpers;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context;
 using Stellmart.Api.Data.Account;
-using Stellmart.Api.Data.Enumerations;
 using Stellmart.Api.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Stellmart.Api.Data.Enums;
 
 namespace Stellmart.Api.Services
 {
