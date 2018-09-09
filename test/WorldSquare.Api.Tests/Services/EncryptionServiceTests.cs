@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Stellmart.Api.Data.ViewModels;
 using NUnit.Framework;
 using Stellmart.Api.Services;
+using Stellmart.Api.Services.Interfaces;
 
 namespace Stellmart.Api.Tests
 {

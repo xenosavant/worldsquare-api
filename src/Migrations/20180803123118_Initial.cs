@@ -24,6 +24,28 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Category",
+                columns: table => new
+                {
+                    Active = table.Column<bool>(nullable: false),
+                    DisplayOrder = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Description = table.Column<string>(nullable: true),
+                    ParentCategoryId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Category", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Category_Category_ParentCategoryId",
+                        column: x => x.ParentCategoryId,
+                        principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ContractStates",
                 columns: table => new
                 {
@@ -146,21 +168,6 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ListingCategory",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(nullable: true),
-                    SubCategoryId = table.Column<string>(nullable: true),
-                    Active = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ListingCategory", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "QuantityUnits",
                 columns: table => new
                 {
@@ -232,35 +239,6 @@ namespace Stellmart.Api.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ShippingManifests", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SubCategories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(nullable: true),
-                    SuperCategoryId = table.Column<string>(nullable: true),
-                    Active = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SubCategories", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SuperCategories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(nullable: true),
-                    Active = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SuperCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -439,6 +417,28 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ItemMetaDatas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    KeyWords = table.Column<string>(nullable: true),
+                    ItemConditionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemMetaDatas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ItemMetaDatas_ItemConditions_ItemConditionId",
+                        column: x => x.ItemConditionId,
+                        principalTable: "ItemConditions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Locations",
                 columns: table => new
                 {
@@ -471,49 +471,6 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ItemMetaDatas",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    SuperCategoryId = table.Column<int>(nullable: false),
-                    SubCategoryId = table.Column<int>(nullable: false),
-                    ListingCategoryId = table.Column<int>(nullable: false),
-                    KeyWords = table.Column<string>(nullable: true),
-                    ItemConditionId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ItemMetaDatas", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ItemMetaDatas_ItemConditions_ItemConditionId",
-                        column: x => x.ItemConditionId,
-                        principalTable: "ItemConditions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemMetaDatas_ListingCategory_ListingCategoryId",
-                        column: x => x.ListingCategoryId,
-                        principalTable: "ListingCategory",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemMetaDatas_SubCategories_SubCategoryId",
-                        column: x => x.SubCategoryId,
-                        principalTable: "SubCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemMetaDatas_SuperCategories_SuperCategoryId",
-                        column: x => x.SuperCategoryId,
-                        principalTable: "SuperCategories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ContractPhases",
                 columns: table => new
                 {
@@ -538,46 +495,6 @@ namespace Stellmart.Api.Migrations
                         name: "FK_ContractPhases_Contracts_ContractId",
                         column: x => x.ContractId,
                         principalTable: "Contracts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "InventoryItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
-                    ConditionId = table.Column<int>(nullable: false),
-                    UnitPriceId = table.Column<int>(nullable: false),
-                    UnitTypeId = table.Column<int>(nullable: false),
-                    Descriptors = table.Column<string>(nullable: true),
-                    UPC = table.Column<string>(nullable: true),
-                    SKU = table.Column<string>(nullable: true),
-                    UnitsAvailable = table.Column<int>(nullable: false),
-                    UnitsSold = table.Column<int>(nullable: false),
-                    UnitsReturned = table.Column<int>(nullable: false),
-                    PriceId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_InventoryItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_InventoryItems_CurrencyAmounts_PriceId",
-                        column: x => x.PriceId,
-                        principalTable: "CurrencyAmounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_InventoryItems_QuantityUnits_UnitTypeId",
-                        column: x => x.UnitTypeId,
-                        principalTable: "QuantityUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -636,6 +553,30 @@ namespace Stellmart.Api.Migrations
                         principalTable: "TimeUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemMetaDataCategories",
+                columns: table => new
+                {
+                    ItemMetaDataId = table.Column<int>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemMetaDataCategories", x => new { x.ItemMetaDataId, x.CategoryId });
+                    table.ForeignKey(
+                        name: "FK_ItemMetaDataCategories_Category_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Category",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ItemMetaDataCategories_ItemMetaDatas_ItemMetaDataId",
+                        column: x => x.ItemMetaDataId,
+                        principalTable: "ItemMetaDatas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -751,33 +692,6 @@ namespace Stellmart.Api.Migrations
                         name: "FK_PreTransactions_ContractPhases_ContractPhaseId",
                         column: x => x.ContractPhaseId,
                         principalTable: "ContractPhases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "LineItems",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
-                    InventoryItemId = table.Column<int>(nullable: false),
-                    Quantity = table.Column<int>(nullable: false),
-                    ShippingManifestId = table.Column<int>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LineItems", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_LineItems_InventoryItems_InventoryItemId",
-                        column: x => x.InventoryItemId,
-                        principalTable: "InventoryItems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1021,16 +935,17 @@ namespace Stellmart.Api.Migrations
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     ModifiedBy = table.Column<int>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
-                    NativeCurrencyId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false),
-                    Verified = table.Column<bool>(nullable: false),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     TagLine = table.Column<string>(nullable: true),
+                    UserId = table.Column<int>(nullable: false),
+                    Verified = table.Column<bool>(nullable: false),
+                    NativeCurrencyId = table.Column<int>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false),
                     ServiceAreaId = table.Column<int>(nullable: true),
                     Internal = table.Column<bool>(nullable: true),
                     Global = table.Column<bool>(nullable: true),
+                    OnlineStore_Internal = table.Column<bool>(nullable: true),
                     ServiceRegionId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -1159,30 +1074,6 @@ namespace Stellmart.Api.Migrations
                         name: "FK_Signatures_AspNetUsers_SignerId",
                         column: x => x.SignerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ShippingManifestLineItems",
-                columns: table => new
-                {
-                    ShippingManifestId = table.Column<int>(nullable: false),
-                    LineItemId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ShippingManifestLineItems", x => new { x.ShippingManifestId, x.LineItemId });
-                    table.ForeignKey(
-                        name: "FK_ShippingManifestLineItems_LineItems_LineItemId",
-                        column: x => x.LineItemId,
-                        principalTable: "LineItems",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ShippingManifestLineItems_ShippingManifests_ShippingManifestId",
-                        column: x => x.ShippingManifestId,
-                        principalTable: "ShippingManifests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1401,25 +1292,98 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ListingInventoryItems",
+                name: "InventoryItems",
                 columns: table => new
                 {
-                    ListingId = table.Column<int>(nullable: false),
-                    InventoryItemId = table.Column<int>(nullable: false)
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedBy = table.Column<int>(nullable: true),
+                    ListingId = table.Column<int>(nullable: true),
+                    UnitPriceId = table.Column<int>(nullable: false),
+                    UnitTypeId = table.Column<int>(nullable: false),
+                    Descriptors = table.Column<string>(nullable: true),
+                    UPC = table.Column<string>(nullable: true),
+                    SKU = table.Column<string>(nullable: true),
+                    UnitsAvailable = table.Column<int>(nullable: false),
+                    UnitsSold = table.Column<int>(nullable: false),
+                    UnitsReturned = table.Column<int>(nullable: false),
+                    PriceId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ListingInventoryItems", x => new { x.ListingId, x.InventoryItemId });
+                    table.PrimaryKey("PK_InventoryItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ListingInventoryItems_InventoryItems_InventoryItemId",
+                        name: "FK_InventoryItems_Listings_ListingId",
+                        column: x => x.ListingId,
+                        principalTable: "Listings",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryItems_CurrencyAmounts_PriceId",
+                        column: x => x.PriceId,
+                        principalTable: "CurrencyAmounts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_InventoryItems_QuantityUnits_UnitTypeId",
+                        column: x => x.UnitTypeId,
+                        principalTable: "QuantityUnits",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LineItems",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedBy = table.Column<int>(nullable: true),
+                    InventoryItemId = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
+                    ShippingManifestId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LineItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LineItems_InventoryItems_InventoryItemId",
                         column: x => x.InventoryItemId,
                         principalTable: "InventoryItems",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShippingManifestLineItems",
+                columns: table => new
+                {
+                    ShippingManifestId = table.Column<int>(nullable: false),
+                    LineItemId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShippingManifestLineItems", x => new { x.ShippingManifestId, x.LineItemId });
                     table.ForeignKey(
-                        name: "FK_ListingInventoryItems_Listings_ListingId",
-                        column: x => x.ListingId,
-                        principalTable: "Listings",
+                        name: "FK_ShippingManifestLineItems_LineItems_LineItemId",
+                        column: x => x.LineItemId,
+                        principalTable: "LineItems",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ShippingManifestLineItems_ShippingManifests_ShippingManifestId",
+                        column: x => x.ShippingManifestId,
+                        principalTable: "ShippingManifests",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1506,6 +1470,13 @@ namespace Stellmart.Api.Migrations
                 column: "VerificationLevelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Category_ParentCategoryId",
+                table: "Category",
+                column: "ParentCategoryId",
+                unique: true,
+                filter: "[ParentCategoryId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ContractPhases_ContractId",
                 table: "ContractPhases",
                 column: "ContractId");
@@ -1526,6 +1497,11 @@ namespace Stellmart.Api.Migrations
                 column: "CurrencyTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_InventoryItems_ListingId",
+                table: "InventoryItems",
+                column: "ListingId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_InventoryItems_PriceId",
                 table: "InventoryItems",
                 column: "PriceId");
@@ -1536,24 +1512,14 @@ namespace Stellmart.Api.Migrations
                 column: "UnitTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ItemMetaDataCategories_CategoryId",
+                table: "ItemMetaDataCategories",
+                column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ItemMetaDatas_ItemConditionId",
                 table: "ItemMetaDatas",
                 column: "ItemConditionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemMetaDatas_ListingCategoryId",
-                table: "ItemMetaDatas",
-                column: "ListingCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemMetaDatas_SubCategoryId",
-                table: "ItemMetaDatas",
-                column: "SubCategoryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ItemMetaDatas_SuperCategoryId",
-                table: "ItemMetaDatas",
-                column: "SuperCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_KycDatas_CountryId",
@@ -1570,11 +1536,6 @@ namespace Stellmart.Api.Migrations
                 table: "LineItems",
                 column: "InventoryItemId",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_ListingInventoryItems_InventoryItemId",
-                table: "ListingInventoryItems",
-                column: "InventoryItemId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Listings_ItemMetaDataId",
@@ -1824,10 +1785,10 @@ namespace Stellmart.Api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "KycDatas");
+                name: "ItemMetaDataCategories");
 
             migrationBuilder.DropTable(
-                name: "ListingInventoryItems");
+                name: "KycDatas");
 
             migrationBuilder.DropTable(
                 name: "Messages");
@@ -1860,7 +1821,7 @@ namespace Stellmart.Api.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Listings");
+                name: "Category");
 
             migrationBuilder.DropTable(
                 name: "Reviews");
@@ -1890,37 +1851,13 @@ namespace Stellmart.Api.Migrations
                 name: "TradeInStates");
 
             migrationBuilder.DropTable(
-                name: "ItemMetaDatas");
-
-            migrationBuilder.DropTable(
-                name: "Services");
-
-            migrationBuilder.DropTable(
-                name: "MessageThreads");
-
-            migrationBuilder.DropTable(
                 name: "InventoryItems");
 
             migrationBuilder.DropTable(
                 name: "ContractPhases");
 
             migrationBuilder.DropTable(
-                name: "ItemConditions");
-
-            migrationBuilder.DropTable(
-                name: "ListingCategory");
-
-            migrationBuilder.DropTable(
-                name: "SubCategories");
-
-            migrationBuilder.DropTable(
-                name: "SuperCategories");
-
-            migrationBuilder.DropTable(
-                name: "Areas");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Listings");
 
             migrationBuilder.DropTable(
                 name: "CurrencyAmounts");
@@ -1932,10 +1869,37 @@ namespace Stellmart.Api.Migrations
                 name: "Contracts");
 
             migrationBuilder.DropTable(
+                name: "ItemMetaDatas");
+
+            migrationBuilder.DropTable(
+                name: "Services");
+
+            migrationBuilder.DropTable(
+                name: "MessageThreads");
+
+            migrationBuilder.DropTable(
+                name: "ContractStates");
+
+            migrationBuilder.DropTable(
+                name: "ContractTypes");
+
+            migrationBuilder.DropTable(
+                name: "ItemConditions");
+
+            migrationBuilder.DropTable(
+                name: "Areas");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
                 name: "DistanceUnits");
 
             migrationBuilder.DropTable(
                 name: "Countries");
+
+            migrationBuilder.DropTable(
+                name: "Currencies");
 
             migrationBuilder.DropTable(
                 name: "Locations");
@@ -1948,15 +1912,6 @@ namespace Stellmart.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "VerificationLevels");
-
-            migrationBuilder.DropTable(
-                name: "Currencies");
-
-            migrationBuilder.DropTable(
-                name: "ContractStates");
-
-            migrationBuilder.DropTable(
-                name: "ContractTypes");
 
             migrationBuilder.DropTable(
                 name: "GeoLocations");

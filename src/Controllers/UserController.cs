@@ -5,6 +5,7 @@ using Stellmart.Api.Business.Logic;
 using Stellmart.Data;
 using Stellmart.Data.ViewModels;
 using Stellmart.Services;
+using Stellmart.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

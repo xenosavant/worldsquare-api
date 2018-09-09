@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.ViewModels.Horizon;
 using Stellmart.Services;
+using Stellmart.Services.Interfaces;
 using System.Threading.Tasks;
 
 namespace Stellmart.Api.Controllers.Helpers

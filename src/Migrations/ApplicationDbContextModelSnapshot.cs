@@ -425,8 +425,6 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("ConditionId");
-
                     b.Property<int>("CreatedBy");
 
                     b.Property<DateTime>("CreatedDate");
@@ -434,6 +432,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("Descriptors");
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<int?>("ListingId");
 
                     b.Property<int?>("ModifiedBy");
 
@@ -458,6 +458,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<int>("UnitsSold");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ListingId");
 
                     b.HasIndex("PriceId");
 
@@ -598,19 +600,6 @@ namespace Stellmart.Api.Migrations
                     b.HasIndex("ThreadId");
 
                     b.ToTable("Listings");
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ListingInventoryItem", b =>
-                {
-                    b.Property<int>("ListingId");
-
-                    b.Property<int>("InventoryItemId");
-
-                    b.HasKey("ListingId", "InventoryItemId");
-
-                    b.HasIndex("InventoryItemId");
-
-                    b.ToTable("ListingInventoryItems");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Message", b =>
@@ -832,6 +821,29 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("ProductShipments");
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.Category", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("DisplayOrder");
+
+                    b.Property<int?>("ParentCategoryId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentCategoryId")
+                        .IsUnique()
+                        .HasFilter("[ParentCategoryId] IS NOT NULL");
+
+                    b.ToTable("Category");
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ContractState", b =>
                 {
                     b.Property<int>("Id")
@@ -917,40 +929,6 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("FulfillmentStates");
                 });
 
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ItemCondition", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("Description");
-
-                    b.Property<int>("DisplayOrder");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ItemConditions");
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ListingCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("SubCategoryId");
-
-                    b.Property<string>("Title");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ListingCategory");
-                });
-
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.QuantityUnit", b =>
                 {
                     b.Property<int>("Id")
@@ -966,6 +944,23 @@ namespace Stellmart.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("QuantityUnits");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ReadonlyViewModel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Active");
+
+                    b.Property<string>("Description");
+
+                    b.Property<int>("DisplayOrder");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ItemConditions");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.RewardsLevel", b =>
@@ -1000,38 +995,6 @@ namespace Stellmart.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ShippingCarriers");
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.SubCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("SuperCategoryId");
-
-                    b.Property<string>("Title");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SubCategories");
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.SuperCategory", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("Title");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("SuperCategories");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.TimeUnit", b =>
@@ -1357,25 +1320,26 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("KeyWords");
 
-                    b.Property<int>("ListingCategoryId");
-
-                    b.Property<int>("SubCategoryId");
-
-                    b.Property<int>("SuperCategoryId");
-
                     b.Property<Guid>("UniqueId");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ItemConditionId");
 
-                    b.HasIndex("ListingCategoryId");
-
-                    b.HasIndex("SubCategoryId");
-
-                    b.HasIndex("SuperCategoryId");
-
                     b.ToTable("ItemMetaDatas");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.ItemMetaDataCategory", b =>
+                {
+                    b.Property<int>("ItemMetaDataId");
+
+                    b.Property<int>("CategoryId");
+
+                    b.HasKey("ItemMetaDataId", "CategoryId");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("ItemMetaDataCategories");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Location", b =>
@@ -1487,6 +1451,9 @@ namespace Stellmart.Api.Migrations
                     b.HasBaseType("Stellmart.Api.Context.Entities.Service");
 
                     b.Property<bool>("Global");
+
+                    b.Property<bool>("Internal")
+                        .HasColumnName("OnlineStore_Internal");
 
                     b.Property<int>("ServiceRegionId");
 
@@ -1693,6 +1660,11 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.InventoryItem", b =>
                 {
+                    b.HasOne("Stellmart.Api.Context.Entities.Listing", "Listing")
+                        .WithMany("InventoryItems")
+                        .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Stellmart.Api.Context.Entities.CurrencyAmount", "Price")
                         .WithMany()
                         .HasForeignKey("PriceId");
@@ -1739,19 +1711,6 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.Entities.MessageThread", "Thread")
                         .WithMany()
                         .HasForeignKey("ThreadId");
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ListingInventoryItem", b =>
-                {
-                    b.HasOne("Stellmart.Api.Context.Entities.InventoryItem", "InventoryItem")
-                        .WithMany("ListingInventoryItems")
-                        .HasForeignKey("InventoryItemId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.Entities.Listing", "Listing")
-                        .WithMany("ListingInventoryItems")
-                        .HasForeignKey("ListingId")
-                        .OnDelete(DeleteBehavior.Restrict);
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Message", b =>
@@ -1855,6 +1814,14 @@ namespace Stellmart.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.Category", b =>
+                {
+                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.Category", "ParentCategory")
+                        .WithOne("ChildCategory")
+                        .HasForeignKey("Stellmart.Api.Context.Entities.ReadOnly.Category", "ParentCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Review", b =>
                 {
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "Reviewer")
@@ -1930,25 +1897,23 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.ItemMetaData", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.ItemCondition", "ItemCondition")
+                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.ReadonlyViewModel", "ItemCondition")
                         .WithMany("ItemMetaDatas")
                         .HasForeignKey("ItemConditionId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
 
-                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.ListingCategory", "ListingCategory")
-                        .WithMany("ItemMetaDatas")
-                        .HasForeignKey("ListingCategoryId")
+            modelBuilder.Entity("Stellmart.Api.Context.ItemMetaDataCategory", b =>
+                {
+                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.Category", "Category")
+                        .WithMany("ItemMetaDataCategories")
+                        .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.SubCategory", "SubCategory")
-                        .WithMany("ItemMetaDatas")
-                        .HasForeignKey("SubCategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.SuperCategory", "SuperCategory")
-                        .WithMany("ItemMetaDatas")
-                        .HasForeignKey("SuperCategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("Stellmart.Api.Context.ItemMetaData", "ItemMetaData")
+                        .WithMany("ItemMetaDataCategories")
+                        .HasForeignKey("ItemMetaDataId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Location", b =>

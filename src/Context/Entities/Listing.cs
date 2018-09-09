@@ -1,4 +1,5 @@
-﻿using Stellmart.Api.Context.Entities.Entity;
+﻿using Newtonsoft.Json;
+using Stellmart.Api.Context.Entities.Entity;
 using Stellmart.Api.Context.Entities.ReadOnly;
 using System;
 using System.Collections.Generic;
@@ -19,12 +20,10 @@ namespace Stellmart.Api.Context.Entities
 
         public string Description { get; set; }
 
-        [Required]
         public bool Flagged { get; set; }
 
         public int? ThreadId { get; set; }
 
-        [Required]
         public bool Internal { get; set; }
 
         public int ItemMetaDataId { get; set; }
@@ -33,10 +32,7 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual MessageThread Thread { get; set; }
 
-        [NotMapped]
-        public virtual IEnumerable<InventoryItem> InventoryItems => ListingInventoryItems?.Select(l => l.InventoryItem);
-
-        public virtual ICollection<ListingInventoryItem> ListingInventoryItems { get; set; }
+        public virtual ICollection<InventoryItem> InventoryItems { get; set; }
 
         public virtual ItemMetaData ItemMetaData { get; set; }
 

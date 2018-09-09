@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Data.Kyc;
 using Stellmart.Api.Services;
+using Stellmart.Api.Services.Interfaces;
 using System.Net;
 using System.Threading.Tasks;
 

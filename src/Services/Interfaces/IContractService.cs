@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using stellar_dotnetcore_sdk;
 
 
-namespace Stellmart.Services
+namespace Stellmart.Services.Interfaces
 {
     public interface IContractService
     {

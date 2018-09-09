@@ -8,12 +8,16 @@ namespace Stellmart.Api.Data.ViewModels
 {
     public class ListingViewModel
     {
+        public int OnlineStoreId { get; set; }
+
         public string Title { get; set; }
 
         public string Description { get; set; }
 
+        public ItemMetaDataViewModel ItemMetaData { get; set; }
+
         public MessageThread Thread { get; set; }
 
-        IEnumerable<InventoryItem> InventoryItems { get; set; }
+        public IEnumerable<InventoryItemViewModel> InventoryItems { get; set; }
     }
 }

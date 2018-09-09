@@ -32,6 +32,8 @@ namespace Stellmart.Context
 
         public DbSet<ItemMetaData> ItemMetaDatas { get; set; }
 
+        public DbSet<ItemMetaDataCategory> ItemMetaDataCategories { get; set; }
+
         public DbSet<KycData> KycDatas { get; set; }
 
         public DbSet<LineItem> LineItems { get; set; }
@@ -39,8 +41,6 @@ namespace Stellmart.Context
         public DbSet<Listing> Listings { get; set; }
 
         public DbSet<Location> Locations { get; set; }
-
-        public DbSet<ListingInventoryItem> ListingInventoryItems { get; set; }
 
         public DbSet<Message> Messages { get; set; }
 
@@ -96,7 +96,7 @@ namespace Stellmart.Context
 
         // Read Only Data
 
-        public DbSet<ItemCondition> ItemConditions { get; set; }
+        public DbSet<ReadonlyViewModel> ItemConditions { get; set; }
 
         public DbSet<ContractState> ContractStates { get; set; }
 
@@ -108,17 +108,11 @@ namespace Stellmart.Context
 
         public DbSet<FulfillmentState> FulfillmentStates { get; set; }
 
-        public DbSet<ListingCategory> ListingCategory { get; set; }
-
         public DbSet<QuantityUnit> QuantityUnits { get; set; }
 
         public DbSet<RewardsLevel> RewardsLevels { get; set; }
 
         public DbSet<ShippingCarrier> ShippingCarriers { get; set; }
-
-        public DbSet<SubCategory> SubCategories { get; set; }
-
-        public DbSet<SuperCategory> SuperCategories { get; set; }
 
         public DbSet<TimeUnit> TimeUnits { get; set; }
 
@@ -143,6 +137,21 @@ namespace Stellmart.Context
             });
 
             //  Many to Many relationships
+
+            modelBuilder.Entity<ItemMetaDataCategory>()
+                .HasKey(i => new { i.ItemMetaDataId, i.CategoryId });
+
+            modelBuilder.Entity<ItemMetaDataCategory>()
+                .HasOne(i => i.Category)
+                .WithMany(c => c.ItemMetaDataCategories)
+                .HasForeignKey(i => i.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ItemMetaDataCategory>()
+                .HasOne(i => i.Category)
+                .WithMany(c => c.ItemMetaDataCategories)
+                .HasForeignKey(i => i.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ShippingManifestLineItem>()
                 .HasKey(sl => new { sl.ShippingManifestId, sl.LineItemId });
@@ -174,19 +183,10 @@ namespace Stellmart.Context
                 .HasForeignKey(or => or.ReviewId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ListingInventoryItem>()
-                .HasKey(li => new { li.ListingId, li.InventoryItemId });
-
-            modelBuilder.Entity<ListingInventoryItem>()
-                .HasOne(li => li.InventoryItem)
-                .WithMany(i => i.ListingInventoryItems)
-                .HasForeignKey(li => li.InventoryItemId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ListingInventoryItem>()
-                .HasOne(li => li.Listing)
-                .WithMany(l => l.ListingInventoryItems)
-                .HasForeignKey(li => li.ListingId)
+            modelBuilder.Entity<InventoryItem>()
+                .HasOne(i => i.Listing)
+                .WithMany(r => r.InventoryItems)
+                .HasForeignKey(i => i.ListingId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ServiceRequest>()
@@ -429,23 +429,10 @@ namespace Stellmart.Context
                 .HasForeignKey(p => p.ContractPhaseId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ItemMetaData>()
-                 .HasOne(i => i.ListingCategory)
-                 .WithMany(l => l.ItemMetaDatas)
-                 .HasForeignKey(r => r.ListingCategoryId)
-                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ItemMetaData>()
-                 .HasOne(i => i.SubCategory)
-                 .WithMany(s => s.ItemMetaDatas)
-                 .HasForeignKey(r => r.SubCategoryId)
-                 .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ItemMetaData>()
-                 .HasOne(r => r.SuperCategory)
-                 .WithMany(s => s.ItemMetaDatas)
-                 .HasForeignKey(r => r.SuperCategoryId)
-                 .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Category>()
+                .HasOne(c => c.ParentCategory)
+                .WithOne(p => p.ChildCategory)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ItemMetaData>()
                  .HasOne(r => r.Listing)

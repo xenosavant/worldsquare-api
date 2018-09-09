@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities.ReadOnly
 {
-    public class ItemCondition : LookupData
+    public class ReadonlyViewModel : LookupData
     {
         public ICollection<ItemMetaData> ItemMetaDatas { get; set; }
     }

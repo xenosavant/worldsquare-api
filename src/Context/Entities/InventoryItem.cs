@@ -10,7 +10,7 @@ namespace Stellmart.Api.Context.Entities
 {
     public class InventoryItem : AuditableEntity<int>
     {
-        public int ConditionId { get; set; }
+        public int? ListingId { get; set; }
 
         public int UnitPriceId { get; set; }
 
@@ -32,10 +32,7 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual QuantityUnit UnitType { get; set; }
 
-        [NotMapped]
-        public virtual Listing Listing => ListingInventoryItems?.Select(l => l.Listing)?.FirstOrDefault();
-
-        public virtual ICollection<ListingInventoryItem> ListingInventoryItems { get; set; }
+        public virtual Listing Listing { get; set; }
 
         public virtual LineItem LineItem { get; set; }
     }

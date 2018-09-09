@@ -97,10 +97,6 @@ namespace Stellmart.Api.Controllers
             {
                 return Unauthorized();
             }
-            if (onlineStore.IsActive == true)
-            {
-                return BadRequest();
-            }
             await _storeLogic.DeleteAsync(onlineStore);
             return NoContent();
         }

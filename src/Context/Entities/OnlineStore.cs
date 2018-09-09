@@ -10,7 +10,9 @@ namespace Stellmart.Api.Context.Entities
     public class OnlineStore : Service
     {
         [Required]
-        public bool Global { get; set; } 
+        public bool Global { get; set; }
+
+        public bool Internal { get; set; }
 
         public int ServiceRegionId { get; set;  }
 

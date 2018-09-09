@@ -6,17 +6,10 @@ using System.Security.Cryptography;
 using Stellmart.Api.Data.ViewModels;
 using System.Text;
 using System.IO;
+using Stellmart.Api.Services.Interfaces;
 
 namespace Stellmart.Api.Services
 {
-
-    public interface IEncryptionService
-    {
-        byte [] EncryptRecoveryKey(string text, List<SecurityAnswerViewModel> answers);
-        string DecryptRecoveryKey(byte [] text, List<SecurityAnswerViewModel> answers);
-        byte [] EncryptSecretKey(string text, byte[] iv, string password);
-        string DecryptSecretKey(byte [] bytes, byte[] iv, string password);
-    }
 
     public class EncryptionService : IEncryptionService
     {
