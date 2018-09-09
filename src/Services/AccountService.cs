@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -58,14 +59,20 @@ namespace Stellmart.Api.Services
                 StellarPublicKey = stellarPublicAddress,
                 StellarEncryptedSecretKey = stellarEncryptedSecretKey,
                 StellarRecoveryKey = stellarRecoveryKey,
-                StellarSecretKeyIv = stellarSecretKeyIv
+                StellarSecretKeyIv = stellarSecretKeyIv,
+                PrimaryShippingLocationId = (byte)PrimaryShippingLocationTypes.Default,
+                RewardsLevelId = (byte)RewardsLevelTypes.Default,
+                TwoFactorTypeId = (byte)TwoFactorTypes.None,
+                NativeCurrencyId = (byte)NativeCurrencyTypes.Default,
+                VerificationLevelId = (byte)VerificationLevelTypes.NonVerified,
+                UniqueId = Guid.NewGuid()
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
             {
-                await _userManager.AddClaimAsync(user, new Claim("role", RolesEnum.Member.GetEnumDescription()));
+                await _userManager.AddClaimAsync(user, new Claim("role", RolesTypes.Member.GetEnumDescription()));
                 return result.Succeeded;
             }
 
