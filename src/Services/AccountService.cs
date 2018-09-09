@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using ServiceStack;
 using Stellmart.Api.Business.Helpers;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context;
@@ -65,7 +66,8 @@ namespace Stellmart.Api.Services
                 TwoFactorTypeId = (byte)TwoFactorTypes.None,
                 NativeCurrencyId = (byte)NativeCurrencyTypes.Default,
                 VerificationLevelId = (byte)VerificationLevelTypes.NonVerified,
-                UniqueId = Guid.NewGuid()
+                UniqueId = Guid.NewGuid(),
+                SecurityQuestions = model.Questions.SerializeToString()
             };
 
             var result = await _userManager.CreateAsync(user, model.Password);
