@@ -2,7 +2,7 @@
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context;
 using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Data.Enumerations;
+using Stellmart.Api.Data.Enums;
 using Stellmart.Api.Data.Kyc;
 using Stellmart.Api.DataAccess;
 using System;

@@ -11,6 +11,8 @@
     <Compile Remove="Business\Mapping\Resolvers\**" />
     <Compile Remove="Client\**" />
     <Compile Remove="Context\Migrations\**" />
+    <Compile Remove="Data\Requests\**" />
+    <Compile Remove="Data\Responses\**" />
     <Compile Remove="src\**" />
     <Compile Remove="Test\**" />
     <Compile Remove="Views\**" />
@@ -18,6 +20,8 @@
     <Content Remove="Business\Mapping\Resolvers\**" />
     <Content Remove="Client\**" />
     <Content Remove="Context\Migrations\**" />
+    <Content Remove="Data\Requests\**" />
+    <Content Remove="Data\Responses\**" />
     <Content Remove="src\**" />
     <Content Remove="Test\**" />
     <Content Remove="Views\**" />
@@ -25,6 +29,8 @@
     <EmbeddedResource Remove="Business\Mapping\Resolvers\**" />
     <EmbeddedResource Remove="Client\**" />
     <EmbeddedResource Remove="Context\Migrations\**" />
+    <EmbeddedResource Remove="Data\Requests\**" />
+    <EmbeddedResource Remove="Data\Responses\**" />
     <EmbeddedResource Remove="src\**" />
     <EmbeddedResource Remove="Test\**" />
     <EmbeddedResource Remove="Views\**" />
@@ -32,6 +38,8 @@
     <None Remove="Business\Mapping\Resolvers\**" />
     <None Remove="Client\**" />
     <None Remove="Context\Migrations\**" />
+    <None Remove="Data\Requests\**" />
+    <None Remove="Data\Responses\**" />
     <None Remove="src\**" />
     <None Remove="Test\**" />
     <None Remove="Views\**" />
@@ -59,8 +67,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Helpers\" />
-    <Folder Include="Data\Requests\" />
-    <Folder Include="Data\Responses\" />
     <Folder Include="Migrations\" />
   </ItemGroup>
 
