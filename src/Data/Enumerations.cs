@@ -22,9 +22,24 @@ namespace Stellmart.Api.Data.Enumerations
         LevelTwo = 3
     }
 
-    public enum RolesEnum
+    public enum RolesTypes
     {
         [Description("member")]
         Member = 1
+    }
+
+    public enum PrimaryShippingLocationTypes
+    {
+        Default = 1
+    }
+
+    public enum RewardsLevelTypes
+    {
+        Default = 1
+    }
+
+    public enum NativeCurrencyTypes
+    {
+        Default = 1
     }
 }
