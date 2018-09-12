@@ -37,7 +37,7 @@ namespace Stellmart.Services
 		var PaymentOp = _horizon.CreatePaymentOps(ContractParam.SourceAccount, escrow.PublicKey,
                 ContractParam.Asset.Amount);
 		ops.Add(PaymentOp);
-		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops);
+		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops, null);
         Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
 		//Escrow threshold weights are 4
 		weight.LowThreshold = 4;
