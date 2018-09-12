@@ -64,12 +64,11 @@ namespace Stellmart.Services
                  .Build();
             return operation;
         }
-        public async Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
-            HorizonAccountWeightModel Weights, HorizonTimeBoundModel Time)
+         public Operation SetOptionsOp(HorizonKeyPairModel SourceAccount,
+            HorizonAccountWeightModel Weights)
         {
             var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
             var operation = new SetOptionsOperation.Builder();
-            Transaction transaction;
 
             operation.SetMasterKeyWeight(Weights.MasterWeight);
             operation.SetLowThreshold(Weights.LowThreshold);
@@ -82,21 +81,7 @@ namespace Stellmart.Services
                 operation.SetSigner(stellar_dotnet_sdk.Signer.Ed25519PublicKey(KeyPair.FromAccountId(SignerAccount.Signer)), SignerAccount.Weight);
             }
             operation.SetSourceAccount(source);
-            var opBuild = operation.Build();
-
-            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
-            if(Time == null) {
-                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-                    .AddOperation(opBuild)
-                    .Build();
-            } else {
-                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-                    .AddOperation(opBuild)
-                    .AddTimeBounds(new TimeBounds(Time.MinTime, Time.MaxTime))
-                    .Build();
-            }
-            transaction.Sign(source);
-            return transaction.ToEnvelopeXdrBase64();
+            return operation.Build();
         }
         public Operation CreateAccountMergeOps(HorizonKeyPairModel sourceAccount,
                     String destAccount) 

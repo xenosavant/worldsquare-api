@@ -13,8 +13,8 @@ namespace Stellmart.Api.Services.Interfaces
 	    Task<long> GetSequenceNumber(string PublicKey);
         Operation CreatePaymentOps(HorizonKeyPairModel sourceAccount,
             string destAccount, string amount);
-	    Task<string> SetWeightSigner(HorizonKeyPairModel SourceAccount,
-			HorizonAccountWeightModel Weights, HorizonTimeBoundModel Time);
+        Operation SetOptionsOp(HorizonKeyPairModel SourceAccount,
+            HorizonAccountWeightModel Weights);
         Operation CreateAccountMergeOps(HorizonKeyPairModel sourceAccount,
                     string destAccount); 
         Task<string> CreateTxn(HorizonKeyPairModel SourceAccount, List<Operation> ops,
