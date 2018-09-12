@@ -39,6 +39,8 @@ namespace Stellmart.Services
 		ops.Add(PaymentOp);
 		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops, null);
         Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
+		//clear ops
+		ops.Clear();
 		//Escrow threshold weights are 4
 		weight.LowThreshold = 4;
 		weight.MediumThreshold = 4;
@@ -53,7 +55,10 @@ namespace Stellmart.Services
 		ws_account.Weight = 2;
 		weight.Signers.Add(ws_account);
 
-        txnxdr = await _horizon.SetWeightSigner(escrow, weight, null);
+		var SetOptionsOp = _horizon.SetOptionsOp(escrow, weight);
+		ops.Add(SetOptionsOp);
+
+		txnxdr = await _horizon.CreateTxn(escrow, ops, null);
         Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
 
 		Contract.Sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
@@ -72,7 +77,7 @@ namespace Stellmart.Services
 			var MergeOp = _horizon.CreateAccountMergeOps(Contract.EscrowAccount, Contract.DestAccount);
 			ops.Add(MergeOp);
 			//save the xdr
-			await _horizon.CreateTxn(ContractParam.SourceAccount, ops, Time);
+			await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
 		} else if (ContractParam.Type == ContractType.PreTxnSetWeight) {
 			HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
@@ -83,8 +88,10 @@ namespace Stellmart.Services
 			weight.HighThreshold = 3;
 			Time.MinTime = ContractParam.MinTime;
 			Time.MaxTime = ContractParam.MaxTime;
+			var SetOptionsOp = _horizon.SetOptionsOp(Contract.EscrowAccount, weight);
+			ops.Add(SetOptionsOp);
 			//save the xdr
-			await _horizon.SetWeightSigner(Contract.EscrowAccount, weight, Time);
+			await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
 		} else {
 			return 0;
 		}
