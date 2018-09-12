@@ -13,6 +13,7 @@ using Stellmart.Services;
 using StructureMap;
 using System;
 using System.Net.Http;
+using MaxMind.GeoIP2;
 using Yoti.Auth;
 
 namespace Stellmart.Api.Config
@@ -52,6 +53,8 @@ namespace Stellmart.Api.Config
             For<YotiClient>()
                 .Singleton()
                 .Use(new YotiClient(configuration["YotiSettings:SdkId"], PemHelper.LoadPemFromString(configuration["YotiSettings:Pem"])));
+
+            For<IGeoIP2DatabaseReader>().Singleton().Use(new DatabaseReader(GeoIpHelper.GetGeoIpDatabaseFilename()));
         }
     }
 }

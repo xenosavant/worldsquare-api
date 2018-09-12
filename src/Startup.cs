@@ -1,5 +1,4 @@
 using AutoMapper;
-using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -17,9 +16,6 @@ using Stellmart.Api.Data.Settings;
 using Stellmart.Context;
 using StructureMap;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using Stellmart.Api.Context.Entities;
 
 namespace Stellmart
 {

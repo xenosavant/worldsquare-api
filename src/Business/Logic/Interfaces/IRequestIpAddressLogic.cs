@@ -6,7 +6,7 @@ namespace Stellmart.Api.Business.Logic.Interfaces
     /// <summary>
     ///     Manager for accessing IP Addresses from an Http Request
     /// </summary>
-    public interface IRequestIpAddressManager
+    public interface IRequestIpAddressLogic
     {
         /// <summary>
         ///     Gets the IP Address of the client from the request, inspecting any proxy headers as appropriate.
