@@ -65,12 +65,15 @@ namespace Stellmart.Services
 	}
 	public async Task<int> CreateContract(ContractParamModel ContractParam)
 	{
+		var ops = new List<Operation>();
 		if (ContractParam.Type == ContractType.PreTxnAccountMerge) {
 			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
 			Time.MinTime = ContractParam.MinTime;
 			Time.MaxTime = ContractParam.MaxTime;
+			var MergeOp = _horizon.CreateAccountMergeOps(Contract.EscrowAccount, Contract.DestAccount);
+			ops.Add(MergeOp);
 			//save the xdr
-			await _horizon.AccountMerge(Contract.EscrowAccount, Contract.DestAccount, Time);
+			await _horizon.CreateTxn(ContractParam.SourceAccount, ops, Time);
 		} else if (ContractParam.Type == ContractType.PreTxnSetWeight) {
 			HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();

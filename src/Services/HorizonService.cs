@@ -98,31 +98,16 @@ namespace Stellmart.Services
             transaction.Sign(source);
             return transaction.ToEnvelopeXdrBase64();
         }
-        public async Task<string> AccountMerge(HorizonKeyPairModel SourceAccount,
-            string DestAccount, HorizonTimeBoundModel Time)
+        public Operation CreateAccountMergeOps(HorizonKeyPairModel sourceAccount,
+                    String destAccount) 
         {
-            var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
-            Transaction transaction;
+            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
 
-            var operation = new AccountMergeOperation.Builder(KeyPair.FromAccountId(DestAccount))
+            var operation = new AccountMergeOperation.Builder(KeyPair.FromAccountId(destAccount))
                  .SetSourceAccount(source)
                  .Build();
-
-            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
-            if(Time == null) {
-                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-                    .AddOperation(operation)
-                    .Build();
-            } else {
-                transaction = new Transaction.Builder(new Account(source, accountRes.SequenceNumber))
-                    .AddOperation(operation)
-                    .AddTimeBounds(new TimeBounds(Time.MinTime, Time.MaxTime))
-                    .Build();
-            }
-            transaction.Sign(source);
-            return transaction.ToEnvelopeXdrBase64();
+            return operation;
         }
-
         private Transaction XdrStrtoTxn(string txnstr) 
         {
             var bytes = Convert.FromBase64String(txnstr);
