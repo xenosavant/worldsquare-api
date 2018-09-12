@@ -17,7 +17,8 @@ namespace Stellmart.Api.Services.Interfaces
 			HorizonAccountWeightModel Weights, HorizonTimeBoundModel Time);
         Task<string> AccountMerge(HorizonKeyPairModel SourceAccount,
             string destAccount, HorizonTimeBoundModel Time);
-        Task<string> CreateTxn(HorizonKeyPairModel SourceAccount, List<Operation> ops);
+        Task<string> CreateTxn(HorizonKeyPairModel SourceAccount, List<Operation> ops,
+                    HorizonTimeBoundModel Time);
         string SignTxn(HorizonKeyPairModel Account, string txnstr);
         Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
     }

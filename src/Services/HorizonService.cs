@@ -131,7 +131,7 @@ namespace Stellmart.Services
         }
         
         public async Task<string> CreateTxn(HorizonKeyPairModel SourceAccount,
-                                                List<Operation> ops)
+                                                List<Operation> ops, HorizonTimeBoundModel Time)
         {
             var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
             var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
@@ -139,6 +139,8 @@ namespace Stellmart.Services
             foreach(Operation op in ops) {
                 txn_builder.AddOperation(op);
             }
+            if(Time != null)
+                txn_builder.AddTimeBounds(new TimeBounds(Time.MinTime, Time.MaxTime));
             var transaction = txn_builder.Build();
             transaction.Sign(source);
 
