@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using Yoti.Auth;
 
-namespace Stellmart.Api.Services.Interfaces
+namespace Stellmart.Api.Services
 {
     public interface IKycService
     {
-        Task<bool> VerifyAsync(KycRequest request);
+        Task<bool> VerifyAsync(KycRequest request, int userId);
     }
 }

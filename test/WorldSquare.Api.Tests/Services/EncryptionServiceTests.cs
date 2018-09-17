@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NUnit.Framework;
 using Stellmart.Api.Data.ViewModels;
-using NUnit.Framework;
 using Stellmart.Api.Services;
 using Stellmart.Api.Services.Interfaces;
+using System.Collections.Generic;
 
 namespace Stellmart.Api.Tests
 {
@@ -11,9 +10,6 @@ namespace Stellmart.Api.Tests
     public class EncryptionServiceTests
     {
         private IEncryptionService _encryptionService;
-
-        private byte[] _iv => new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
-                                           0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };
 
         private string _key => "SAV76USXIJOBMEQXPANUOQM6F5LIOTLPDIDVRJBFFE2MDJXG24TAPUU7";
 
@@ -26,51 +22,29 @@ namespace Stellmart.Api.Tests
         [Test]
         public void TestEncryptDecryptRecoveryKey()
         {
+            byte[] iv = _encryptionService.GenerateIv();
+
             var answers =
-            new List<SecurityAnswerViewModel>()
+            new List<string>()
             {
-                new SecurityAnswerViewModel()
-                {
-                    Answer = "lollipop",
-                    IV = _iv,
-                    Order = 1
-                },
-                new SecurityAnswerViewModel()
-                {
-                    Answer = "popsicle",
-                    IV = _iv,
-                    Order = 2
-                },
-                new SecurityAnswerViewModel()
-                {
-                    Answer = "america",
-                    IV = _iv,
-                    Order = 3
-                },
-                new SecurityAnswerViewModel()
-                {
-                    Answer = "purple",
-                    IV = _iv,
-                    Order = 4
-                },
-                new SecurityAnswerViewModel()
-                {
-                    Answer = "witchitah",
-                    IV = _iv,
-                    Order = 5
-                }
+                "lollipop",
+                "popsicle",
+                "america",
+                "purple",
+                "witchitah"
             };
-            var encrypted = _encryptionService.EncryptRecoveryKey(_key, answers);
-            var decrypted = _encryptionService.DecryptRecoveryKey(encrypted, answers);
+            var encrypted = _encryptionService.EncryptRecoveryKey(_key, answers, iv);
+            var decrypted = _encryptionService.DecryptRecoveryKey(encrypted, answers, iv);
             Assert.AreEqual(_key, decrypted);
         }
 
         [Test]
         public void TestEncryptDecryptSecretKey()
         {
-            var password = "ksdjf*KAJSDF123";
-            var encrypted = _encryptionService.EncryptSecretKey(_key, _iv, password);
-            var decrypted = _encryptionService.DecryptSecretKey(encrypted, _iv, password);
+            byte[] iv = _encryptionService.GenerateIv();
+            var password = "ksdjf*KAJSDF123ksdjf*KAJSDF123";
+            var encrypted = _encryptionService.EncryptSecretKey(_key, iv, password);
+            var decrypted = _encryptionService.DecryptSecretKey(encrypted, iv, password);
             Assert.AreEqual(_key, decrypted);
         }
 

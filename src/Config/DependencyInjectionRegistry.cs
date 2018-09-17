@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.Azure.Search;
 using Microsoft.Extensions.Configuration;
-using stellar_dotnetcore_sdk;
+using stellar_dotnet_sdk;
 using Stellmart.Api.Business.Helpers;
 using Stellmart.Api.Context;
 using Stellmart.Api.DataAccess;
@@ -11,10 +11,8 @@ using Stellmart.Api.Services;
 using Stellmart.Api.Services.Interfaces;
 using Stellmart.Context;
 using Stellmart.Services;
-using Stellmart.Services.Interfaces;
 using StructureMap;
 using System;
-using System.IO;
 using System.Net.Http;
 using Yoti.Auth;
 
@@ -22,6 +20,9 @@ namespace Stellmart.Api.Config
 {
     public class DependencyInjectionRegistry : Registry
     {
+        private const string _apiKey = "1B1C620D0A357D9D4AEAE20973EF6245";
+        private const string _serviceName = "worldsquaredev";
+
         public DependencyInjectionRegistry(IConfiguration configuration)
         {
             Scan(x =>
@@ -40,7 +41,7 @@ namespace Stellmart.Api.Config
             For<IHttpContextAccessor>().Singleton().Use<HttpContextAccessor>();
             For<IMapper>().Use(() => Mapper.Instance);
             For<IHorizonService>().Singleton().Use<HorizonService>();
-            For<IContractService>().Singleton().Use<ContractService>();
+
 
             For<Server>()
                 .Singleton()
@@ -51,6 +52,12 @@ namespace Stellmart.Api.Config
 			BaseAddress = new Uri(configuration["HorizonSettings:Server"])
                     }
                 });
+
+            For<ISearchService>()
+                .Singleton()
+                .Use(new AzureSearchService(
+                    new SearchServiceClient(_serviceName, new SearchCredentials(_apiKey))
+                    ));
 
             For<YotiClient>()
                 .Singleton()

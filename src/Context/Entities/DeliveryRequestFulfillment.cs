@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
+
     public class DeliveryRequestFulfillment : ServiceRequestFulfillment
     {
     }

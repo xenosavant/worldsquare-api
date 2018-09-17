@@ -10,13 +10,12 @@ namespace Stellmart.Api.Context.Entities
     public class Review : Entity<int>
     {
         public int ReviewerId { get; set; }
-
         public int Stars { get; set; }
-
         public string Body { get; set; }
 
         public virtual ApplicationUser Reviewer { get; set; }
+        public OnlineStore OnlineStore => OnlineStoreReviews?.Select(o => o.OnlineStore).First();
 
-        public virtual ICollection<OnlineStoreReview> OnlineStoreReviews { get; set; }
+        private ICollection<OnlineStoreReview> OnlineStoreReviews { get; set; }
     }
 }

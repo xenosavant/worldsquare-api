@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using Bounce.Api.Data.Indexes;
 using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
 using Stellmart.Api.Data.ViewModels;
 using Stellmart.Api.DataAccess;
+using Stellmart.Api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +17,16 @@ namespace Stellmart.Api.Business.Logic
     {
         private readonly IRepository _repository;
         private readonly IMapper _mapper;
+        private readonly ISearchService _searchService;
 
         public static string NavigationProperties => "ListingInventoryItems.InventoryItems.Price," +
             "ListingInventoryItems.InventoryItems.UnitType,Thread";
 
-        public ListingLogic(IRepository repository, IMapper mapper)
+        public ListingLogic(IRepository repository, IMapper mapper, ISearchService searchService)
         {
             _repository = repository;
             _mapper = mapper;
+            _searchService = searchService;
         }
 
 
@@ -41,6 +45,11 @@ namespace Stellmart.Api.Business.Logic
 
         public async Task<Listing> CreateAsync(int userId, ListingViewModel listingViewModel)
         {
+            // index
+            var metaData = listingViewModel.ItemMetaData;
+            await _searchService.Index<InventoryItem, ItemMetaDataSearchIndex>(
+                new List<ItemMetaDataSearchIndex>() { _mapper.Map<ItemMetaDataSearchIndex>(metaData) });
+
             var listing = _mapper.Map<Listing>(listingViewModel);
             _repository.Create(listing);
             await _repository.SaveAsync();

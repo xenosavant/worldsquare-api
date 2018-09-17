@@ -10,10 +10,7 @@ namespace Stellmart.Api.Context.Entities
 {
     public class ShippingManifest : Entity<int>
     {
-        [NotMapped]
-        public IEnumerable<LineItem> LineItems => ShippingManifestLineItems?.Select(s => s.LineItem);
-
-        public virtual ICollection<ShippingManifestLineItem> ShippingManifestLineItems { get; set; }
+        public virtual ICollection<LineItem> LineItems  { get; set; }
 
         public virtual ProductShipment Shipment { get; set; }
     }

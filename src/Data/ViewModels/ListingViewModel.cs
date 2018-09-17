@@ -8,6 +8,8 @@ namespace Stellmart.Api.Data.ViewModels
 {
     public class ListingViewModel
     {
+        public int Id { get; set; }
+
         public int OnlineStoreId { get; set; }
 
         public string Title { get; set; }

@@ -26,6 +26,8 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual ServiceRequest ServiceRequest { get; set; }
 
+        public virtual ServiceFulfillment ServiceFulfillment { get; set; }
+
         public virtual Contract Contract { get; set; }
 
         public virtual FulfillmentState FulfillmentState {get; set;}

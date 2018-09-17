@@ -17,13 +17,15 @@ namespace Stellmart.Api.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     // [Authorize]
-    public class ListingController : BaseController
+    public class ListingController : AuthorizedController
     {
         private readonly IListingLogic _listingLogic;
+        private readonly IMapper _mapper;
 
-        public ListingController(IListingLogic listingLogic, IMapper mapper) : base(mapper)
+        public ListingController(IListingLogic listingLogic, IMapper mapper)
         {
             _listingLogic = listingLogic;
+            _mapper = mapper;
         }
 
         [HttpGet]
@@ -69,8 +71,6 @@ namespace Stellmart.Api.Controllers
             var listing = await _listingLogic.CreateAsync(UserId, viewModel);
             return CreatedAtRoute("GetListing", new { id = listing.Id }, _mapper.Map<Listing>(listing));
         }
-
-
 
     }
 }

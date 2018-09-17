@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
+using Newtonsoft.Json;
 using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Context.Entities.ReadOnly;
 using Stellmart.Api.Data.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -38,6 +40,24 @@ namespace Stellmart.Api.Business.Mapping.Profiles
                 .ForMember(dest => dest.UnitsReturned, opts => opts.MapFrom(src => src.UnitsReturned))
                 .ForMember(dest => dest.Price, opts => opts.MapFrom(src => src.Price))
                 .ForMember(dest => dest.UnitTypeId, opts => opts.MapFrom(src => src.UnitType.Id))
+                .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<ItemMetaData, ItemMetaDataViewModel>()
+                .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
+                .ForMember(dest => dest.ItemConditionId, opts => opts.MapFrom(src => src.ItemConditionId))
+                .ForMember(dest => dest.KeyWords, opts => opts.MapFrom(src => JsonConvert.DeserializeObject<string[]>(src.KeyWords)))
+                .ForMember(dest => dest.CategoryIds, opts => opts.MapFrom(src => src.Categories.Select(c => c.Id)))
+                .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<ItemMetaDataViewModel, ItemMetaData>()
+                .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
+                .ForMember(dest => dest.ItemConditionId, opts => opts.MapFrom(src => src.ItemConditionId))
+                .ForMember(dest => dest.Categories, opts => opts.MapFrom(src => src.CategoryIds.Select(id => 
+                new Category()
+                {
+                    Id = id
+                })))
+                .ForMember(dest => dest.KeyWords, opts => opts.MapFrom(src => JsonConvert.SerializeObject(src.KeyWords)))
                 .ForAllOtherMembers(x => x.Ignore());
 
         }

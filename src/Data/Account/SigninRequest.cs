@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Stellmart.Data
+﻿namespace Stellmart.Data.Account
 {
     public class SigninRequest
     {

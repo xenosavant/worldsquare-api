@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Rewrite.Internal.ApacheModRewrite;
+﻿using Bounce.Api.Data.Indexes;
+using Microsoft.AspNetCore.Rewrite.Internal.ApacheModRewrite;
+using Microsoft.Azure.Search;
+using Microsoft.Azure.Search.Models;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Context.Entities.Entity;
+using Stellmart.Api.Context.Entities.Interfaces;
 using Stellmart.Api.Context.Entities.ReadOnly;
 using System;
 using System.Collections.Generic;
@@ -9,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context
 {
-    public class TradeItem : AuditableEntity<int>
+    public class TradeItem : AuditableEntity<int>, IItem, ISearchable
     {
         public string Title { get; set; }
 
@@ -28,5 +32,12 @@ namespace Stellmart.Api.Context
         public virtual TradeInState TradeInState { get; set; }
 
         public virtual ItemMetaData ItemMetaData { get; set; }
+
+        public virtual LineItem LineItem { get; set; }
+
+        public IList<Field> GetFields()
+        {
+            return FieldBuilder.BuildForType<ItemMetaDataSearchIndex>();
+        }
     }
 }

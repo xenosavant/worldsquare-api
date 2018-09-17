@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Stellmart.Api.Business.Managers;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Kyc;
 using Stellmart.Api.Services.Interfaces;
 using System.Threading.Tasks;
@@ -20,15 +21,14 @@ namespace Stellmart.Api.Services
             _kycDataManager = kycDataManager;
         }
 
-        public async Task<bool> VerifyAsync(KycRequest request)
+        public async Task<bool> VerifyAsync(KycRequest request, int userId)
         {
             var profile = await _yotiClient.GetActivityDetailsAsync(request.Token);
             
             if(profile.Outcome == ActivityOutcome.Success)
             {
                 var result = _mapper.Map<KycProfileModel>(profile.Profile);
-                // to do - user id should come from claims service - hardcoded 1
-                await _kycDataManager.CreateAsync(result, 1);
+                await _kycDataManager.CreateAsync(result, userId);
                 return true;
             }
 

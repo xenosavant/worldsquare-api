@@ -15,18 +15,36 @@ namespace Stellmart.Api.Context
         public static void Initialize(ApplicationDbContext context, UserManager<ApplicationUser> userManager, IConfiguration configuration)
         {
             // ensure database exists and migration applied
-            // context.Database.Migrate();
+            context.Database.Migrate();
 
             //  Look for any users.
             if (context.Users.Any())
-                {
-                    return; // DB has been seeded
-                }
+            {
+                return; // DB has been seeded
+            }
 
             using (var transaction = context.Database.BeginTransaction())
             {
                 try
                 {
+                    var securityQuestions = new SecurityQuestion[]
+                    {
+                        new SecurityQuestion
+                        {
+                            DisplayOrder = 1,
+                            Description = "Who was your childhood hero?",
+                            Active = true
+                        },
+                        new SecurityQuestion
+                        {
+                            DisplayOrder = 2,
+                            Description = "What is your oldest cousin's first and last name?",
+                            Active = true
+                        }
+                    };
+
+                    context.SecurityQuestions.AddRange(securityQuestions);
+
                     var geolocation = new GeoLocation()
                     {
                         Latitude = 51.5073509,
@@ -58,33 +76,33 @@ namespace Stellmart.Api.Context
 
                     context.RewardsLevels.Add(rewardsLevel);
 
-                    var conditions = new ReadonlyViewModel[]
+                    var conditions = new ItemCondition[]
                         {
-                            new ReadonlyViewModel()
+                            new ItemCondition()
                             {
                                 Active = true,
                                 Description = "New",
                                 DisplayOrder = 1
                             },
-                            new ReadonlyViewModel()
+                            new ItemCondition()
                             {
                                 Active = true,
                                 Description = "Like New",
                                 DisplayOrder = 2
                             },
-                            new ReadonlyViewModel()
+                            new ItemCondition()
                             {
                                 Active = true,
                                 Description = "Very Good",
                                 DisplayOrder = 3
                             },
-                            new ReadonlyViewModel()
+                            new ItemCondition()
                             {
                                 Active = true,
                                 Description = "Good",
                                 DisplayOrder = 4
                             },
-                            new ReadonlyViewModel()
+                            new ItemCondition()
                             {
                                 Active = true,
                                 Description = "Fair",
@@ -115,25 +133,55 @@ namespace Stellmart.Api.Context
 
                     context.Currencies.Add(currency);
 
-                    var twoFactor = new TwoFactorAuthenticationType()
+                    var twoFactors = new TwoFactorAuthenticationType[]
                     {
-                        Active = true,
-                        Description = "Google",
-                        DisplayOrder = 1
+                        new TwoFactorAuthenticationType
+                        {
+                            Active = true,
+                            Description = "Email",
+                            DisplayOrder = 1
+                        },
+
+                        new TwoFactorAuthenticationType()
+                        {
+                            Active = true,
+                            Description = "SMS",
+                            DisplayOrder = 2
+                        },
+
+                        new TwoFactorAuthenticationType()
+                        {
+                            Active = true,
+                            Description = "Google Authenticator",
+                            DisplayOrder = 3
+                        }
                     };
 
-                    context.TwoFactorAuthenticationTypes.Add(twoFactor);
+                    context.TwoFactorAuthenticationTypes.AddRange(twoFactors);
 
-                    var verificationLevel = new VerificationLevel()
+                    var verificationLevels = new VerificationLevel[]
                     {
-                        Active = true,
-                        Description = "Level 1",
-                        DisplayOrder = 1
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Non verified",
+                            DisplayOrder = 1
+                        },
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Level 1",
+                            DisplayOrder = 2
+                        },
+                        new VerificationLevel()
+                        {
+                            Active = true,
+                            Description = "Level 2",
+                            DisplayOrder = 3
+                        }
                     };
 
-                    // Add Some dummy categories
-
-                    context.VerificationLevels.Add(verificationLevel);
+                    context.VerificationLevels.AddRange(verificationLevels);
 
                     var user = new ApplicationUser
                     {
@@ -142,8 +190,8 @@ namespace Stellmart.Api.Context
                         NativeCurrency = currency,
                         PrimaryShippingLocation = location,
                         RewardsLevel = rewardsLevel,
-                        TwoFactorAuthenticationType = twoFactor,
-                        VerificationLevel = verificationLevel,
+                        TwoFactorAuthenticationType = twoFactors[2],
+                        VerificationLevel = verificationLevels[0],
                         CreatedBy = 1,
                         EmailConfirmed = true,
                         FirstName = "Elton",
@@ -151,14 +199,15 @@ namespace Stellmart.Api.Context
                         IsActive = true,
                         IsDeleted = false,
                         LockoutEnabled = false,
-                        PhoneNumber = "00443239923023",
+                        PhoneNumber = "+14349899872",
                         PhoneNumberConfirmed = true,
-                        UniqueId = Guid.NewGuid()
+                        UniqueId = Guid.NewGuid(),
+                        SecurityQuestions = "[{\"order\":1,\"question\":\"Who was your childhood hero?\"},{\"order\":2,\"question\":\"What is your oldest cousin's first and last name?\"}]"
                     };
 
                     var password = configuration["SeedData:InitialAdminPassword"];
 
-                    // Result used to avoid "The connection does not support MultipleActiveResultSets" since usermanager doesn't have non asynch method
+                    // Result used to avoid "The connection does not support MultipleActiveResultSets" since usermanager doesn't have synchronous method
                     var obj = userManager.CreateAsync(user, password).Result;
                     var obj2 = userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin")).Result;
 

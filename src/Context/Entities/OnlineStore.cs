@@ -24,7 +24,7 @@ namespace Stellmart.Api.Context.Entities
         [ForeignKey("ServiceId")]
         public virtual ICollection<Listing> Listings { get; set; }
 
-        public virtual ICollection<OnlineStoreReview> OnlineStoreReviews { get; set; }
+        private ICollection<OnlineStoreReview> OnlineStoreReviews { get; set; }
 
     }
 }

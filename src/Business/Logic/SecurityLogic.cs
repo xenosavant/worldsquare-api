@@ -1,9 +1,9 @@
-﻿using Stellmart.Api.Context;
+﻿using Newtonsoft.Json;
+using Stellmart.Api.Context;
 using Stellmart.Api.Data.ViewModels;
 using Stellmart.Api.DataAccess;
-using System;
+using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Stellmart.Api.Services;
@@ -28,11 +28,11 @@ namespace Stellmart.Api.Business.Logic
             return JsonConvert.DeserializeObject<List<SecurityQuestionViewModel>>(user.SecurityQuestions);
         }
 
-        public async Task<bool> AnswerQuestionsAsync(string userName, List<SecurityAnswerViewModel> answers)
+        public async Task<bool> AnswerQuestionsAsync(string userName, IReadOnlyCollection<string> answers)
         {
             var user = await _repository.GetOneAsync<ApplicationUser>(u => u.UserName == userName);
             var recoveryKey = user.StellarRecoveryKey;
-            var decryptedKey = _encryptionService.DecryptRecoveryKey(recoveryKey, answers);
+            var decryptedKey = _encryptionService.DecryptRecoveryKey(recoveryKey, answers, user.StellarSecretKeyIv);
 
             // check that key is valid from horizon
 

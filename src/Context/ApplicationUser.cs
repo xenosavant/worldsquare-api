@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel;
 
 namespace Stellmart.Api.Context
 {
@@ -32,24 +33,33 @@ namespace Stellmart.Api.Context
 
         public bool ManagedAccount { get; set; }
 
-        public int PrimaryShippingLocationId { get; set; }
+        public int? PrimaryShippingLocationId { get; set; }
 
-        public int RewardsLevelId { get; set; }
+        public int? RewardsLevelId { get; set; }
 
-        public int TwoFactorTypeId { get; set; }
+        public int? TwoFactorTypeId { get; set; }
 
-        public int NativeCurrencyId { get; set; }
+        public int? NativeCurrencyId { get; set; }
 
-        public int VerificationLevelId { get; set; }
+        public int? VerificationLevelId { get; set; }
 
         public bool Flagged { get; set; }
 
         public bool UseTwoFactorForLogin { get; set; }
 
+        public string TotpSecret { get; set; }
+
+        public string TwoFactorCode { get; set; }
+
         public string SecurityQuestions { get; set; }
 
-        [ForeignKey("CountryId")]
-        public virtual Country Country { get; set; }
+        public int TwoFactorFailedCount { get; set; }
+
+        [DefaultValue(5)]
+        public int MaxTwoFactorFailedAccessAttempts { get; set; }
+
+        [DefaultValue(5)]
+        public int DefaultTwoFatorLockoutMinutes{ get; set; }
 
         public virtual Location PrimaryShippingLocation { get; set; }
 
@@ -63,6 +73,9 @@ namespace Stellmart.Api.Context
 
         [ForeignKey("UserId")]
         public virtual ICollection<OnlineStore> OnlineStores { get; set; }
+
+        [ForeignKey("CountryId")]
+        public virtual Country Country { get; set; }
 
         [ForeignKey("UserId")]
         public virtual ICollection<DeliveryService> DeliveryServices { get; set; }

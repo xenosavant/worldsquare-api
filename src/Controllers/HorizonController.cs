@@ -1,25 +1,26 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Stellmart.Api.Services.Interfaces;
 using Stellmart.Api.ViewModels.Horizon;
-using Stellmart.Services;
-using Stellmart.Services.Interfaces;
 using System.Threading.Tasks;
 
 namespace Stellmart.Api.Controllers.Helpers
 {
     [Produces("application/json")]
     [Route("api/[controller]/[action]")]
-    public class HorizonController : BaseController
+    public class HorizonController: ControllerBase
     {
         private readonly IHorizonService _horizonService;
+        private readonly IMapper _mapper;
 
-        public HorizonController(IHorizonService horizonService, IMapper mapper) : base(mapper)
+        public HorizonController(IHorizonService horizonService, IMapper mapper)
         {
             _horizonService = horizonService;
+            _mapper = mapper;
         }
 
         [HttpGet]
-        public async Task<ActionResult> CreateAccount()
+        public IActionResult CreateAccount()
         {
             return Ok(_mapper.Map<HorizonKeyPairViewModel>(_horizonService.CreateAccount()));
         }

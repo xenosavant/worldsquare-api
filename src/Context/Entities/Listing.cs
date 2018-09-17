@@ -26,8 +26,6 @@ namespace Stellmart.Api.Context.Entities
 
         public bool Internal { get; set; }
 
-        public int ItemMetaDataId { get; set; }
-
         public virtual OnlineStore OnlineStore { get; set; }
 
         public virtual MessageThread Thread { get; set; }
