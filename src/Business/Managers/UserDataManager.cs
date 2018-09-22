@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Stellmart.Api.Business.Helpers;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context;
+using Stellmart.Api.Data.Account;
+using Stellmart.Api.Data.Enums;
 using Stellmart.Api.DataAccess;
-using Stellmart.Data.Account;
-using Stellmart.Data.ViewModels;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace Stellmart.Api.Business.Managers
 {
@@ -14,33 +17,49 @@ namespace Stellmart.Api.Business.Managers
     {
         private readonly IRepository _repository;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public UserDataManager(IRepository repository, IMapper mapper)
+        public UserDataManager
+            (
+                IRepository repository,
+                IMapper mapper,
+                UserManager<ApplicationUser> userManager
+            )
         {
             _repository = repository;
             _mapper = mapper;
+            _userManager = userManager;
         }
 
-        public async Task<int> SignupAsync(SignupRequest request)
+        public async Task<bool> SignupAsync(ApplicationUserModel model)
         {
-            _repository.Create(_mapper.Map<ApplicationUser>(request));
-            return await _repository.SaveAsync();
+            var user = _mapper.Map<ApplicationUser>(model);
+
+            var result = await _userManager.CreateAsync(user, model.Password);
+
+            if (result.Succeeded)
+            {
+                await _userManager.AddClaimAsync(user, new Claim("role", RolesTypes.Member.GetEnumDescription()));
+                return result.Succeeded;
+            }
+
+            return false;
         }
 
-        public async Task<ApplicationUserViewModel> GetByIdAsync(int id)
+        public async Task<ApplicationUser> GetByIdAsync(int id)
         {
-            return _mapper.Map<ApplicationUserViewModel>(await _repository.GetByIdAsync<ApplicationUser>(id));
+            return await _repository.GetByIdAsync<ApplicationUser>(id);
         }
 
-        public async Task<IReadOnlyCollection<ApplicationUserViewModel>> GetAllAsync()
+        public async Task<IReadOnlyCollection<ApplicationUser>> GetAllAsync()
         {
-            return _mapper.Map<List<ApplicationUserViewModel>>(await _repository.GetAllAsync<ApplicationUser>());
+            return await _repository.GetAllAsync<ApplicationUser>() as IReadOnlyCollection<ApplicationUser>;
         }
 
         //example method for ordering and including entities by eager loading (aka include())
-        public async Task<IReadOnlyCollection<ApplicationUserViewModel>> GetAllOrderingAndIncludeExampleAsync()
+        public async Task<IReadOnlyCollection<ApplicationUser>> GetAllOrderingAndIncludeExampleAsync()
         {
-            return _mapper.Map<List<ApplicationUserViewModel>>(await _repository.GetAsync<ApplicationUser>(x => x.IsActive, x => x.OrderByDescending(y => y.CreatedDate), "NameOfRelatedEntity,NameOfOtherRelatedEntity,NameOfRelatedEntity.ChildEntity"));
+            return await _repository.GetAsync<ApplicationUser>(x => x.IsActive, x => x.OrderByDescending(y => y.CreatedDate), "NameOfRelatedEntity,NameOfOtherRelatedEntity,NameOfRelatedEntity.ChildEntity") as IReadOnlyCollection<ApplicationUser>;
         }
     }
 }
