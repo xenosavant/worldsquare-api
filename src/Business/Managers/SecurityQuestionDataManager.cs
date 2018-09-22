@@ -11,17 +11,15 @@ namespace Stellmart.Api.Business.Managers
     public class SecurityQuestionDataManager : ISecurityQuestionDataManager
     {
         private readonly IRepository _repository;
-        private readonly IMapper _mapper;
 
-        public SecurityQuestionDataManager(IRepository repository, IMapper mapper)
+        public SecurityQuestionDataManager(IRepository repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
-        public async Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync()
+        public async Task<IReadOnlyCollection<SecurityQuestion>> GetSecurityQuestionsAsync()
         {
-            return _mapper.Map<IReadOnlyCollection<SecurityQuestionModel>>(await _repository.GetAllAsync<SecurityQuestion>());
+            return await _repository.GetAllAsync<SecurityQuestion>() as IReadOnlyCollection<SecurityQuestion>;
         }
     }
 }
