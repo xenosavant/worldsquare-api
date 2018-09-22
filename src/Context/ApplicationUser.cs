@@ -19,6 +19,8 @@ namespace Stellmart.Api.Context
         [MaxLength(50)]
         public string LastName { get; set; }
 
+        public string IpAddress { get; set; }
+
         public bool MustRecoverKey { get; set; }
 
         public bool MustResetKey { get; set; }
@@ -42,6 +44,7 @@ namespace Stellmart.Api.Context
         public int? NativeCurrencyId { get; set; }
 
         public int? VerificationLevelId { get; set; }
+        public int? CountryId { get; set; }
 
         public bool Flagged { get; set; }
 
