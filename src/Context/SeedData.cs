@@ -49,8 +49,7 @@ namespace Stellmart.Api.Context
                     {
                         Latitude = 51.5073509,
                         Longitude = -0.12775829999998223,
-                        IsDeleted = false,
-                        UniqueId = Guid.NewGuid()
+                        IsDeleted = false
                     };
 
                     context.GeoLocations.Add(geolocation);
@@ -61,7 +60,6 @@ namespace Stellmart.Api.Context
                         Address = "11 Victoria Street",
                         IsDeleted = false,
                         LocationComponents = string.Empty,
-                        UniqueId = Guid.NewGuid(),
                         Verified = true
                     };
 
@@ -183,6 +181,32 @@ namespace Stellmart.Api.Context
 
                     context.VerificationLevels.AddRange(verificationLevels);
 
+                    var categories = new Category[]
+                    {
+                        new Category()
+                        {
+                            Active = true,
+                            Description = "Apple iPhone",
+                            DisplayOrder = 1,
+                            ParentCategory =
+                            new Category()
+                            {
+                                  Active = true,
+                                  Description = "Cell Phones",
+                                  DisplayOrder = 1,
+                                  ParentCategory =
+                                  new Category()
+                                  {
+                                      Active = true,
+                                      Description = "Electronics",
+                                      DisplayOrder = 1
+                                  }
+                            }
+                        }
+                    };
+
+                    context.Categories.AddRange(categories);
+
                     var user = new ApplicationUser
                     {
                         Email = configuration["SeedData:InitialAdminUser"],
@@ -211,20 +235,24 @@ namespace Stellmart.Api.Context
                     var obj = userManager.CreateAsync(user, password).Result;
                     var obj2 = userManager.AddClaimAsync(user, new Claim(ClaimTypes.Role, "admin")).Result;
 
+                    context.SaveChanges();
+
                     var internalStore = new OnlineStore()
                     {
+                        UniqueId = Guid.NewGuid(),
                         Internal = true,
                         Global = true,
                         Name = "WorldSquare Store",
                         Description = "A place to find odds and ends",
                         TagLine = "The entire world, squared",
                         Verified = true,
-                        UserId = 1,
-                        NativeCurrencyId = 1
+                        User = user,
+                        NativeCurrency = currency
                     };
 
-                    context.SaveChanges();
+                    context.OnlineStores.Add(internalStore);
 
+                    context.SaveChanges();
                     transaction.Commit();
 
                 }

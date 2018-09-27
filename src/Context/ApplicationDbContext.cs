@@ -30,7 +30,7 @@ namespace Stellmart.Context
         public DbSet<Signature> Signatures { get; set; }
         public DbSet<UserSignature> UserSignatures { get; set; }
         public DbSet<SystemSignature> SystemSignatures { get; set; }
-        public DbSet<OracleSignature> OracleSignatures { get; set; }
+        public DbSet<SecretKeySignature> SecretKeySignatures { get; set; }
 
         // Entities
 
@@ -42,6 +42,7 @@ namespace Stellmart.Context
         public DbSet<GeoLocation> GeoLocations { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<ItemMetaData> ItemMetaDatas { get; set; }
+        public DbSet<ContractSecretKey> ContractSecretKeys { get; set; }
 
         public DbSet<ItemMetaDataCategory> ItemMetaDataCategories { get; set; }
 
@@ -72,6 +73,7 @@ namespace Stellmart.Context
 
         // Read Only Data
 
+        public DbSet<Category> Categories { get; set; }
         public DbSet<ItemCondition> ItemConditions { get; set; }
         public DbSet<ContractState> ContractStates { get; set; }
         public DbSet<ContractType> ContractTypes { get; set; }
@@ -166,6 +168,18 @@ namespace Stellmart.Context
 
             // One to many relationships
 
+            modelBuilder.Entity<ContractSecretKey>()
+               .HasOne(p => p.User)
+               .WithMany(o => o.ContractSecretKeys)
+               .HasForeignKey(p => p.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ContractSecretKey>()
+               .HasOne(p => p.Contract)
+               .WithMany(o => o.ContractSecretKeys)
+               .HasForeignKey(p => p.ContractId)
+               .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<ProductShipment>()
                 .HasOne(p => p.Order)
                 .WithMany(o => o.Shipments)
@@ -217,7 +231,7 @@ namespace Stellmart.Context
             modelBuilder.Entity<TradeItem>()
                 .HasOne(t => t.Owner)
                 .WithMany(o => o.TradeItems)
-                .HasForeignKey(t => t.TradeInValueId)
+                .HasForeignKey(t => t.OwnerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ServiceRequestFulfillment>()
@@ -274,18 +288,6 @@ namespace Stellmart.Context
                 .HasForeignKey<ProductShipment>(s => s.DeliveryRequestId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<DeliveryRequest>()
-                .HasOne(d => d.Requestor)
-                .WithMany(d => d.DeliveryRequests)
-                .HasForeignKey(s => s.RequestorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<RideRequest>()
-                .HasOne(d => d.Requestor)
-                .WithMany(d => d.RideRequests)
-                .HasForeignKey(s => s.RequestorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<ProductShipment>()
                 .HasOne(s => s.Manifest)
                 .WithOne(m => m.Shipment)
@@ -314,6 +316,18 @@ namespace Stellmart.Context
                 .HasOne(s => s.ServiceRegion)
                 .WithOne(u => u.OnlineStore)
                 .HasForeignKey<OnlineStore>(s => s.ServiceRegionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RideRequest>()
+                .HasOne(s => s.Requestor)
+                .WithMany(u => u.RideRequests)
+                .HasForeignKey(s => s.RequestorId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<DeliveryRequest>()
+                .HasOne(s => s.Requestor)
+                .WithMany(u => u.DeliveryRequests)
+                .HasForeignKey(s => s.RequestorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OnlineStore>()
@@ -394,6 +408,18 @@ namespace Stellmart.Context
                 .HasForeignKey(l => l.UnitTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Listing>()
+                .HasOne(l => l.Price)
+                .WithOne(p => p.Listing)
+                .HasForeignKey<Listing>(l => l.UnitPriceId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TradeItem>()
+                .HasOne(t => t.TradeInValue)
+                .WithOne(c => c.TradeItem)
+                .HasForeignKey<TradeItem>(t => t.ValueId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<PricePerDistance>()
                 .HasOne(u => u.Amount)
                 .WithOne(a => a.PricePerDistance)
@@ -426,13 +452,19 @@ namespace Stellmart.Context
 
             modelBuilder.Entity<Category>()
                 .HasOne(c => c.ParentCategory)
-                .WithOne(p => p.ChildCategory)
+                .WithMany(p => p.ChildCategories)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ItemMetaData>()
                  .HasOne(r => r.Listing)
                  .WithOne(s => s.ItemMetaData)
-                 .HasForeignKey<ItemMetaData>(l => l.ListingId)
+                 .HasForeignKey<Listing>(l => l.ItemMetaDataId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ItemMetaData>()
+                 .HasOne(r => r.TradeItem)
+                 .WithOne(s => s.ItemMetaData)
+                 .HasForeignKey<TradeItem>(l => l.ItemMetaDataId)
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ItemMetaData>()

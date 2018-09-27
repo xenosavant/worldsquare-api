@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class LineItem : AuditableEntity<int>
+    public class LineItem : Entity<int>
     {
         public int? InventoryItemId { get; set; }
         public int? TradeItemId { get; set; }

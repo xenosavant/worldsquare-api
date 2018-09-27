@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class Area : AuditableEntity<int>
+    public class Area : Entity<int>
     {
         [Required]
         public double Radius { get; set; }

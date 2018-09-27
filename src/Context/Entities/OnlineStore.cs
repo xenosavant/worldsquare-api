@@ -14,7 +14,7 @@ namespace Stellmart.Api.Context.Entities
 
         public bool Internal { get; set; }
 
-        public int ServiceRegionId { get; set;  }
+        public int? ServiceRegionId { get; set; }
 
         [NotMapped]
         public IEnumerable<Review> Reviews => OnlineStoreReviews?.Select(o => o.Review);

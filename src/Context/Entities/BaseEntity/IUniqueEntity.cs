@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities.BaseEntity
 {
-    public interface IMutableEntity
+    public interface IUniqueEntity
     {
-        bool IsDeleted { get; set; }
+        Guid UniqueId { get; set; }
     }
 }

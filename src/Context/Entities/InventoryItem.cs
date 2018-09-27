@@ -8,15 +8,12 @@ using Stellmart.Api.Context.Entities.Entity;
 using Stellmart.Api.Context.Entities.Interfaces;
 using Microsoft.Azure.Search.Models;
 using Microsoft.Azure.Search;
-using Bounce.Api.Data.Indexes;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class InventoryItem : AuditableEntity<int>, IItem, ISearchable
+    public class InventoryItem : AuditableEntity<int>, IItem
     {
         public int? ListingId { get; set; }
-
-        public int UnitPriceId { get; set; }
 
         public int UnitTypeId { get; set; }
 
@@ -32,17 +29,11 @@ namespace Stellmart.Api.Context.Entities
 
         public int UnitsReturned { get; set; }
 
-        public virtual CurrencyAmount Price { get; set; }
-
         public virtual QuantityUnit UnitType { get; set; }
 
         public virtual Listing Listing { get; set; }
 
         public virtual LineItem LineItem { get; set; }
 
-        public IList<Field> GetFields()
-        {
-            return FieldBuilder.BuildForType<ItemMetaDataSearchIndex>();
-        }
     }
 }

@@ -71,11 +71,11 @@ namespace Stellmart.Api.Context
 
         public virtual Currency NativeCurrency { get; set; }
 
-        [ForeignKey("UserId")]
-        public virtual ICollection<OnlineStore> OnlineStores { get; set; }
-
         [ForeignKey("CountryId")]
         public virtual Country Country { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual ICollection<OnlineStore> OnlineStores { get; set; }
 
         [ForeignKey("UserId")]
         public virtual ICollection<DeliveryService> DeliveryServices { get; set; }
@@ -94,6 +94,8 @@ namespace Stellmart.Api.Context
 
         [ForeignKey("SignerId")]
         public virtual ICollection<UserSignature> Signatures { get; set; }
+
+        public virtual ICollection<ContractSecretKey> ContractSecretKeys { get; set; }
 
         public virtual ICollection<TradeItem> TradeItems { get; set; }
 

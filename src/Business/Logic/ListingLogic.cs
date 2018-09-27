@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
-using Bounce.Api.Data.Indexes;
+using Bounce.Api.Data.Search.Indexes;
+using Stellmart.Api.Business.Extensions;
 using Stellmart.Api.Business.Logic.Interfaces;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
+using Stellmart.Api.Data.Search.Queries;
 using Stellmart.Api.Data.ViewModels;
 using Stellmart.Api.DataAccess;
 using Stellmart.Api.Services.Interfaces;
@@ -15,60 +18,56 @@ namespace Stellmart.Api.Business.Logic
 {
     public class ListingLogic : IListingLogic
     {
-        private readonly IRepository _repository;
-        private readonly IMapper _mapper;
         private readonly ISearchService _searchService;
+        private readonly IListingDataManager _manager;
 
-        public static string NavigationProperties => "ListingInventoryItems.InventoryItems.Price," +
-            "ListingInventoryItems.InventoryItems.UnitType,Thread";
-
-        public ListingLogic(IRepository repository, IMapper mapper, ISearchService searchService)
+        public ListingLogic(IMapper mapper, IListingDataManager manager, ISearchService searchService)
         {
-            _repository = repository;
-            _mapper = mapper;
+            _manager = manager;
             _searchService = searchService;
         }
 
-
-        public Task<IEnumerable<Listing>> GetAsync(string[] keywords, int? onlineStroreId,  int? categoryId, 
-            int? subcategoryId, int? listingCategoryId, 
-            int? conditionId, string searchString)
+        public async Task<IEnumerable<Listing>> GetAsync(int? onlineStroreId,  string category,
+            int? conditionId, string searchString, double? usdMin,
+            double? usdMax)
         {
-            // integrate with elastic search
-            throw new NotImplementedException();
+            var query = new ItemSearchQuery()
+            {
+                Category = category,
+                ParentId = onlineStroreId,
+                ItemConditionId = conditionId,
+                MinimumPriceUsd = usdMin,
+                MaximumPriceUsd = usdMax
+            };
+            var ids = (await _searchService.SearchAsync<Listing, ItemSearchQuery>(searchString, query)).ToList();
+            return await _manager.GetAsync(ids);
         } 
 
-        public async Task<Listing> GetByIdAsync(int id)
+        public Task<Listing> GetById(int id)
         {
-            return await _repository.GetOneAsync<Listing>(s => s.Id == id, NavigationProperties);
+            return _manager.GetById(id);
         }
 
-        public async Task<Listing> CreateAsync(int userId, ListingViewModel listingViewModel)
+        public async Task<Listing> CreateAsync(int? userId, Listing listing)
         {
-            // index
-            var metaData = listingViewModel.ItemMetaData;
-            await _searchService.Index<InventoryItem, ItemMetaDataSearchIndex>(
-                new List<ItemMetaDataSearchIndex>() { _mapper.Map<ItemMetaDataSearchIndex>(metaData) });
-
-            var listing = _mapper.Map<Listing>(listingViewModel);
-            _repository.Create(listing);
-            await _repository.SaveAsync();
-            return await _repository.GetOneAsync<Listing>(l => l.Id == listing.Id, NavigationProperties);
+            var newListing = await _manager.CreateAsync(listing, null);
+            await _searchService.IndexAsync<Listing, ItemMetaDataSearchIndex>(
+                    new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(listing) });
+            return newListing;
         }
 
         public async Task<Listing> UpdateAsync(Listing listing, Delta<Listing> delta)
         {
-            throw new NotImplementedException();
+            delta.Patch(listing);
+            var updatedListing = await _manager.UpdateAsync(listing);
+            await _searchService.UpdateAsync<Listing, ItemMetaDataSearchIndex>(
+                    new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(updatedListing) });
+            return updatedListing;
         }
 
-        public async Task<Listing> UpdateAsync(Listing listing)
+        public Task Delete(Listing store)
         {
-            throw new NotImplementedException();
-        }
-
-        public async Task DeleteAsync(Listing store)
-        {
-            throw new NotImplementedException();
+            return _manager.Delete(store);
         }
     }
 }

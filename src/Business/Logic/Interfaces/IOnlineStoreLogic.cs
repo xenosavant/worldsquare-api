@@ -11,10 +11,10 @@ namespace Stellmart.Api.Business.Logic
 {
     public interface IOnlineStoreLogic
     {
-        Task<IEnumerable<OnlineStore>> GetAllAsync();
-        Task<OnlineStore> GetByIdAsync(int id);
-        Task<OnlineStore> CreateAsync(int userId, OnlineStoreViewModel store);
-        Task<OnlineStore> UpdateAsync(OnlineStore store, Delta<OnlineStore> delta);
-        Task DeleteAsync(OnlineStore store);
+        Task<IEnumerable<OnlineStore>> GetAll();
+        Task<OnlineStore> GetById(int id);
+        Task<OnlineStore> Create(int userId, OnlineStoreViewModel store);
+        Task<OnlineStore> Update(OnlineStore store, Delta<OnlineStore> delta);
+        Task Delete(OnlineStore store);
     }
 }

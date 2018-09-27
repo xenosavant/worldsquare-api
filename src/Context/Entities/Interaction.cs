@@ -9,7 +9,6 @@ namespace Stellmart.Api.Context
 {
     public abstract class Interaction : AuditableEntity<int>
     {
-        int EscrowAccountId { get; set; }
         int InteractionStateId { get; set; }
 
         public abstract void Update(IContractService contractService);

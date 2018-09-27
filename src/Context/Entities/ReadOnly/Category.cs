@@ -9,7 +9,7 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
     {
         public int? ParentCategoryId { get; set; }
         public Category ParentCategory { get; set; }
-        public Category ChildCategory { get; set; }
+        public ICollection<Category> ChildCategories { get; set; }
 
         private ICollection<ItemMetaDataCategory> ItemMetaDataCategories { get; set; }
     }

@@ -15,7 +15,7 @@ namespace Stellmart.Api.Business.Extensions
             var j = i;
             while (i > 0)
             {
-                while (j > 0 && categories[j].ParentCategoryId != categories[j-1].Id)
+                while (j > 0 && categories[j] != null && categories[j]?.ParentCategoryId != categories[j-1].Id)
                 {
                     j--;
                 }

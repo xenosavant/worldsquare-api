@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 namespace Stellmart.Api.Context.Entities.Entity
 {
 
-    public interface IAuditableEntity : IEntity, IMutableEntity
+    public interface IAuditableEntity : IEntity, IUniqueEntity
     {
         DateTime CreatedDate { get; set; }
         DateTime? ModifiedDate { get; set; }
@@ -13,7 +13,7 @@ namespace Stellmart.Api.Context.Entities.Entity
         int CreatedBy { get; set; }
     }
 
-    public class AuditableEntity<T> : Entity<T>, IAuditableEntity
+    public class AuditableEntity<T> : UniqueEntity, IAuditableEntity
     {
         private DateTime? _createdDate;
         [DataType(DataType.DateTime)]

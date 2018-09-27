@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class ContractPhase : AuditableEntity<int>
+    public class ContractPhase : Entity<int>
     {
         [Required]
         public int ContractId { get; set; }

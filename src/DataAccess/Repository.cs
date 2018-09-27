@@ -27,9 +27,9 @@ namespace Stellmart.Api.DataAccess
                 ((IAuditableEntity)entity).CreatedBy = (int)createdBy;
             }
 
-            if (entity is IMutableEntity && ((IMutableEntity)entity).UniqueId == new Guid())
+            if (entity is IUniqueEntity && ((IUniqueEntity)entity).UniqueId == new Guid())
             {
-                ((IMutableEntity)entity).UniqueId = Guid.NewGuid();
+                ((IUniqueEntity)entity).UniqueId = Guid.NewGuid();
             }
 
             context.Set<TEntity>().Add(entity);
@@ -46,9 +46,9 @@ namespace Stellmart.Api.DataAccess
                     ((IAuditableEntity)item).CreatedBy = createdBy;
                 }
 
-                if (item is IMutableEntity && ((IMutableEntity)item).UniqueId == new Guid())
+                if (item is IUniqueEntity && ((IUniqueEntity)item).UniqueId == new Guid())
                 {
-                    ((IMutableEntity)item).UniqueId = Guid.NewGuid();
+                    ((IUniqueEntity)item).UniqueId = Guid.NewGuid();
                 }
 
             }

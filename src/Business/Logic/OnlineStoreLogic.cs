@@ -9,32 +9,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Stellmart.Api.Data;
+using Stellmart.Api.Business.Managers.Interfaces;
 
 namespace Stellmart.Api.Business.Logic
 {
     public class OnlineStoreLogic : IOnlineStoreLogic
     {
-        private readonly IRepository _repository;
+        private readonly IOnlineStoreDataManager _manager;
         private readonly IMapper _mapper;
-        public static string NavigationProperties => "User,NativeCurrency,ServiceRegion";
 
-        public OnlineStoreLogic(IRepository repository, IMapper mapper) 
+        public OnlineStoreLogic(IOnlineStoreDataManager manager, IMapper mapper) 
         {
-            _repository = repository;
+            _manager = manager;
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<OnlineStore>> GetAllAsync()
+        public Task<IEnumerable<OnlineStore>> GetAll()
         {
-            return await _repository.GetAllAsync<OnlineStore>();
+            return _manager.GetAll();
         }
 
-        public async Task<OnlineStore> GetByIdAsync(int id)
+        public Task<OnlineStore> GetById(int id)
         {
-            return await _repository.GetOneAsync<OnlineStore>(s => s.Id == id, NavigationProperties);
+            return _manager.GetById(id);
         }
 
-        public async Task<OnlineStore> CreateAsync(int userId, OnlineStoreViewModel viewModel)
+        public Task<OnlineStore> Create(int userId, OnlineStoreViewModel viewModel)
         {
             var onlineStore = _mapper.Map<OnlineStore>(viewModel);
             onlineStore.UserId = userId;
@@ -50,24 +50,18 @@ namespace Stellmart.Api.Business.Logic
             {
                 onlineStore.NativeCurrencyId = viewModel.NativeCurrency.Id;
             }
-            _repository.Create(onlineStore);
-            await _repository.SaveAsync();
-            return await _repository.GetOneAsync<OnlineStore>(o => o.Id == onlineStore.Id, NavigationProperties);
+            return _manager.CreateAsync(onlineStore);
         }
 
-        public async Task<OnlineStore> UpdateAsync(OnlineStore store, Delta<OnlineStore> delta)
+        public Task<OnlineStore> Update(OnlineStore store, Delta<OnlineStore> delta)
         {
             delta.Patch(store);
-            _repository.Update(store);
-            await _repository.SaveAsync();
-            return await _repository.GetOneAsync<OnlineStore>(o => o.Id == store.Id, NavigationProperties);
+            return _manager.UpdateAsync(store);
         }
 
-        public async Task DeleteAsync(OnlineStore store)
+        public Task Delete(OnlineStore store)
         {
-            store.IsActive = false;
-            _repository.Update(store);
-            await _repository.SaveAsync();
+            return _manager.Delete(store);
         }
     }
 }

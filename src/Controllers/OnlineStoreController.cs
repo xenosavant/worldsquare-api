@@ -34,7 +34,7 @@ namespace Stellmart.Api.Controllers
        [ProducesResponseType(200)]
        public async Task<ActionResult<IEnumerable<OnlineStoreViewModel>>> Get()
        {
-            return _mapper.Map<List<OnlineStoreViewModel>>(await _storeLogic.GetAllAsync());
+            return _mapper.Map<List<OnlineStoreViewModel>>(await _storeLogic.GetAll());
        }
 
         //GET: api/onlinestore/1
@@ -44,7 +44,7 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(404)]
         public async Task<ActionResult<OnlineStoreViewModel>> GetSingle(int id)
         {
-            var store = await _storeLogic.GetByIdAsync(id);
+            var store = await _storeLogic.GetById(id);
             if (store == null)
             {
                 return NotFound();
@@ -63,7 +63,7 @@ namespace Stellmart.Api.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var store = await _storeLogic.CreateAsync(UserId, viewModel);
+            var store = await _storeLogic.Create(UserId, viewModel);
             return CreatedAtRoute("GetOnlineStore", new { id = store.Id }, _mapper.Map<OnlineStoreViewModel>(store));
         }
 
@@ -74,7 +74,7 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<OnlineStoreViewModel>> Patch(int id, [FromBody] Delta<OnlineStore> delta)
         {
-            var onlineStore = await _storeLogic.GetByIdAsync(id);
+            var onlineStore = await _storeLogic.GetById(id);
             if (delta.ContainsKey("Verified"))
             {
                 return BadRequest();
@@ -83,7 +83,7 @@ namespace Stellmart.Api.Controllers
             {
                 return Unauthorized();
             }
-            return _mapper.Map<OnlineStoreViewModel>(await _storeLogic.UpdateAsync(onlineStore, delta));
+            return _mapper.Map<OnlineStoreViewModel>(await _storeLogic.Update(onlineStore, delta));
         }
 
         //DELETE: api/onlinestore/1
@@ -93,12 +93,12 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult> Delete(int id)
         {
-            var onlineStore = await _storeLogic.GetByIdAsync(id);
+            var onlineStore = await _storeLogic.GetById(id);
             if (onlineStore.UserId != UserId)
             {
                 return Unauthorized();
             }
-            await _storeLogic.DeleteAsync(onlineStore);
+            await _storeLogic.Delete(onlineStore);
             return NoContent();
         }
     }

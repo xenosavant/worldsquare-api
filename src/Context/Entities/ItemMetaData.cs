@@ -12,8 +12,6 @@ namespace Stellmart.Api.Context.Entities
 {
     public class ItemMetaData : Entity<int>
     {
-        public int ListingId { get; set; }
-
         public string KeyWords { get; set; }
 
         public int ItemConditionId { get; set; }
@@ -24,8 +22,8 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual Listing Listing { get; set; }
 
-        private ICollection<ItemMetaDataCategory> ItemMetaDataCategories { get; set; }
+        public ICollection<ItemMetaDataCategory> ItemMetaDataCategories { get; set; } = new List<ItemMetaDataCategory>();
 
-        public ICollection<Category> Categories { get { return ItemMetaDataCategories.Select(i => i.Category).ToList().SortCategories(); } }
+        public ICollection<Category> Categories { get { return ItemMetaDataCategories?.Select(i => i.Category).ToList().SortCategories(); } }
     }
 }

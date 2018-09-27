@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class CurrencyAmount : AuditableEntity<int>
+    public class CurrencyAmount : Entity<int>
     {
         [Required]
         public int CurrencyTypeId { get; set; }
@@ -19,6 +19,8 @@ namespace Stellmart.Api.Context.Entities
         public virtual Currency CurrencyType { get; set; }
 
         public virtual TradeItem TradeItem { get; set; }
+
+        public virtual Listing Listing { get; set; }
 
         public virtual PricePerDistance PricePerDistance { get; set; }
 

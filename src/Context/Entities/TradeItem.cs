@@ -1,4 +1,4 @@
-﻿using Bounce.Api.Data.Indexes;
+﻿using Bounce.Api.Data.Search.Indexes;
 using Microsoft.AspNetCore.Rewrite.Internal.ApacheModRewrite;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
@@ -23,7 +23,9 @@ namespace Stellmart.Api.Context
 
         public int? TradeInStateId { get; set; }
 
-        public int? ItemMetaDataId { get; set; }
+        public int ItemMetaDataId { get; set; }
+
+        public int ValueId { get; set; }
 
         public virtual ApplicationUser Owner { get; set; }
 

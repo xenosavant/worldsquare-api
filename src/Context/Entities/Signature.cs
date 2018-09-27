@@ -12,6 +12,11 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         public bool Signed { get; set;  }
 
+        [Required]
+        public bool PreSign { get; set; }
+
+        public string SignatureHash { get; set; }
+
         public DateTime SignedOn { get; set; }
 
         public virtual PreTransaction Transaction { get; set; }

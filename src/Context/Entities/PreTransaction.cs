@@ -8,10 +8,13 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class PreTransaction : AuditableEntity<int>
+    public class PreTransaction : Entity<int>
     {
         [Required]
         public int PreTransactionTypeId { get; set; }
+
+        [Required]
+        public bool Preauthorized { get; set; }
 
         public string XdrString { get; set; }
 

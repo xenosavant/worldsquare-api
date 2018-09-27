@@ -1,4 +1,5 @@
 ﻿using Stellmart.Api.Context.Entities.Interfaces;
+using Stellmart.Api.Data.Search.Queries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,17 @@ namespace Stellmart.Api.Services.Interfaces
 {
     public interface ISearchService
     {
-        Task Index<TEntity, TIndex>(List<TIndex> documents)
+        Task<List<int>> SearchAsync<TEntity, TIndex>(string searchText, ISearchQuery queryFilter);
+
+        Task IndexAsync<TEntity, TIndex>(List<TIndex> documents)
            where TEntity : ISearchable
            where TIndex : class;
 
-        Task Update<TEntity, TIndex>(List<TIndex> documents)
+        Task UpdateAsync<TEntity, TIndex>(List<TIndex> documents)
             where TEntity : ISearchable
             where TIndex : class;
 
-        Task Delete<TEntity, TIndex>(List<TIndex> documents)
+        Task DeleteAsync<TEntity, TIndex>(List<TIndex> documents)
             where TEntity : ISearchable
             where TIndex : class;
     }

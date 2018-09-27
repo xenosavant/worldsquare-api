@@ -24,8 +24,6 @@ namespace Stellmart.Api.Context.Entities.Entity
             get => Id;
         }
 
-        public Guid UniqueId { get; set; }
-
         public bool IsDeleted { get; set; }
 
     }
