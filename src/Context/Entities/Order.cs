@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class Order : AuditableEntity<int>
+    public class Order : UniqueEntity<int>
     {
         public int OnlineSaleId { get; set; }
         public virtual OnlineSale Sale { get; set; }

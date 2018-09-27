@@ -20,11 +20,19 @@ namespace Stellmart.Api.Business.Logic
     {
         private readonly ISearchService _searchService;
         private readonly IListingDataManager _manager;
+        private readonly IInventoryDataManager _inventoryManager;
+        private readonly IItemMetaDataManager _metaDataManager;
 
-        public ListingLogic(IMapper mapper, IListingDataManager manager, ISearchService searchService)
+        public ListingLogic(IMapper mapper,
+            IListingDataManager manager,
+            ISearchService searchService,
+            IInventoryDataManager inventoryManager,
+            IItemMetaDataManager metaDataManager)
         {
             _manager = manager;
             _searchService = searchService;
+            _metaDataManager = metaDataManager;
+            _inventoryManager = inventoryManager;
         }
 
         public async Task<IEnumerable<Listing>> GetAsync(int? onlineStroreId,  string category,
@@ -50,6 +58,8 @@ namespace Stellmart.Api.Business.Logic
 
         public async Task<Listing> CreateAsync(int? userId, Listing listing)
         {
+            await _metaDataManager.UpdateRelationshipsAsync(listing.ItemMetaData);
+            _inventoryManager.Create(listing.InventoryItems);
             var newListing = await _manager.CreateAsync(listing, null);
             await _searchService.IndexAsync<Listing, ItemMetaDataSearchIndex>(
                     new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(listing) });

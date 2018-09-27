@@ -13,7 +13,7 @@ namespace Stellmart.Api.Context.Entities.Entity
         int CreatedBy { get; set; }
     }
 
-    public class AuditableEntity<T> : UniqueEntity, IAuditableEntity
+    public class UniqueEntity<T> : UniqueEntity, IAuditableEntity
     {
         private DateTime? _createdDate;
         [DataType(DataType.DateTime)]

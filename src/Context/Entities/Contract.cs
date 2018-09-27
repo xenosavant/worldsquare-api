@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class Contract : AuditableEntity<int>
+    public class Contract : UniqueEntity<int>
     {
         [Required]
         public string EscrowAccountId { get; set; }

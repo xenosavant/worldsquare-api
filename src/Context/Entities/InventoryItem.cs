@@ -11,7 +11,7 @@ using Microsoft.Azure.Search;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class InventoryItem : AuditableEntity<int>, IItem
+    public class InventoryItem : UniqueEntity<int>, IItem
     {
         public int? ListingId { get; set; }
 

@@ -13,15 +13,13 @@ namespace Stellmart.Api.Business.Managers
     public class ListingDataManager : IListingDataManager
     {
         private readonly IRepository _repository;
-        private readonly ISearchService _searchService;
 
         public static string NavigationProperties => "InventoryItems.Price," +
             "InventoryItems.UnitType,Thread";
 
-        public ListingDataManager(IRepository repository, ISearchService searchService)
+        public ListingDataManager(IRepository repository)
         {
             _repository = repository;
-            _searchService = searchService;
         }
 
 
@@ -37,15 +35,6 @@ namespace Stellmart.Api.Business.Managers
 
         public async Task<Listing> CreateAsync(Listing listing, int? userId = null)
         {
-            var ids = listing.ItemMetaData.ItemMetaDataCategories.Select(l => l.CategoryId).ToList();
-            var categories = await _repository.GetAsync<Category>(c => ids.Any(id => id == c.Id));
-            listing.ItemMetaData.ItemMetaDataCategories =
-                listing.ItemMetaData.ItemMetaDataCategories.Select(lc =>
-               new ItemMetaDataCategory()
-               {
-                   Category = categories.Where(c => c.Id == lc.CategoryId).Single(),
-                   ItemMetaData = listing.ItemMetaData
-               }).ToList();
             _repository.Create(listing, userId);
             await _repository.SaveAsync();
             return await _repository.GetOneAsync<Listing>(l => l.Id == listing.Id, NavigationProperties);

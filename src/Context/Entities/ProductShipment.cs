@@ -7,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class ProductShipment : AuditableEntity<int>
+    public class ProductShipment : UniqueEntity<int>
     {
         public int? SenderId { get; set; }
 

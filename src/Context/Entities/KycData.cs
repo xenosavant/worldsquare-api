@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class KycData : AuditableEntity<int>
+    public class KycData : UniqueEntity<int>
     {
         public string UserIdentifier { get; set; }
         public string FirstName { get; set; }

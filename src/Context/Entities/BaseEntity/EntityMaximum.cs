@@ -6,7 +6,7 @@ namespace Stellmart.Api.Context.Entities.Entity
         bool IsActive { get; set; }
     }
 
-    public class EntityMaximum : AuditableEntity<int>
+    public class EntityMaximum : UniqueEntity<int>
     {
         public bool IsActive { get; set; }
     }
