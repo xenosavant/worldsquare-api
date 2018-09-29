@@ -1,19 +1,15 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using ServiceStack;
-using Stellmart.Api.Business.Helpers;
+using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context;
 using Stellmart.Api.Data.Account;
 using Stellmart.Api.Services.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Stellmart.Api.Business.Logic.Interfaces;
-using Stellmart.Api.Data.Enums;
 
 namespace Stellmart.Api.Services
 {
@@ -55,7 +51,7 @@ namespace Stellmart.Api.Services
         {
             var ipAddress = _requestIpAddressLogic.Get(httpContext);
 
-            var resolvedCountryIso = _countryResolverLogic.Resolve(IPAddress.Parse("193.77.124.158"));
+            var resolvedCountryIso = _countryResolverLogic.Resolve(ipAddress);
 
             var country = await _countryDataManager.GetByIsoAsync(resolvedCountryIso);
 
