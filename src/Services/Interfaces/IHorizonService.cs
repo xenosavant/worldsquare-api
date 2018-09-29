@@ -17,6 +17,8 @@ namespace Stellmart.Api.Services.Interfaces
             HorizonAccountWeightModel Weights);
         Operation CreateAccountMergeOps(HorizonKeyPairModel sourceAccount,
                     string destAccount); 
+        Operation ChangeTrustOps(HorizonKeyPairModel sourceAccount, HorizonAssetModel AssetModel,
+                    string limit);
         Task<string> CreateTxn(HorizonKeyPairModel SourceAccount, List<Operation> ops,
                     HorizonTimeBoundModel Time);
         string SignTxn(HorizonKeyPairModel Account, string txnstr);

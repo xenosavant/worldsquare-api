@@ -93,6 +93,17 @@ namespace Stellmart.Services
                  .Build();
             return operation;
         }
+        public Operation ChangeTrustOps(HorizonKeyPairModel sourceAccount, HorizonAssetModel AssetModel,
+                    String limit)
+        {
+            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+            Asset asset = new AssetTypeCreditAlphaNum4(AssetModel.Code, AssetModel.Issuer);
+
+            var operation = new ChangeTrustOperation.Builder(asset, limit)
+                .SetSourceAccount(source)
+                .Build();
+            return operation;
+        }
         private Transaction XdrStrtoTxn(string txnstr) 
         {
             var bytes = Convert.FromBase64String(txnstr);
