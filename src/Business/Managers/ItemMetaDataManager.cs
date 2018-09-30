@@ -14,12 +14,22 @@ namespace Stellmart.Api.Business.Managers
         private readonly IRepository _repository;
         private readonly ILookupDataManager _lookupManager;
 
-        public static string NavigationProperties => "Price,UnitType,Thread";
-
         public ItemMetaDataManager(IRepository repository, ILookupDataManager lookupManager)
         {
             _lookupManager = lookupManager;
             _repository = repository;
+        }
+
+        public Task<ItemMetaData> GetById(int id, string navigationProperties = null)
+        {
+            return _repository.GetOneAsync<ItemMetaData>(s => s.Id == id, navigationProperties);
+        }
+
+        public async Task<ItemMetaData> UpdateAndSaveAsync(ItemMetaData metaData)
+        {
+            _repository.Update(metaData);
+            await _repository.SaveAsync();
+            return metaData;
         }
 
         public async Task UpdateRelationshipsAsync(ItemMetaData metaData, int? userId = null)

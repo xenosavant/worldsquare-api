@@ -35,7 +35,7 @@ namespace Stellmart.Api.DataAccess
             context.Set<TEntity>().Add(entity);
         }
 
-        public virtual void CreateRange<TEntity>(ICollection<TEntity> entities, int createdBy)
+        public virtual void CreateRange<TEntity>(ICollection<TEntity> entities, int? createdBy = null)
             where TEntity : class, IEntity
         {
             foreach (var item in entities)
@@ -43,7 +43,7 @@ namespace Stellmart.Api.DataAccess
                 if (item is IAuditableEntity)
                 {
                     ((IAuditableEntity)item).CreatedDate = DateTime.UtcNow;
-                    ((IAuditableEntity)item).CreatedBy = createdBy;
+                    ((IAuditableEntity)item).CreatedBy = (int)createdBy;
                 }
 
                 if (item is IUniqueEntity && ((IUniqueEntity)item).UniqueId == new Guid())

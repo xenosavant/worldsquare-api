@@ -8,6 +8,8 @@ namespace Stellmart.Api.Data.ViewModels
 {
     public class ItemMetaDataViewModel
     {
+        public int Id { get; set; }
+
         public int ItemConditionId { get; set; }
 
         public string [] KeyWords { get; set; }

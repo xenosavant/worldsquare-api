@@ -14,7 +14,7 @@ namespace Bounce.Api.Data.Search.Indexes
         public ItemMetaDataSearchIndex(Listing listing)
         {
             Id = listing.Id.ToString();
-            ParentId = listing.OnlineStore.Id;
+            ParentId = listing.ServiceId;
             Title = listing.Title;
             ItemConditionId = listing.ItemMetaData.ItemConditionId;
             KeyWords = JsonConvert.DeserializeObject<string[]>(listing.ItemMetaData.KeyWords);
@@ -37,15 +37,14 @@ namespace Bounce.Api.Data.Search.Indexes
         [IsFilterable, IsFacetable]
         public int ItemConditionId { get; set; }
 
-
         [IsFilterable, IsFacetable]
         public string [] Categories { get; set; }
 
         [IsFilterable]
-        public double? UsdPrice { get; set; }
+        public double? MinUsdPrice { get; set; }
 
         [IsFilterable]
-        public double? XlmPrice { get; set; }
+        public double? MaxUsdPrice { get; set; }
 
     }
 }

@@ -8,7 +8,9 @@ namespace Stellmart.Api.Data.ViewModels
 {
     public class InventoryItemViewModel
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
+
+        public int? ListingId { get; set; }
 
         public string Descriptors { get; set; }
 
@@ -18,12 +20,12 @@ namespace Stellmart.Api.Data.ViewModels
 
         public int UnitsAvailable { get; set; }
 
-        public int UnitsSold { get; set; }
+        public int? UnitsSold { get; set; }
 
-        public int UnitsReturned { get; set; }
+        public int? UnitsReturned { get; set; }
 
-        public virtual CurrencyAmountViewModel Price { get; set; }
+        public int CurrencyTypeId { get; set; }
 
-        public virtual LookupDataViewModel UnitType { get; set; }
+        public decimal CurrencyAmount { get; set; }
     }
 }

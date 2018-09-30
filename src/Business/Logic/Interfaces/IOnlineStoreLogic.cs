@@ -14,7 +14,7 @@ namespace Stellmart.Api.Business.Logic
         Task<IEnumerable<OnlineStore>> GetAll();
         Task<OnlineStore> GetById(int id);
         Task<OnlineStore> Create(int userId, OnlineStoreViewModel store);
-        Task<OnlineStore> Update(OnlineStore store, Delta<OnlineStore> delta);
+        Task<OnlineStore> Update(int userId, OnlineStore store, Delta<OnlineStore> delta);
         Task Delete(OnlineStore store);
     }
 }

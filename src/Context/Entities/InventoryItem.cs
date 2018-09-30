@@ -8,14 +8,15 @@ using Stellmart.Api.Context.Entities.Entity;
 using Stellmart.Api.Context.Entities.Interfaces;
 using Microsoft.Azure.Search.Models;
 using Microsoft.Azure.Search;
+using Stellmart.Api.Context.Entities.BaseEntity;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class InventoryItem : UniqueEntity<int>, IItem
+    public class InventoryItem : UniqueEntity, IItem
     {
         public int? ListingId { get; set; }
 
-        public int UnitTypeId { get; set; }
+        public int UnitPriceId { get; set; }
 
         public string Descriptors { get; set; }
 
@@ -29,7 +30,7 @@ namespace Stellmart.Api.Context.Entities
 
         public int UnitsReturned { get; set; }
 
-        public virtual QuantityUnit UnitType { get; set; }
+        public virtual CurrencyAmount Price { get; set; }
 
         public virtual Listing Listing { get; set; }
 

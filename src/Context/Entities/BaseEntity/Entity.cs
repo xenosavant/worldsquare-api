@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Stellmart.Api.Context.Entities.BaseEntity;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -14,7 +15,7 @@ namespace Stellmart.Api.Context.Entities.Entity
         new T Id { get; set; }
     }
 
-    public abstract class Entity<T> : IEntity<T>
+    public abstract class Entity<T> : IEntity<T>, IMutableEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

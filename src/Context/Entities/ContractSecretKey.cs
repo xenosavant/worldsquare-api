@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class ContractSecretKey : UniqueEntity<int>
+    public class ContractSecretKey : UniqueEntity
     {
         public string SecretKey { get; set; }
 

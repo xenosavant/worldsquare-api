@@ -320,10 +320,6 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     EscrowAccountId = table.Column<string>(nullable: false),
                     CurrentSequenceNumber = table.Column<int>(nullable: false),
                     ContractStateId = table.Column<int>(nullable: false),
@@ -790,10 +786,6 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     SecretKey = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
                     ContractId = table.Column<int>(nullable: false)
@@ -823,10 +815,6 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     UserIdentifier = table.Column<string>(nullable: true),
                     FirstName = table.Column<string>(nullable: true),
                     LastName = table.Column<string>(nullable: true),
@@ -1031,10 +1019,6 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     Title = table.Column<string>(nullable: true),
                     OwnerId = table.Column<int>(nullable: false),
                     TradeInValueId = table.Column<int>(nullable: true),
@@ -1159,7 +1143,7 @@ namespace Stellmart.Api.Migrations
                     ThreadId = table.Column<int>(nullable: true),
                     Internal = table.Column<bool>(nullable: false),
                     ItemMetaDataId = table.Column<int>(nullable: false),
-                    UnitPriceId = table.Column<int>(nullable: false)
+                    UnitTypeId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1183,9 +1167,9 @@ namespace Stellmart.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Listings_CurrencyAmounts_UnitPriceId",
-                        column: x => x.UnitPriceId,
-                        principalTable: "CurrencyAmounts",
+                        name: "FK_Listings_QuantityUnits_UnitTypeId",
+                        column: x => x.UnitTypeId,
+                        principalTable: "QuantityUnits",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1270,12 +1254,8 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     ListingId = table.Column<int>(nullable: true),
-                    UnitTypeId = table.Column<int>(nullable: false),
+                    UnitPriceId = table.Column<int>(nullable: false),
                     Descriptors = table.Column<string>(nullable: true),
                     UPC = table.Column<string>(nullable: true),
                     SKU = table.Column<string>(nullable: true),
@@ -1293,9 +1273,9 @@ namespace Stellmart.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_InventoryItems_QuantityUnits_UnitTypeId",
-                        column: x => x.UnitTypeId,
-                        principalTable: "QuantityUnits",
+                        name: "FK_InventoryItems_CurrencyAmounts_UnitPriceId",
+                        column: x => x.UnitPriceId,
+                        principalTable: "CurrencyAmounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1308,10 +1288,6 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     Discriminator = table.Column<string>(nullable: false),
                     ServiceRequestFulfillmentId = table.Column<int>(nullable: true)
                 },
@@ -1369,10 +1345,6 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     OnlineSaleId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
@@ -1394,10 +1366,6 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
                     SenderId = table.Column<int>(nullable: true),
                     ReceiverId = table.Column<int>(nullable: true),
                     OrderDate = table.Column<DateTime>(nullable: false),
@@ -1624,9 +1592,10 @@ namespace Stellmart.Api.Migrations
                 column: "ListingId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_InventoryItems_UnitTypeId",
+                name: "IX_InventoryItems_UnitPriceId",
                 table: "InventoryItems",
-                column: "UnitTypeId");
+                column: "UnitPriceId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ItemMetaDataCategories_CategoryId",
@@ -1679,10 +1648,9 @@ namespace Stellmart.Api.Migrations
                 column: "ThreadId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Listings_UnitPriceId",
+                name: "IX_Listings_UnitTypeId",
                 table: "Listings",
-                column: "UnitPriceId",
-                unique: true);
+                column: "UnitTypeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Locations_GeoLocationId",
@@ -1995,10 +1963,10 @@ namespace Stellmart.Api.Migrations
                 name: "Listings");
 
             migrationBuilder.DropTable(
-                name: "QuantityUnits");
+                name: "TradeInStates");
 
             migrationBuilder.DropTable(
-                name: "TradeInStates");
+                name: "CurrencyAmounts");
 
             migrationBuilder.DropTable(
                 name: "ContractPhases");
@@ -2019,7 +1987,7 @@ namespace Stellmart.Api.Migrations
                 name: "MessageThreads");
 
             migrationBuilder.DropTable(
-                name: "CurrencyAmounts");
+                name: "QuantityUnits");
 
             migrationBuilder.DropTable(
                 name: "Interactions");

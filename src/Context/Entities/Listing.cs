@@ -30,19 +30,19 @@ namespace Stellmart.Api.Context.Entities
 
         public bool Internal { get; set; }
 
+        public int UnitTypeId { get; set; }
+
         public int ItemMetaDataId { get; set; }
 
-        public int UnitPriceId { get; set; }
+        public virtual QuantityUnit UnitType { get; set; }
 
         public virtual OnlineStore OnlineStore { get; set; }
 
         public virtual MessageThread Thread { get; set; }
 
-        public virtual CurrencyAmount Price { get; set; }
+        public virtual ItemMetaData ItemMetaData { get; set; }
 
         public virtual ICollection<InventoryItem> InventoryItems { get; set; }
-
-        public virtual ItemMetaData ItemMetaData { get; set; }
 
         public IList<Field> GetFields()
         {

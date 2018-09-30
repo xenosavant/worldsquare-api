@@ -14,8 +14,6 @@ namespace Stellmart.Api.Business.Extensions
 {
     public static class WebHostExtension
     {
-        private static string _apiKey = "1B1C620D0A357D9D4AEAE20973EF6245";
-        private static string _serviceName = "worldsquaredev";
         public static IWebHost Migrate(this IWebHost webhost)
         {
             using (var scope = webhost.Services.GetService<IServiceScopeFactory>().CreateScope())
@@ -23,7 +21,8 @@ namespace Stellmart.Api.Business.Extensions
                 try
                 {
                     var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-                    var searchClient = new SearchServiceClient(_serviceName, new SearchCredentials(_apiKey));
+                    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+                    var searchClient = new SearchServiceClient(configuration["AzureSearch:ServiceName"], new SearchCredentials(configuration["AzureSearch:ApiKey"]));
                     var types = context.TypesOf<ISearchable>();
                     foreach (var type in types)
                     {
@@ -41,7 +40,6 @@ namespace Stellmart.Api.Business.Extensions
                     }
 
                     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-                    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
                     SeedData.Initialize(context, userManager, configuration);
                 }

@@ -7,6 +7,6 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 {
     public class QuantityUnit : LookupData
     {
-        public virtual ICollection<InventoryItem> InventoryItems { get; set; }
+        public virtual ICollection<Listing> Listings { get; set; }
     }
 }

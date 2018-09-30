@@ -19,17 +19,17 @@ namespace Stellmart.Api.Business.Logic
     public class ListingLogic : IListingLogic
     {
         private readonly ISearchService _searchService;
-        private readonly IListingDataManager _manager;
-        private readonly IInventoryDataManager _inventoryManager;
+        private readonly IListingDataManager _listingManager;
+        private readonly IInventoryItemDataManager _inventoryManager;
         private readonly IItemMetaDataManager _metaDataManager;
 
         public ListingLogic(IMapper mapper,
-            IListingDataManager manager,
+            IListingDataManager listingManager,
             ISearchService searchService,
-            IInventoryDataManager inventoryManager,
+            IInventoryItemDataManager inventoryManager,
             IItemMetaDataManager metaDataManager)
         {
-            _manager = manager;
+            _listingManager = listingManager;
             _searchService = searchService;
             _metaDataManager = metaDataManager;
             _inventoryManager = inventoryManager;
@@ -47,37 +47,40 @@ namespace Stellmart.Api.Business.Logic
                 MinimumPriceUsd = usdMin,
                 MaximumPriceUsd = usdMax
             };
-            var ids = (await _searchService.SearchAsync<Listing, ItemSearchQuery>(searchString, query)).ToList();
-            return await _manager.GetAsync(ids);
+            var ids = (await _searchService.SearchAsync<Listing, ItemSearchQuery>(searchString + "~1", query)).ToList();
+            return await _listingManager.GetAsync(ids);
         } 
 
         public Task<Listing> GetById(int id)
         {
-            return _manager.GetById(id);
+            return _listingManager.GetById(id);
         }
 
-        public async Task<Listing> CreateAsync(int? userId, Listing listing)
+        public async Task<Listing> CreateAsync(int userId, Listing listing)
         {
-            await _metaDataManager.UpdateRelationshipsAsync(listing.ItemMetaData);
             _inventoryManager.Create(listing.InventoryItems);
-            var newListing = await _manager.CreateAsync(listing, null);
+            await _metaDataManager.UpdateRelationshipsAsync(listing.ItemMetaData);
+            listing.IsActive = true;
+            var newListing = await _listingManager.CreateAndSaveAsync(listing, userId);
             await _searchService.IndexAsync<Listing, ItemMetaDataSearchIndex>(
                     new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(listing) });
-            return newListing;
+            return await _listingManager.GetById(newListing.Id);
         }
 
-        public async Task<Listing> UpdateAsync(Listing listing, Delta<Listing> delta)
+        public async Task<Listing> UpdateAsync(int userId, Listing listing, Delta<Listing> delta)
         {
             delta.Patch(listing);
-            var updatedListing = await _manager.UpdateAsync(listing);
+            var updatedListing = await _listingManager.UpdateAndSaveAsync(listing, userId);
             await _searchService.UpdateAsync<Listing, ItemMetaDataSearchIndex>(
                     new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(updatedListing) });
             return updatedListing;
         }
 
-        public Task Delete(Listing store)
+        public async Task DeleteAsync(Listing listing)
         {
-            return _manager.Delete(store);
+            await _listingManager.Delete(listing);
+            await _searchService.DeleteAsync<Listing, ItemMetaDataSearchIndex>(
+                new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(listing) });
         }
     }
 }

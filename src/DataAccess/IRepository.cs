@@ -12,7 +12,7 @@ namespace Stellmart.Api.DataAccess
         void Create<TEntity>(TEntity entity, int? createdBy = null)
             where TEntity : class, IEntity;
 
-        void CreateRange<TEntity>(ICollection<TEntity> entities, int createdBy)
+        void CreateRange<TEntity>(ICollection<TEntity> entities, int? createdBy = null)
             where TEntity : class, IEntity;
 
         void TryUpdateManyToMany<TEntity, TKey>(IEnumerable<TEntity> currentItems, IEnumerable<TEntity> newItems, Func<TEntity, TKey> getKey)

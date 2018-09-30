@@ -20,7 +20,7 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual TradeItem TradeItem { get; set; }
 
-        public virtual Listing Listing { get; set; }
+        public virtual InventoryItem InventoryItem { get; set; }
 
         public virtual PricePerDistance PricePerDistance { get; set; }
 

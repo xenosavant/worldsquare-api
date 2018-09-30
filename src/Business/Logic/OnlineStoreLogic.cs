@@ -50,13 +50,13 @@ namespace Stellmart.Api.Business.Logic
             {
                 onlineStore.NativeCurrencyId = viewModel.NativeCurrency.Id;
             }
-            return _manager.CreateAsync(onlineStore);
+            return _manager.CreateAndSaveAsync(onlineStore, userId);
         }
 
-        public Task<OnlineStore> Update(OnlineStore store, Delta<OnlineStore> delta)
+        public Task<OnlineStore> Update(int userId, OnlineStore store, Delta<OnlineStore> delta)
         {
             delta.Patch(store);
-            return _manager.UpdateAsync(store);
+            return _manager.UpdateAndSaveAsync(store, userId);
         }
 
         public Task Delete(OnlineStore store)

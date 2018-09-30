@@ -20,9 +20,6 @@ namespace Stellmart.Api.Config
 {
     public class DependencyInjectionRegistry : Registry
     {
-        private const string _apiKey = "1B1C620D0A357D9D4AEAE20973EF6245";
-        private const string _serviceName = "worldsquaredev";
-
         public DependencyInjectionRegistry(IConfiguration configuration)
         {
             Scan(x =>
@@ -56,7 +53,7 @@ namespace Stellmart.Api.Config
             For<ISearchService>()
                 .Singleton()
                 .Use(new AzureSearchService(
-                    new SearchServiceClient(_serviceName, new SearchCredentials(_apiKey))
+                    new SearchServiceClient(configuration["AzureSearch:ServiceName"], new SearchCredentials(configuration["AzureSearch:ApiKey"]))
                     ));
 
             For<YotiClient>()

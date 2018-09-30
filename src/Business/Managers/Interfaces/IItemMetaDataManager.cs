@@ -8,6 +8,8 @@ namespace Stellmart.Api.Business.Managers.Interfaces
 {
     public interface IItemMetaDataManager
     {
+        Task<ItemMetaData> GetById(int id, string navigationProperties = null);
+        Task<ItemMetaData> UpdateAndSaveAsync(ItemMetaData metaData);
         Task UpdateRelationshipsAsync(ItemMetaData metaData, int? userId = null);
     }
 }

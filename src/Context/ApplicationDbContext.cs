@@ -402,16 +402,16 @@ namespace Stellmart.Context
                 .HasForeignKey<Location>(l => l.GeoLocationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<InventoryItem>()
+            modelBuilder.Entity<Listing>()
                 .HasOne(u => u.UnitType)
-                .WithMany(i => i.InventoryItems)
+                .WithMany(i => i.Listings)
                 .HasForeignKey(l => l.UnitTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<Listing>()
+            modelBuilder.Entity<InventoryItem>()
                 .HasOne(l => l.Price)
-                .WithOne(p => p.Listing)
-                .HasForeignKey<Listing>(l => l.UnitPriceId)
+                .WithOne(p => p.InventoryItem)
+                .HasForeignKey<InventoryItem>(l => l.UnitPriceId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<TradeItem>()

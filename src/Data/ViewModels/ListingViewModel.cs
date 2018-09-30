@@ -1,4 +1,5 @@
 ﻿using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Context.Entities.ReadOnly;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,9 @@ namespace Stellmart.Api.Data.ViewModels
 
         public string Description { get; set; }
 
-        public ItemMetaDataViewModel ItemMetaData { get; set; }
+        public int? UnitTypeId { get; set; }
+
+        public virtual ItemMetaDataViewModel ItemMetaData { get; set; }
 
         public MessageThread Thread { get; set; }
 

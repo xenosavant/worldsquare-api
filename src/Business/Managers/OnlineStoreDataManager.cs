@@ -28,18 +28,30 @@ namespace Stellmart.Api.Business.Managers
             return _repository.GetOneAsync<OnlineStore>(s => s.Id == id, NavigationProperties);
         }
 
-        public async Task<OnlineStore> CreateAsync(OnlineStore store)
+        public OnlineStore Create(OnlineStore store, int id)
         {
-            _repository.Create(store);
-            await _repository.SaveAsync();
-            return await _repository.GetOneAsync<OnlineStore>(o => o.Id == store.Id, NavigationProperties);
+            _repository.Create(store, id);
+            return store;
         }
 
-        public async Task<OnlineStore> UpdateAsync(OnlineStore store)
+        public async Task<OnlineStore> CreateAndSaveAsync(OnlineStore store, int id)
+        {
+            _repository.Create(store, id);
+            await _repository.SaveAsync();
+            return store;
+        }
+
+        public OnlineStore Update(OnlineStore store, int id)
+        {
+            _repository.Update(store, id);
+            return store;
+        }
+
+        public async Task<OnlineStore> UpdateAndSaveAsync(OnlineStore store, int id)
         {
             _repository.Update(store);
             await _repository.SaveAsync();
-            return await _repository.GetOneAsync<OnlineStore>(o => o.Id == store.Id, NavigationProperties);
+            return store;
         }
 
         public Task Delete(OnlineStore store)

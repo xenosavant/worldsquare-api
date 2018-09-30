@@ -25,18 +25,19 @@ namespace Stellmart.Api.Services
 
         public async Task<List<int>> SearchAsync<TEntity, TIndex>(string searchText, ISearchQuery queryFilter)
         {
-            var indexClient = GetClient(typeof(TIndex).Name);
+            var indexClient = GetClient(typeof(TEntity).Name.ToLower());
             var searchParams = new SearchParameters()
             {
                 Filter = queryFilter.BuildAzureQueryFilter(),
-                Select = new[] { "Id" }
+                Select = new[] { "id" }
             };
-            var results = await indexClient.Documents.SearchAsync(searchText == null ? "*" : searchText, searchParams);
+            // TODO: Fuzzy search isn't working
+            var results = await indexClient.Documents.SearchAsync(searchText == null ? "*" : searchText + "~1", searchParams);
             return results.Results.Select(r =>
             {
-                object id = 0;
-                r.Document.TryGetValue("Id", out id);
-                return (int)id;
+                r.Document.TryGetValue("id", out object id);
+                Int32.TryParse((string)id, out int result);
+                return result;
             }).ToList();
         }
 
@@ -45,7 +46,7 @@ namespace Stellmart.Api.Services
             where TEntity : ISearchable 
             where TIndex : class
         {
-            var indexClient = GetClient(typeof(TIndex).Name);
+            var indexClient = GetClient(typeof(TEntity).Name.ToLower());
             var batch = IndexBatch.Upload(documents);
             var result = await indexClient.Documents.IndexAsync(batch);
         }
@@ -54,7 +55,7 @@ namespace Stellmart.Api.Services
             where TEntity : ISearchable
             where TIndex : class
         {
-            var indexClient = GetClient(typeof(TIndex).Name);
+            var indexClient = GetClient(typeof(TEntity).Name.ToLower());
             var batch = IndexBatch.MergeOrUpload(documents);
             var result = await indexClient.Documents.IndexAsync(batch);
         }
@@ -63,7 +64,7 @@ namespace Stellmart.Api.Services
             where TEntity : ISearchable
             where TIndex : class
         {
-            var indexClient = GetClient(typeof(TIndex).Name);
+            var indexClient = GetClient(typeof(TEntity).Name.ToLower());
             var batch = IndexBatch.Delete(documents);
             var result = await indexClient.Documents.IndexAsync(batch);
         }

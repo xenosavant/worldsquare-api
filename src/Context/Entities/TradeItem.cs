@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context
 {
-    public class TradeItem : UniqueEntity<int>, IItem, ISearchable
+    public class TradeItem : UniqueEntity, IItem, ISearchable
     {
         public string Title { get; set; }
 

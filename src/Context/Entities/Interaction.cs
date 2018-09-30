@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context
 {
-    public abstract class Interaction : UniqueEntity<int>
+    public abstract class Interaction : UniqueEntity
     {
         int InteractionStateId { get; set; }
 

@@ -26,6 +26,7 @@ namespace Stellmart.Api.Business.Extensions
                     categories[j] = temp;
                 }
                 i--;
+                j = i;
             }
             return categories;
         }

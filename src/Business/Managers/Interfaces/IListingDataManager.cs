@@ -9,9 +9,12 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     public interface IListingDataManager
     {
         Task<IEnumerable<Listing>> GetAsync(List<int> ids = null);
-        Task<Listing> GetById(int id);
-        Task<Listing> CreateAsync(Listing listing, int? userId);
-        Task<Listing> UpdateAsync(Listing listing);
+        Task<Listing> GetById(int id, string navigationProperties = null);
+        Task<Listing> GetByMetaDataId(int metaDataId, string navigationProperties = null);
+        Listing Create(Listing listing, int userId);
+        Task<Listing> CreateAndSaveAsync(Listing listing, int userId);
+        Listing Update(Listing listing, int userId);
+        Task<Listing> UpdateAndSaveAsync(Listing listing, int userId);
         Task Delete(Listing store);
     }
 }

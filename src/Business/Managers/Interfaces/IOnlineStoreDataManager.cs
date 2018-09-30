@@ -12,8 +12,10 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     {
         Task<IEnumerable<OnlineStore>> GetAll();
         Task<OnlineStore> GetById(int id);
-        Task<OnlineStore> CreateAsync(OnlineStore store);
-        Task<OnlineStore> UpdateAsync(OnlineStore store);
+        OnlineStore Create(OnlineStore store, int id);
+        Task<OnlineStore> CreateAndSaveAsync(OnlineStore store, int id);
+        OnlineStore Update(OnlineStore store, int id);
+        Task<OnlineStore> UpdateAndSaveAsync(OnlineStore store, int id);
         Task Delete(OnlineStore store);
     }
 }

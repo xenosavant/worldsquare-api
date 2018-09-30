@@ -27,21 +27,51 @@ namespace Stellmart.Api.Business.Mapping.Profiles
                 .ForMember(dest => dest.Title, opts => opts.MapFrom(src => src.Title))
                 .ForMember(dest => dest.Description, opts => opts.MapFrom(src => src.Description))
                 .ForMember(dest => dest.InventoryItems, opts => opts.MapFrom(src => src.InventoryItems))
+                .ForMember(dest => dest.UnitTypeId, opts => opts.MapFrom(src => src.UnitTypeId))
+                .ForMember(dest => dest.ItemMetaData, opts => opts.MapFrom(src => src.ItemMetaData))
+                .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<Listing, ListingViewModel>()
+                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
+                .ForMember(dest => dest.OnlineStoreId, opts => opts.MapFrom(src => src.ServiceId))
+                .ForMember(dest => dest.Title, opts => opts.MapFrom(src => src.Title))
+                .ForMember(dest => dest.Description, opts => opts.MapFrom(src => src.Description))
+                .ForMember(dest => dest.InventoryItems, opts => opts.MapFrom(src => src.InventoryItems))
+                .ForMember(dest => dest.UnitTypeId, opts => opts.MapFrom(src => src.UnitTypeId))
                 .ForMember(dest => dest.ItemMetaData, opts => opts.MapFrom(src => src.ItemMetaData))
                 .ForAllOtherMembers(x => x.Ignore());
 
             CreateMap<InventoryItemViewModel, InventoryItem>()
-                .ForMember(dest => dest.UniqueId, opts => opts.MapFrom(src => Guid.NewGuid()))
+                .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
                 .ForMember(dest => dest.SKU, opts => opts.MapFrom(src => src.SKU))
                 .ForMember(dest => dest.UPC, opts => opts.MapFrom(src => src.UPC))
                 .ForMember(dest => dest.Descriptors, opts => opts.MapFrom(src => src.Descriptors))
                 .ForMember(dest => dest.UnitsAvailable, opts => opts.MapFrom(src => src.UnitsAvailable))
                 .ForMember(dest => dest.UnitsSold, opts => opts.MapFrom(src => src.UnitsSold))
                 .ForMember(dest => dest.UnitsReturned, opts => opts.MapFrom(src => src.UnitsReturned))
-                .ForMember(dest => dest.UnitTypeId, opts => opts.MapFrom(src => src.UnitType.Id))
+                .ForMember(dest => dest.Price, opts => opts.MapFrom(src => 
+                new CurrencyAmount()
+                {
+                    Amount = src.CurrencyAmount,
+                    CurrencyTypeId = src.CurrencyTypeId
+                }))
+                .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<InventoryItem, InventoryItemViewModel>()
+                .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
+                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
+                .ForMember(dest => dest.SKU, opts => opts.MapFrom(src => src.SKU))
+                .ForMember(dest => dest.UPC, opts => opts.MapFrom(src => src.UPC))
+                .ForMember(dest => dest.Descriptors, opts => opts.MapFrom(src => src.Descriptors))
+                .ForMember(dest => dest.UnitsAvailable, opts => opts.MapFrom(src => src.UnitsAvailable))
+                .ForMember(dest => dest.UnitsSold, opts => opts.MapFrom(src => src.UnitsSold))
+                .ForMember(dest => dest.UnitsReturned, opts => opts.MapFrom(src => src.UnitsReturned))
+                .ForMember(dest => dest.CurrencyAmount, opts => opts.MapFrom(src => src.Price.Amount))
+                .ForMember(dest => dest.CurrencyTypeId, opts => opts.MapFrom(src => src.Price.CurrencyTypeId))
                 .ForAllOtherMembers(x => x.Ignore());
 
             CreateMap<ItemMetaData, ItemMetaDataViewModel>()
+                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
                 .ForMember(dest => dest.ItemConditionId, opts => opts.MapFrom(src => src.ItemConditionId))
                 .ForMember(dest => dest.KeyWords, opts => opts.MapFrom(src => JsonConvert.DeserializeObject<string[]>(src.KeyWords)))
                 .ForMember(dest => dest.CategoryIds, opts => opts.MapFrom(src => src.Categories.Select(c => c.Id)))
@@ -50,6 +80,9 @@ namespace Stellmart.Api.Business.Mapping.Profiles
             CreateMap<ItemMetaDataViewModel, ItemMetaData>()
                 .ForMember(dest => dest.ItemConditionId, opts => opts.MapFrom(src => src.ItemConditionId))
                 .ForMember(dest => dest.KeyWords, opts => opts.MapFrom(src => JsonConvert.SerializeObject(src.KeyWords)))
+                .ForMember(dest => dest.Categories, opts => opts.UseValue<ICollection<Category>>(null))
+                .ForMember(dest => dest.ItemMetaDataCategories, opts => opts.MapFrom(src => src.CategoryIds.Select(
+                    id => new ItemMetaDataCategory() { CategoryId = id})))
                 .ForAllOtherMembers(x => x.Ignore());
 
         }

@@ -15,36 +15,52 @@ namespace Stellmart.Api.Business.Managers
         private readonly IRepository _repository;
 
         public static string NavigationProperties => "InventoryItems.Price," +
-            "InventoryItems.UnitType,Thread";
+            "Thread,UnitType,ItemMetaData.ItemMetaDataCategories.Category";
 
         public ListingDataManager(IRepository repository)
         {
             _repository = repository;
         }
 
-
         public Task<IEnumerable<Listing>> GetAsync(List<int> ids = null)
         {
-            return _repository.GetAsync<Listing>(l => ids.Contains(l.Id));
+            return _repository.GetAsync<Listing>(l => ids.Contains(l.Id), null, NavigationProperties);
         }
 
-        public Task<Listing> GetById(int id)
+        public Task<Listing> GetByMetaDataId(int metaDataId, string navigationProperties = null)
         {
-            return _repository.GetOneAsync<Listing>(s => s.Id == id, NavigationProperties);
+            return _repository.GetOneAsync<Listing>(l => l.ItemMetaDataId == metaDataId, navigationProperties ?? NavigationProperties);
         }
 
-        public async Task<Listing> CreateAsync(Listing listing, int? userId = null)
+        public Task<Listing> GetById(int id, string navigationProperties = null)
+        {
+            return _repository.GetOneAsync<Listing>(s => s.Id == id, navigationProperties ?? NavigationProperties);
+        }
+
+        public Listing Create(Listing listing, int userId)
+        {
+            _repository.Create(listing, userId);
+            return listing;
+        }
+
+        public async Task<Listing> CreateAndSaveAsync(Listing listing, int userId)
         {
             _repository.Create(listing, userId);
             await _repository.SaveAsync();
-            return await _repository.GetOneAsync<Listing>(l => l.Id == listing.Id, NavigationProperties);
+            return listing;
         }
 
-        public async Task<Listing> UpdateAsync(Listing listing)
+        public Listing Update(Listing listing, int userId)
+        {
+            _repository.Update(listing);
+            return listing;
+        }
+
+        public async Task<Listing> UpdateAndSaveAsync(Listing listing, int userId)
         {
             _repository.Update(listing);
             await _repository.SaveAsync();
-            return await _repository.GetOneAsync<Listing>(o => o.Id == listing.Id, NavigationProperties);
+            return listing;
         }
 
         public Task Delete(Listing store)

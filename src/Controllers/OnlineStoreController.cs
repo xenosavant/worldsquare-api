@@ -83,7 +83,7 @@ namespace Stellmart.Api.Controllers
             {
                 return Unauthorized();
             }
-            return _mapper.Map<OnlineStoreViewModel>(await _storeLogic.Update(onlineStore, delta));
+            return _mapper.Map<OnlineStoreViewModel>(await _storeLogic.Update(UserId, onlineStore, delta));
         }
 
         //DELETE: api/onlinestore/1

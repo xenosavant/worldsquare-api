@@ -291,20 +291,12 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractTypeId");
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<int>("CurrentSequenceNumber");
 
                     b.Property<string>("EscrowAccountId")
                         .IsRequired();
 
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<Guid>("UniqueId");
 
@@ -350,15 +342,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractId");
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<string>("SecretKey");
 
@@ -437,19 +421,11 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<string>("Descriptors");
 
                     b.Property<bool>("IsDeleted");
 
                     b.Property<int?>("ListingId");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<string>("SKU");
 
@@ -457,7 +433,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<Guid>("UniqueId");
 
-                    b.Property<int>("UnitTypeId");
+                    b.Property<int>("UnitPriceId");
 
                     b.Property<int>("UnitsAvailable");
 
@@ -469,7 +445,8 @@ namespace Stellmart.Api.Migrations
 
                     b.HasIndex("ListingId");
 
-                    b.HasIndex("UnitTypeId");
+                    b.HasIndex("UnitPriceId")
+                        .IsUnique();
 
                     b.ToTable("InventoryItems");
                 });
@@ -524,10 +501,6 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("AddressLine6");
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<DateTime>("DateOfBirth");
 
                     b.Property<string>("Email");
@@ -541,10 +514,6 @@ namespace Stellmart.Api.Migrations
                     b.Property<string>("LastName");
 
                     b.Property<string>("MobileNumber");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<string>("Nationality");
 
@@ -627,7 +596,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<Guid>("UniqueId");
 
-                    b.Property<int>("UnitPriceId");
+                    b.Property<int>("UnitTypeId");
 
                     b.HasKey("Id");
 
@@ -638,8 +607,7 @@ namespace Stellmart.Api.Migrations
 
                     b.HasIndex("ThreadId");
 
-                    b.HasIndex("UnitPriceId")
-                        .IsUnique();
+                    b.HasIndex("UnitTypeId");
 
                     b.ToTable("Listings");
                 });
@@ -717,15 +685,7 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<int>("OnlineSaleId");
 
@@ -820,10 +780,6 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractId");
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<int?>("DeliveryRequestId");
 
                     b.Property<bool>("FulfilledInternally");
@@ -833,10 +789,6 @@ namespace Stellmart.Api.Migrations
                     b.Property<bool>("Internal");
 
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<DateTime>("OrderDate");
 
@@ -1391,18 +1343,10 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<string>("Discriminator")
                         .IsRequired();
 
                     b.Property<bool>("IsDeleted");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<Guid>("UniqueId");
 
@@ -1449,17 +1393,9 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<int>("ItemMetaDataId");
-
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
 
                     b.Property<int>("OwnerId");
 
@@ -1795,9 +1731,9 @@ namespace Stellmart.Api.Migrations
                         .HasForeignKey("ListingId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.QuantityUnit", "UnitType")
-                        .WithMany("InventoryItems")
-                        .HasForeignKey("UnitTypeId")
+                    b.HasOne("Stellmart.Api.Context.Entities.CurrencyAmount", "Price")
+                        .WithOne("InventoryItem")
+                        .HasForeignKey("Stellmart.Api.Context.Entities.InventoryItem", "UnitPriceId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -1864,9 +1800,9 @@ namespace Stellmart.Api.Migrations
                         .WithMany()
                         .HasForeignKey("ThreadId");
 
-                    b.HasOne("Stellmart.Api.Context.Entities.CurrencyAmount", "Price")
-                        .WithOne("Listing")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.Listing", "UnitPriceId")
+                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.QuantityUnit", "UnitType")
+                        .WithMany("Listings")
+                        .HasForeignKey("UnitTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
