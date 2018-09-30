@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Data.Kyc;
 using Stellmart.Api.Services;
 using Stellmart.Api.Services.Interfaces;
@@ -17,7 +15,7 @@ namespace Stellmart.Api.Controllers
     {
         private readonly IKycService _kycService;
 
-        public YotiController(IKycService kycService, IMapper mapper)
+        public YotiController(IKycService kycService)
         {
             _kycService = kycService;
         }

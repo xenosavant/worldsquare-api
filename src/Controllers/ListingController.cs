@@ -19,7 +19,7 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class ListingController : BaseController
+    public class ListingController : AuthorizedController
     {
         private readonly IListingLogic _listingLogic;
         private readonly IListingDataManager _listingDataManager;

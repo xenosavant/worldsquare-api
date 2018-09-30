@@ -156,6 +156,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("Flagged");
 
+                    b.Property<string>("IpAddress");
+
                     b.Property<bool>("IsActive");
 
                     b.Property<bool>("IsDeleted");
@@ -242,9 +244,7 @@ namespace Stellmart.Api.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("PrimaryShippingLocationId")
-                        .IsUnique()
-                        .HasFilter("[PrimaryShippingLocationId] IS NOT NULL");
+                    b.HasIndex("PrimaryShippingLocationId");
 
                     b.HasIndex("RewardsLevelId");
 
@@ -1650,8 +1650,8 @@ namespace Stellmart.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Location", "PrimaryShippingLocation")
-                        .WithOne("User")
-                        .HasForeignKey("Stellmart.Api.Context.ApplicationUser", "PrimaryShippingLocationId")
+                        .WithMany("Users")
+                        .HasForeignKey("PrimaryShippingLocationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.RewardsLevel", "RewardsLevel")

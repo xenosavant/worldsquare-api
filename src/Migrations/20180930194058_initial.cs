@@ -573,6 +573,7 @@ namespace Stellmart.Api.Migrations
                     AccessFailedCount = table.Column<int>(nullable: false),
                     FirstName = table.Column<string>(maxLength: 50, nullable: true),
                     LastName = table.Column<string>(maxLength: 50, nullable: true),
+                    IpAddress = table.Column<string>(nullable: true),
                     MustRecoverKey = table.Column<bool>(nullable: false),
                     MustResetKey = table.Column<bool>(nullable: false),
                     StellarPublicKey = table.Column<string>(nullable: true),
@@ -585,6 +586,7 @@ namespace Stellmart.Api.Migrations
                     TwoFactorTypeId = table.Column<int>(nullable: true),
                     NativeCurrencyId = table.Column<int>(nullable: true),
                     VerificationLevelId = table.Column<int>(nullable: true),
+                    CountryId = table.Column<int>(nullable: true),
                     Flagged = table.Column<bool>(nullable: false),
                     UseTwoFactorForLogin = table.Column<bool>(nullable: false),
                     TotpSecret = table.Column<string>(nullable: true),
@@ -593,7 +595,6 @@ namespace Stellmart.Api.Migrations
                     TwoFactorFailedCount = table.Column<int>(nullable: false),
                     MaxTwoFactorFailedAccessAttempts = table.Column<int>(nullable: false),
                     DefaultTwoFatorLockoutMinutes = table.Column<int>(nullable: false),
-                    CountryId = table.Column<int>(nullable: true),
                     UniqueId = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
                     CreatedDate = table.Column<DateTime>(nullable: false),
@@ -903,10 +904,10 @@ namespace Stellmart.Api.Migrations
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     ModifiedBy = table.Column<int>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
-                    RequestorId = table.Column<int>(nullable: false),
-                    Fulfilled = table.Column<bool>(nullable: false),
                     DestinationId = table.Column<int>(nullable: true),
+                    Fulfilled = table.Column<bool>(nullable: false),
                     LocationId = table.Column<int>(nullable: true),
+                    RequestorId = table.Column<int>(nullable: false),
                     Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
@@ -1068,11 +1069,11 @@ namespace Stellmart.Api.Migrations
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     ModifiedBy = table.Column<int>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
+                    PreSign = table.Column<bool>(nullable: false),
                     PreTransactionId = table.Column<int>(nullable: false),
                     Signed = table.Column<bool>(nullable: false),
-                    PreSign = table.Column<bool>(nullable: false),
-                    SignatureHash = table.Column<string>(nullable: true),
                     SignedOn = table.Column<DateTime>(nullable: false),
+                    SignatureHash = table.Column<string>(nullable: true),
                     Discriminator = table.Column<string>(nullable: false),
                     SignerId = table.Column<int>(nullable: true),
                     SecretKeyHash = table.Column<string>(nullable: true)
@@ -1142,8 +1143,8 @@ namespace Stellmart.Api.Migrations
                     Flagged = table.Column<bool>(nullable: false),
                     ThreadId = table.Column<int>(nullable: true),
                     Internal = table.Column<bool>(nullable: false),
-                    ItemMetaDataId = table.Column<int>(nullable: false),
-                    UnitTypeId = table.Column<int>(nullable: false)
+                    UnitTypeId = table.Column<int>(nullable: false),
+                    ItemMetaDataId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -1520,9 +1521,7 @@ namespace Stellmart.Api.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_PrimaryShippingLocationId",
                 table: "AspNetUsers",
-                column: "PrimaryShippingLocationId",
-                unique: true,
-                filter: "[PrimaryShippingLocationId] IS NOT NULL");
+                column: "PrimaryShippingLocationId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_RewardsLevelId",

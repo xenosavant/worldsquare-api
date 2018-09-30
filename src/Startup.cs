@@ -1,5 +1,4 @@
 using AutoMapper;
-using IdentityServer4.AccessTokenValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -17,9 +16,6 @@ using Stellmart.Api.Data.Settings;
 using Stellmart.Context;
 using StructureMap;
 using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Threading.Tasks;
-using Stellmart.Api.Context.Entities;
 
 namespace Stellmart
 {
@@ -37,17 +33,9 @@ namespace Stellmart
         // This method gets called by the runtime. Use this method to add services to the container.
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            if (Hosting.IsDevelopment())
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer("Server=localhost\\MSSQLSERVER01;Database=stellmart-dev-db;Trusted_Connection=True"));
-            }
-            else
-            {
-                services.AddDbContext<ApplicationDbContext>(options =>
-                    options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
-
-            }
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
+                
             services.AddIdentityCore<ApplicationUser>(options => { })
                 .AddRoles<ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -96,14 +84,7 @@ namespace Stellmart
 
         private void GetJwtBearerOptions(JwtBearerOptions options)
         {
-            if (Hosting.IsDevelopment())
-            {
-                options.Authority = "http://localhost:5001/";
-            }
-            else
-            {
-                options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
-            }
+            options.Authority = Configuration.GetSection("IdentityServerSettings:AuthUrl").Value;
             options.Audience = "api1";
             options.RequireHttpsMetadata = false;
         }

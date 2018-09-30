@@ -10,7 +10,7 @@ using Stellmart.Context;
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180929171317_initial")]
+    [Migration("20180930194058_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("Flagged");
 
+                    b.Property<string>("IpAddress");
+
                     b.Property<bool>("IsActive");
 
                     b.Property<bool>("IsDeleted");
@@ -244,9 +246,7 @@ namespace Stellmart.Api.Migrations
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("PrimaryShippingLocationId")
-                        .IsUnique()
-                        .HasFilter("[PrimaryShippingLocationId] IS NOT NULL");
+                    b.HasIndex("PrimaryShippingLocationId");
 
                     b.HasIndex("RewardsLevelId");
 
@@ -1652,8 +1652,8 @@ namespace Stellmart.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Location", "PrimaryShippingLocation")
-                        .WithOne("User")
-                        .HasForeignKey("Stellmart.Api.Context.ApplicationUser", "PrimaryShippingLocationId")
+                        .WithMany("Users")
+                        .HasForeignKey("PrimaryShippingLocationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.RewardsLevel", "RewardsLevel")

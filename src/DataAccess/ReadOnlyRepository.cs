@@ -126,6 +126,16 @@ namespace Stellmart.Api.DataAccess
             return await MinimalGetQueryable<TEntity>(filter, orderBy, includeProperties, skip, take).ToListAsync();
         }
 
+        public virtual async Task<IEnumerable<TEntity>> MinimalGetAllAsync<TEntity>(
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = null,
+            int? skip = null,
+            int? take = null)
+            where TEntity : class
+        {
+            return await MinimalGetQueryable<TEntity>(null, orderBy, includeProperties, skip, take).ToListAsync();
+        }
+
         protected virtual IQueryable<TEntity> MinimalGetQueryable<TEntity>(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,

@@ -42,7 +42,7 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
         public async Task Signup([FromBody]SignupRequest request)
         {
-            await _accountService.SignupAsync(_mapper.Map<ApplicationUserModel>(request));
+            await _accountService.SignupAsync(_mapper.Map<ApplicationUserModel>(request), HttpContext);
         }
 
         /// <summary>

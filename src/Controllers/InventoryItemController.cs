@@ -13,7 +13,7 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class InventoryItemController : BaseController
+    public class InventoryItemController : AuthorizedController
     {
         private readonly IInventoryItemLogic _inventoryItemLogic;
         private readonly IMapper _mapper;

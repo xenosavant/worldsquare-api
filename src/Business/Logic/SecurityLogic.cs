@@ -5,9 +5,7 @@ using Stellmart.Api.DataAccess;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
 using Stellmart.Api.Services;
-using Stellmart.Api.Services.Interfaces;
 
 namespace Stellmart.Api.Business.Logic
 {

@@ -1,14 +1,10 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Context.Entities.ReadOnly;
-using Stellmart.Api.Controllers.Helpers;
+using Stellmart.Api.Data;
 using Stellmart.Api.Data.ViewModels;
 using Stellmart.Api.DataAccess;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Stellmart.Api.Data;
 using Stellmart.Api.Business.Managers.Interfaces;
 
 namespace Stellmart.Api.Business.Logic

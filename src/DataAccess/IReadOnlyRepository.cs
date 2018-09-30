@@ -91,5 +91,12 @@ namespace Stellmart.Api.DataAccess
                   int? skip = null,
                   int? take = null)
                     where TEntity : class;
+
+        Task<IEnumerable<TEntity>> MinimalGetAllAsync<TEntity>(
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = null,
+            int? skip = null,
+            int? take = null)
+            where TEntity : class;
     }
 }
