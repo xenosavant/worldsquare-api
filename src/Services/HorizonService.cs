@@ -137,5 +137,66 @@ namespace Stellmart.Services
         {
             return await _server.SubmitTransaction(XdrStrtoTxn(txnstr));
         }
+        public async Task<HorizonAssetModel> CreateAsset(string name, string limit)
+        {
+            HorizonAssetModel asset = new HorizonAssetModel();
+            asset.IsNative = false;
+            asset.MaxCoinLimit = limit;
+            asset.Code = name;
+            HorizonKeyPairModel Issuer = CreateAccount();
+            HorizonKeyPairModel Distributor = CreateAccount();
+            //TBD : Real network code is pending
+            //Fund minimum XLM to create operations
+            await FundTestAccountAsync(Issuer.PublicKey);
+            await FundTestAccountAsync(Distributor.PublicKey);
+            asset.IssuerAccount = Issuer;
+            asset.Distributor = Distributor;
+            asset.Issuer = KeyPair.FromAccountId(Issuer.PublicKey);
+            //Create trustline from Distributor to Issuer
+            var Ops = new List<Operation>();
+            var TrustOp = ChangeTrustOps(Distributor, asset, limit);
+            Ops.Add(TrustOp);
+            var txnxdr = await CreateTxn(Distributor, Ops, null);
+            await SubmitTxn(txnxdr);
+            asset.State = CustomTokenState.CreateCustomToken;
+            return asset;
+        }
+        public async Task<int> MoveAsset(HorizonAssetModel asset)
+        {
+            if(asset.State == CustomTokenState.CreateCustomToken)
+            {
+                var Ops = new List<Operation>();
+                //TBD: PaymentOps supports only native currency XLM.
+                //Add support for custom token transfer.
+                var PaymentOp = CreatePaymentOps(asset.IssuerAccount, asset.Distributor.PublicKey,
+                    asset.MaxCoinLimit);
+                Ops.Add(PaymentOp);
+                var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
+                await SubmitTxn(txnxdr);
+                asset.State = CustomTokenState.MoveCustomToken;
+                return 0;
+            } else
+                return -1;
+        }
+        public async Task<int> LockAsset(HorizonAssetModel asset)
+        {
+            if(asset.State == CustomTokenState.MoveCustomToken)
+            {
+                //Set threshold and weights of Issuer account as 0; so that no more coin can be minted.
+                //All the coins should have been transferred to Distribution account by now.
+                //Its the responsiblity of the Distribution account to transfer the tokens to others.
+                HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
+                weight.MasterWeight = weight.HighThreshold = weight.MediumThreshold =
+                    weight.LowThreshold = 0;
+                var Ops = new List<Operation>();
+                var SetOptOp = SetOptionsOp(asset.IssuerAccount, weight);
+                Ops.Add(SetOptOp);
+                var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
+                await SubmitTxn(txnxdr);
+                asset.State = CustomTokenState.LockCustomToken;
+                return 0;
+            } else
+                return -1;
+        }
     }
 }
