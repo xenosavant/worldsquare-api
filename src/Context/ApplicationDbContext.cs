@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Stellmart.Api.Context;
 using Stellmart.Api.Context.Entities;
@@ -364,12 +365,6 @@ namespace Stellmart.Context
                 .HasOne(u => u.NativeCurrency)
                 .WithMany(c => c.Users)
                 .HasForeignKey(s => s.NativeCurrencyId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ApplicationUser>()
-                .HasOne(u => u.PrimaryShippingLocation)
-                .WithMany(c => c.Users)
-                .HasForeignKey(s => s.PrimaryShippingLocationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ApplicationUser>()

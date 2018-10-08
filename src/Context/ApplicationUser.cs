@@ -35,8 +35,6 @@ namespace Stellmart.Api.Context
 
         public bool ManagedAccount { get; set; }
 
-        public int? PrimaryShippingLocationId { get; set; }
-
         public int? RewardsLevelId { get; set; }
 
         public int? TwoFactorTypeId { get; set; }
@@ -64,7 +62,7 @@ namespace Stellmart.Api.Context
         [DefaultValue(5)]
         public int DefaultTwoFatorLockoutMinutes{ get; set; }
 
-        public virtual Location PrimaryShippingLocation { get; set; }
+        public virtual ICollection<Location> Locations { get; set; }
 
         public virtual RewardsLevel RewardsLevel { get; set; }
 
