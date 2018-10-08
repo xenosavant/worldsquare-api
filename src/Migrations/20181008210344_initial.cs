@@ -414,32 +414,88 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Locations",
+                name: "AspNetUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    UserName = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
+                    Email = table.Column<string>(maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>(nullable: false),
+                    PasswordHash = table.Column<string>(nullable: true),
+                    SecurityStamp = table.Column<string>(nullable: true),
+                    ConcurrencyStamp = table.Column<string>(nullable: true),
+                    PhoneNumber = table.Column<string>(nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
+                    TwoFactorEnabled = table.Column<bool>(nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
+                    LockoutEnabled = table.Column<bool>(nullable: false),
+                    AccessFailedCount = table.Column<int>(nullable: false),
+                    FirstName = table.Column<string>(maxLength: 50, nullable: true),
+                    LastName = table.Column<string>(maxLength: 50, nullable: true),
+                    IpAddress = table.Column<string>(nullable: true),
+                    MustRecoverKey = table.Column<bool>(nullable: false),
+                    MustResetKey = table.Column<bool>(nullable: false),
+                    StellarPublicKey = table.Column<string>(nullable: true),
+                    StellarEncryptedSecretKey = table.Column<byte[]>(nullable: true),
+                    StellarRecoveryKey = table.Column<byte[]>(nullable: true),
+                    StellarSecretKeyIv = table.Column<byte[]>(nullable: true),
+                    ManagedAccount = table.Column<bool>(nullable: false),
+                    PrimaryShippingLocationId = table.Column<int>(nullable: true),
+                    RewardsLevelId = table.Column<int>(nullable: true),
+                    TwoFactorTypeId = table.Column<int>(nullable: true),
+                    NativeCurrencyId = table.Column<int>(nullable: true),
+                    VerificationLevelId = table.Column<int>(nullable: true),
+                    CountryId = table.Column<int>(nullable: true),
+                    Flagged = table.Column<bool>(nullable: false),
+                    UseTwoFactorForLogin = table.Column<bool>(nullable: false),
+                    TotpSecret = table.Column<string>(nullable: true),
+                    TwoFactorCode = table.Column<string>(nullable: true),
+                    SecurityQuestions = table.Column<string>(nullable: true),
+                    TwoFactorFailedCount = table.Column<int>(nullable: false),
+                    MaxTwoFactorFailedAccessAttempts = table.Column<int>(nullable: false),
+                    DefaultTwoFatorLockoutMinutes = table.Column<int>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
                     IsDeleted = table.Column<bool>(nullable: false),
-                    Address = table.Column<string>(nullable: true),
-                    GeoLocationId = table.Column<int>(nullable: false),
-                    LocationComponents = table.Column<string>(nullable: true),
-                    PlaceId = table.Column<string>(nullable: true),
-                    Verified = table.Column<bool>(nullable: false),
-                    RegionId = table.Column<int>(nullable: true)
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedBy = table.Column<int>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Locations", x => x.Id);
+                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Locations_GeoLocations_GeoLocationId",
-                        column: x => x.GeoLocationId,
-                        principalTable: "GeoLocations",
+                        name: "FK_AspNetUsers_Countries_CountryId",
+                        column: x => x.CountryId,
+                        principalTable: "Countries",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Locations_Regions_RegionId",
-                        column: x => x.RegionId,
-                        principalTable: "Regions",
+                        name: "FK_AspNetUsers_Currencies_NativeCurrencyId",
+                        column: x => x.NativeCurrencyId,
+                        principalTable: "Currencies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_RewardsLevels_RewardsLevelId",
+                        column: x => x.RewardsLevelId,
+                        principalTable: "RewardsLevels",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_TwoFactorAuthenticationTypes_TwoFactorTypeId",
+                        column: x => x.TwoFactorTypeId,
+                        principalTable: "TwoFactorAuthenticationTypes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_AspNetUsers_VerificationLevels_VerificationLevelId",
+                        column: x => x.VerificationLevelId,
+                        principalTable: "VerificationLevels",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -547,149 +603,6 @@ namespace Stellmart.Api.Migrations
                         name: "FK_Categories_Categories_ParentCategoryId",
                         column: x => x.ParentCategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    UserName = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
-                    Email = table.Column<string>(maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(nullable: false),
-                    PasswordHash = table.Column<string>(nullable: true),
-                    SecurityStamp = table.Column<string>(nullable: true),
-                    ConcurrencyStamp = table.Column<string>(nullable: true),
-                    PhoneNumber = table.Column<string>(nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(nullable: true),
-                    LockoutEnabled = table.Column<bool>(nullable: false),
-                    AccessFailedCount = table.Column<int>(nullable: false),
-                    FirstName = table.Column<string>(maxLength: 50, nullable: true),
-                    LastName = table.Column<string>(maxLength: 50, nullable: true),
-                    IpAddress = table.Column<string>(nullable: true),
-                    MustRecoverKey = table.Column<bool>(nullable: false),
-                    MustResetKey = table.Column<bool>(nullable: false),
-                    StellarPublicKey = table.Column<string>(nullable: true),
-                    StellarEncryptedSecretKey = table.Column<byte[]>(nullable: true),
-                    StellarRecoveryKey = table.Column<byte[]>(nullable: true),
-                    StellarSecretKeyIv = table.Column<byte[]>(nullable: true),
-                    ManagedAccount = table.Column<bool>(nullable: false),
-                    PrimaryShippingLocationId = table.Column<int>(nullable: true),
-                    RewardsLevelId = table.Column<int>(nullable: true),
-                    TwoFactorTypeId = table.Column<int>(nullable: true),
-                    NativeCurrencyId = table.Column<int>(nullable: true),
-                    VerificationLevelId = table.Column<int>(nullable: true),
-                    CountryId = table.Column<int>(nullable: true),
-                    Flagged = table.Column<bool>(nullable: false),
-                    UseTwoFactorForLogin = table.Column<bool>(nullable: false),
-                    TotpSecret = table.Column<string>(nullable: true),
-                    TwoFactorCode = table.Column<string>(nullable: true),
-                    SecurityQuestions = table.Column<string>(nullable: true),
-                    TwoFactorFailedCount = table.Column<int>(nullable: false),
-                    MaxTwoFactorFailedAccessAttempts = table.Column<int>(nullable: false),
-                    DefaultTwoFatorLockoutMinutes = table.Column<int>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Currencies_NativeCurrencyId",
-                        column: x => x.NativeCurrencyId,
-                        principalTable: "Currencies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_Locations_PrimaryShippingLocationId",
-                        column: x => x.PrimaryShippingLocationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_RewardsLevels_RewardsLevelId",
-                        column: x => x.RewardsLevelId,
-                        principalTable: "RewardsLevels",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_TwoFactorAuthenticationTypes_TwoFactorTypeId",
-                        column: x => x.TwoFactorTypeId,
-                        principalTable: "TwoFactorAuthenticationTypes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AspNetUsers_VerificationLevels_VerificationLevelId",
-                        column: x => x.VerificationLevelId,
-                        principalTable: "VerificationLevels",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "PreTransactions",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    PreTransactionTypeId = table.Column<int>(nullable: false),
-                    Preauthorized = table.Column<bool>(nullable: false),
-                    XdrString = table.Column<string>(nullable: true),
-                    Submitted = table.Column<bool>(nullable: false),
-                    ContractPhaseId = table.Column<int>(nullable: false),
-                    MinimumTime = table.Column<DateTime>(nullable: false),
-                    MaximumTime = table.Column<DateTime>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PreTransactions", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PreTransactions_ContractPhases_ContractPhaseId",
-                        column: x => x.ContractPhaseId,
-                        principalTable: "ContractPhases",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ItemMetaDataCategories",
-                columns: table => new
-                {
-                    ItemMetaDataId = table.Column<int>(nullable: false),
-                    CategoryId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ItemMetaDataCategories", x => new { x.ItemMetaDataId, x.CategoryId });
-                    table.ForeignKey(
-                        name: "FK_ItemMetaDataCategories_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ItemMetaDataCategories_ItemMetaDatas_ItemMetaDataId",
-                        column: x => x.ItemMetaDataId,
-                        principalTable: "ItemMetaDatas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -844,6 +757,50 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Locations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedBy = table.Column<int>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    Address = table.Column<string>(nullable: true),
+                    GeoLocationId = table.Column<int>(nullable: false),
+                    LocationComponents = table.Column<string>(nullable: true),
+                    PlaceId = table.Column<string>(nullable: true),
+                    Verified = table.Column<bool>(nullable: false),
+                    UserId = table.Column<int>(nullable: true),
+                    RegionId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Locations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Locations_GeoLocations_GeoLocationId",
+                        column: x => x.GeoLocationId,
+                        principalTable: "GeoLocations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Locations_Regions_RegionId",
+                        column: x => x.RegionId,
+                        principalTable: "Regions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Locations_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "MessageThreads",
                 columns: table => new
                 {
@@ -887,54 +844,6 @@ namespace Stellmart.Api.Migrations
                         name: "FK_Reviews_AspNetUsers_ReviewerId",
                         column: x => x.ReviewerId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ServiceRequests",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    IsDeleted = table.Column<bool>(nullable: false),
-                    UniqueId = table.Column<Guid>(nullable: false),
-                    CreatedDate = table.Column<DateTime>(nullable: false),
-                    CreatedBy = table.Column<int>(nullable: false),
-                    ModifiedDate = table.Column<DateTime>(nullable: true),
-                    ModifiedBy = table.Column<int>(nullable: true),
-                    IsActive = table.Column<bool>(nullable: false),
-                    DestinationId = table.Column<int>(nullable: true),
-                    Fulfilled = table.Column<bool>(nullable: false),
-                    LocationId = table.Column<int>(nullable: true),
-                    RequestorId = table.Column<int>(nullable: false),
-                    Discriminator = table.Column<string>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ServiceRequests", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ServiceRequests_AspNetUsers_RequestorId",
-                        column: x => x.RequestorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ServiceRequests_AspNetUsers_RequestorId1",
-                        column: x => x.RequestorId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ServiceRequests_Locations_DestinationId",
-                        column: x => x.DestinationId,
-                        principalTable: "Locations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_ServiceRequests_Locations_LocationId",
-                        column: x => x.LocationId,
-                        principalTable: "Locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1057,7 +966,57 @@ namespace Stellmart.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Signatures",
+                name: "PreTransactions",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    PreTransactionTypeId = table.Column<int>(nullable: false),
+                    Preauthorized = table.Column<bool>(nullable: false),
+                    XdrString = table.Column<string>(nullable: true),
+                    Submitted = table.Column<bool>(nullable: false),
+                    ContractPhaseId = table.Column<int>(nullable: false),
+                    MinimumTime = table.Column<DateTime>(nullable: false),
+                    MaximumTime = table.Column<DateTime>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PreTransactions", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PreTransactions_ContractPhases_ContractPhaseId",
+                        column: x => x.ContractPhaseId,
+                        principalTable: "ContractPhases",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ItemMetaDataCategories",
+                columns: table => new
+                {
+                    ItemMetaDataId = table.Column<int>(nullable: false),
+                    CategoryId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ItemMetaDataCategories", x => new { x.ItemMetaDataId, x.CategoryId });
+                    table.ForeignKey(
+                        name: "FK_ItemMetaDataCategories_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ItemMetaDataCategories_ItemMetaDatas_ItemMetaDataId",
+                        column: x => x.ItemMetaDataId,
+                        principalTable: "ItemMetaDatas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ServiceRequests",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -1069,28 +1028,37 @@ namespace Stellmart.Api.Migrations
                     ModifiedDate = table.Column<DateTime>(nullable: true),
                     ModifiedBy = table.Column<int>(nullable: true),
                     IsActive = table.Column<bool>(nullable: false),
-                    PreSign = table.Column<bool>(nullable: false),
-                    PreTransactionId = table.Column<int>(nullable: false),
-                    Signed = table.Column<bool>(nullable: false),
-                    SignedOn = table.Column<DateTime>(nullable: false),
-                    SignatureHash = table.Column<string>(nullable: true),
-                    Discriminator = table.Column<string>(nullable: false),
-                    SignerId = table.Column<int>(nullable: true),
-                    SecretKeyHash = table.Column<string>(nullable: true)
+                    DestinationId = table.Column<int>(nullable: true),
+                    Fulfilled = table.Column<bool>(nullable: false),
+                    LocationId = table.Column<int>(nullable: true),
+                    RequestorId = table.Column<int>(nullable: false),
+                    Discriminator = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Signatures", x => x.Id);
+                    table.PrimaryKey("PK_ServiceRequests", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Signatures_PreTransactions_PreTransactionId",
-                        column: x => x.PreTransactionId,
-                        principalTable: "PreTransactions",
+                        name: "FK_ServiceRequests_AspNetUsers_RequestorId",
+                        column: x => x.RequestorId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Signatures_AspNetUsers_SignerId",
-                        column: x => x.SignerId,
+                        name: "FK_ServiceRequests_AspNetUsers_RequestorId1",
+                        column: x => x.RequestorId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ServiceRequests_Locations_DestinationId",
+                        column: x => x.DestinationId,
+                        principalTable: "Locations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_ServiceRequests_Locations_LocationId",
+                        column: x => x.LocationId,
+                        principalTable: "Locations",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1195,6 +1163,45 @@ namespace Stellmart.Api.Migrations
                         name: "FK_OnlineStoreReviews_Reviews_ReviewId",
                         column: x => x.ReviewId,
                         principalTable: "Reviews",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Signatures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    IsDeleted = table.Column<bool>(nullable: false),
+                    UniqueId = table.Column<Guid>(nullable: false),
+                    CreatedDate = table.Column<DateTime>(nullable: false),
+                    CreatedBy = table.Column<int>(nullable: false),
+                    ModifiedDate = table.Column<DateTime>(nullable: true),
+                    ModifiedBy = table.Column<int>(nullable: true),
+                    IsActive = table.Column<bool>(nullable: false),
+                    PreSign = table.Column<bool>(nullable: false),
+                    PreTransactionId = table.Column<int>(nullable: false),
+                    Signed = table.Column<bool>(nullable: false),
+                    SignedOn = table.Column<DateTime>(nullable: false),
+                    SignatureHash = table.Column<string>(nullable: true),
+                    Discriminator = table.Column<string>(nullable: false),
+                    SignerId = table.Column<int>(nullable: true),
+                    SecretKeyHash = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Signatures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Signatures_PreTransactions_PreTransactionId",
+                        column: x => x.PreTransactionId,
+                        principalTable: "PreTransactions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Signatures_AspNetUsers_SignerId",
+                        column: x => x.SignerId,
+                        principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -1519,11 +1526,6 @@ namespace Stellmart.Api.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUsers_PrimaryShippingLocationId",
-                table: "AspNetUsers",
-                column: "PrimaryShippingLocationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_AspNetUsers_RewardsLevelId",
                 table: "AspNetUsers",
                 column: "RewardsLevelId");
@@ -1661,6 +1663,11 @@ namespace Stellmart.Api.Migrations
                 name: "IX_Locations_RegionId",
                 table: "Locations",
                 column: "RegionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Locations_UserId",
+                table: "Locations",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_MessageThreadId",
@@ -2019,19 +2026,25 @@ namespace Stellmart.Api.Migrations
                 name: "Areas");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "DistanceUnits");
+
+            migrationBuilder.DropTable(
+                name: "GeoLocations");
+
+            migrationBuilder.DropTable(
+                name: "Regions");
+
+            migrationBuilder.DropTable(
+                name: "AspNetUsers");
 
             migrationBuilder.DropTable(
                 name: "Countries");
 
             migrationBuilder.DropTable(
                 name: "Currencies");
-
-            migrationBuilder.DropTable(
-                name: "Locations");
 
             migrationBuilder.DropTable(
                 name: "RewardsLevels");
@@ -2041,12 +2054,6 @@ namespace Stellmart.Api.Migrations
 
             migrationBuilder.DropTable(
                 name: "VerificationLevels");
-
-            migrationBuilder.DropTable(
-                name: "GeoLocations");
-
-            migrationBuilder.DropTable(
-                name: "Regions");
         }
     }
 }

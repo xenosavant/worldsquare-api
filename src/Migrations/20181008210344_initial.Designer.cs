@@ -10,7 +10,7 @@ using Stellmart.Context;
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180930194058_initial")]
+    [Migration("20181008210344_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -245,8 +245,6 @@ namespace Stellmart.Api.Migrations
                         .IsUnique()
                         .HasName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("PrimaryShippingLocationId");
 
                     b.HasIndex("RewardsLevelId");
 
@@ -1367,15 +1365,29 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("Address");
 
+                    b.Property<int>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
                     b.Property<int>("GeoLocationId");
+
+                    b.Property<bool>("IsActive");
 
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LocationComponents");
 
+                    b.Property<int?>("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
                     b.Property<string>("PlaceId");
 
                     b.Property<int?>("RegionId");
+
+                    b.Property<Guid>("UniqueId");
+
+                    b.Property<int?>("UserId");
 
                     b.Property<bool>("Verified");
 
@@ -1385,6 +1397,8 @@ namespace Stellmart.Api.Migrations
                         .IsUnique();
 
                     b.HasIndex("RegionId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Locations");
                 });
@@ -1649,11 +1663,6 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.Currency", "NativeCurrency")
                         .WithMany("Users")
                         .HasForeignKey("NativeCurrencyId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.Location", "PrimaryShippingLocation")
-                        .WithMany("Users")
-                        .HasForeignKey("PrimaryShippingLocationId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.RewardsLevel", "RewardsLevel")
@@ -2021,6 +2030,10 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.Entities.Region", "Region")
                         .WithMany()
                         .HasForeignKey("RegionId");
+
+                    b.HasOne("Stellmart.Api.Context.ApplicationUser", "User")
+                        .WithMany("Locations")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.TradeItem", b =>
