@@ -1,22 +1,24 @@
-﻿using Stellmart.Api.Context.Entities;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Context.Entities.Entity;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Stellmart.Api.Context
 {
-    public class Location : Entity<int>
+    public class Location : EntityMaximum
     {
         public string Address { get; set; }
 
         public int GeoLocationId { get; set; }
 
-        public string LocationComponents { get; set; }
+        public string LocationComponentsFromApp { get; set; }
+        public string LocationComponentsFromGoogleApi { get; set; }
 
         public string PlaceId { get; set; }
+
+        [ForeignKey("UserId")]
+        public int UserId { get; set; }
 
         [Required]
         public bool Verified { get; set; }
@@ -27,9 +29,8 @@ namespace Stellmart.Api.Context
 
         public virtual ServiceRequest ServiceRequestLocation { get; set; }
 
-        public virtual ICollection<ApplicationUser> Users { get; set; }
+        public virtual ApplicationUser User { get; set; }
 
         public virtual Region Region { get; set; }
-
     }
 }
