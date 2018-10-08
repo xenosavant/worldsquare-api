@@ -45,26 +45,6 @@ namespace Stellmart.Api.Context
 
                     context.SecurityQuestions.AddRange(securityQuestions);
 
-                    var geolocation = new GeoLocation()
-                    {
-                        Latitude = 51.5073509,
-                        Longitude = -0.12775829999998223,
-                        IsDeleted = false
-                    };
-
-                    context.GeoLocations.Add(geolocation);
-
-                    var location = new Location()
-                    {
-                        GeoLocation = geolocation,
-                        Address = "11 Victoria Street",
-                        IsDeleted = false,
-                        LocationComponents = string.Empty,
-                        Verified = true
-                    };
-
-                    context.Locations.Add(location);
-
                     var rewardsLevel = new RewardsLevel()
                     {
                         Active = true,
@@ -212,7 +192,6 @@ namespace Stellmart.Api.Context
                         Email = configuration["SeedData:InitialAdminUser"],
                         UserName = configuration["SeedData:InitialAdminUser"],
                         NativeCurrency = currency,
-                        PrimaryShippingLocation = location,
                         RewardsLevel = rewardsLevel,
                         TwoFactorAuthenticationType = twoFactors[2],
                         VerificationLevel = verificationLevels[0],
@@ -251,6 +230,29 @@ namespace Stellmart.Api.Context
                     };
 
                     context.OnlineStores.Add(internalStore);
+
+                    var geolocation = new GeoLocation()
+                    {
+                        Latitude = 51.5073509,
+                        Longitude = -0.12775829999998223,
+                        IsDeleted = false
+                    };
+
+                    context.GeoLocations.Add(geolocation);
+
+                    var location = new Location()
+                    {
+                        GeoLocation = geolocation,
+                        Address = "422 Massachusetts Ave, Arlington, MA 02474, USA",
+                        IsDeleted = false,
+                        LocationComponentsFromApp = "",
+                        LocationComponentsFromGoogleApi = "[ { \"long_name\": \"422\", \"short_name\": \"422\", \"types\": [ \"street_number\" ] }, { \"long_name\": \"Massachusetts Avenue\", \"short_name\": \"Massachusetts Ave\", \"types\": [ \"route\" ] }, { \"long_name\": \"Arlington\", \"short_name\": \"Arlington\", \"types\": [ \"locality\", \"political\" ] }, { \"long_name\": \"Middlesex County\", \"short_name\": \"Middlesex County\", \"types\": [ \"administrative_area_level_2\", \"political\" ] }, { \"long_name\": \"Massachusetts\", \"short_name\": \"MA\", \"types\": [ \"administrative_area_level_1\", \"political\" ] }, { \"long_name\": \"United States\", \"short_name\": \"US\", \"types\": [ \"country\", \"political\" ] }, { \"long_name\": \"02474\", \"short_name\": \"02474\", \"types\": [ \"postal_code\" ] }, { \"long_name\": \"6725\", \"short_name\": \"6725\", \"types\": [ \"postal_code_suffix\" ] } ]",
+                        Verified = true,
+                        IsActive = true,
+                        User = user
+                    };
+
+                    context.Locations.Add(location);
 
                     context.SaveChanges();
                     transaction.Commit();
