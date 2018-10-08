@@ -1,16 +1,11 @@
 ﻿using Bounce.Api.Data.Search.Indexes;
 using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
-using Newtonsoft.Json;
 using Stellmart.Api.Context.Entities.Entity;
 using Stellmart.Api.Context.Entities.Interfaces;
 using Stellmart.Api.Context.Entities.ReadOnly;
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {

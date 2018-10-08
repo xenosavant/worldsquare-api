@@ -1,13 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Account;
 using Stellmart.Api.Services.Interfaces;
 using Stellmart.Data.Account;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using Stellmart.Api.Data;
 
 namespace Stellmart.Api.Controllers
 {

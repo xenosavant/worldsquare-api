@@ -21,15 +21,15 @@ namespace Stellmart.Api.Business.Managers
             _mapper = mapper;
         }
 
-        public async Task CreateAsync(KycProfileModel model, int createdBy)
+        public async Task CreateAsync(KycProfileModel model, int userId)
         {
             using (var transaction = await _repository.BeginTransactionAsync())
             {
                 try
                 {
-                    _repository.Create(_mapper.Map<KycData>(model), createdBy);
+                    _repository.Create(_mapper.Map<KycData>(model), userId);
 
-                    var user = await _repository.GetOneAsync<ApplicationUser>(x => x.Id == createdBy);
+                    var user = await _repository.GetOneAsync<ApplicationUser>(x => x.Id == userId);
                     user.VerificationLevelId = (byte)VerificationLevelTypes.LevelOne;
                     _repository.Update(user);
 

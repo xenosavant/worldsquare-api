@@ -32,7 +32,6 @@ namespace Stellmart.Api.Business.Mapping.Profiles
                 .ForMember(dest => dest.StellarEncryptedSecretKey, opts => opts.MapFrom(src => src.StellarEncryptedSecretKey))
                 .ForMember(dest => dest.StellarRecoveryKey, opts => opts.MapFrom(src => src.StellarRecoveryKey))
                 .ForMember(dest => dest.StellarSecretKeyIv, opts => opts.MapFrom(src => src.StellarSecretKeyIv))
-                .ForMember(dest => dest.PrimaryShippingLocationId, opts => opts.UseValue((byte)PrimaryShippingLocationTypes.Default))
                 .ForMember(dest => dest.RewardsLevelId, opts => opts.UseValue((byte)RewardsLevelTypes.Default))
                 .ForMember(dest => dest.TwoFactorTypeId, opts => opts.UseValue((byte)TwoFactorTypes.None))
                 .ForMember(dest => dest.NativeCurrencyId, opts => opts.UseValue((byte)NativeCurrencyTypes.Default))

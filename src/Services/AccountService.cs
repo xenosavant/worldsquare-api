@@ -1,22 +1,19 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using ServiceStack;
 using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
-using Stellmart.Api.Context;
 using Stellmart.Api.Data.Account;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
+using Stellmart.Api.Data;
 
 namespace Stellmart.Api.Services
 {
     public class AccountService : IAccountService
     {
         private readonly ISecurityQuestionDataManager _securityQuestionDataManager;
-        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHorizonService _horizonService;
         private readonly IEncryptionService _encryptionService;
         private readonly IRequestIpAddressLogic _requestIpAddressLogic;

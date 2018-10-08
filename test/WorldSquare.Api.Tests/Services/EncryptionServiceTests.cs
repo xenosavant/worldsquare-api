@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using Stellmart.Api.Data.ViewModels;
 using Stellmart.Api.Services;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
