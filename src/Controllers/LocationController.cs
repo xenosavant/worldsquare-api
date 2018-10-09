@@ -27,10 +27,10 @@ namespace Stellmart.Api.Controllers
         [HttpGet]
         [Route(template: "user")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(IReadOnlyCollection<LocationModel>), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(IReadOnlyCollection<LocationModel>), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(IReadOnlyCollection<LocationModel>), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(IReadOnlyCollection<LocationModel>), (int)HttpStatusCode.InternalServerError)]
         public async Task<IReadOnlyCollection<LocationModel>> GetLocationsAsync()
         {
             return await _locationLogic.GetLocationsAsync(UserId);
@@ -44,10 +44,10 @@ namespace Stellmart.Api.Controllers
         [HttpPost]
         [Route(template: "")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.InternalServerError)]
         public async Task CreateAsync(LocationModel model)
         {
             await _locationLogic.CreateAsync(model, UserId);
