@@ -400,11 +400,21 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<int>("CreatedBy");
+
+                    b.Property<DateTime>("CreatedDate");
+
                     b.Property<bool>("IsDeleted");
 
                     b.Property<double>("Latitude");
 
                     b.Property<double>("Longitude");
+
+                    b.Property<int?>("ModifiedBy");
+
+                    b.Property<DateTime?>("ModifiedDate");
+
+                    b.Property<Guid>("UniqueId");
 
                     b.HasKey("Id");
 
@@ -1385,7 +1395,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<Guid>("UniqueId");
 
-                    b.Property<int?>("UserId");
+                    b.Property<int>("UserId");
 
                     b.Property<bool>("Verified");
 
@@ -2031,7 +2041,8 @@ namespace Stellmart.Api.Migrations
 
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "User")
                         .WithMany("Locations")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.TradeItem", b =>

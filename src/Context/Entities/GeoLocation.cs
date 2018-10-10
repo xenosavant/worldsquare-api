@@ -2,7 +2,7 @@
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class GeoLocation : Entity<int>
+    public class GeoLocation : AuditableEntity<int>
     {
         public double Latitude { get; set; }
 
