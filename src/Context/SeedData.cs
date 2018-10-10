@@ -245,7 +245,7 @@ namespace Stellmart.Api.Context
                         GeoLocation = geolocation,
                         Address = "422 Massachusetts Ave, Arlington, MA 02474, USA",
                         IsDeleted = false,
-                        LocationComponentsFromApp = "",
+                        LocationComponentsFromApp = "{\"search\":\"4\",\"route\":\"9th Avenue\",\"street_number\":\"432\",\"locality\":\"New York\",\"administrative_area_level_1\":\"NY\",\"administrative_area_level_2\":\"New York County\",\"sublocality_level_1\":\"Manhattan\",\"neighborhood\":\"\",\"postal_code\":\"10001\",\"country\":\"United States\"}",
                         LocationComponentsFromGoogleApi = "[ { \"long_name\": \"422\", \"short_name\": \"422\", \"types\": [ \"street_number\" ] }, { \"long_name\": \"Massachusetts Avenue\", \"short_name\": \"Massachusetts Ave\", \"types\": [ \"route\" ] }, { \"long_name\": \"Arlington\", \"short_name\": \"Arlington\", \"types\": [ \"locality\", \"political\" ] }, { \"long_name\": \"Middlesex County\", \"short_name\": \"Middlesex County\", \"types\": [ \"administrative_area_level_2\", \"political\" ] }, { \"long_name\": \"Massachusetts\", \"short_name\": \"MA\", \"types\": [ \"administrative_area_level_1\", \"political\" ] }, { \"long_name\": \"United States\", \"short_name\": \"US\", \"types\": [ \"country\", \"political\" ] }, { \"long_name\": \"02474\", \"short_name\": \"02474\", \"types\": [ \"postal_code\" ] }, { \"long_name\": \"6725\", \"short_name\": \"6725\", \"types\": [ \"postal_code_suffix\" ] } ]",
                         Verified = true,
                         IsActive = true,
