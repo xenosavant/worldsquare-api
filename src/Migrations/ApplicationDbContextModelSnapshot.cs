@@ -1379,6 +1379,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsActive");
 
+                    b.Property<bool>("IsDefault");
+
                     b.Property<bool>("IsDeleted");
 
                     b.Property<string>("LocationComponentsFromApp");
