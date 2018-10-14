@@ -23,6 +23,8 @@ namespace Stellmart.Api.Context
         [Required]
         public bool Verified { get; set; }
 
+        public bool IsDefault { get; set; }
+
         public virtual GeoLocation GeoLocation { get; set; }
 
         public virtual ServiceRequest ServiceRequestDestination { get; set; }

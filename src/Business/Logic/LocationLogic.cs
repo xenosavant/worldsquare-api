@@ -27,5 +27,10 @@ namespace Stellmart.Api.Business.Logic
         {
             await _locationDataManager.CreateAsync(model, userId);
         }
+
+        public async Task<int> SetDefaultAsync(LocationModel model, int userId)
+        {
+            return await _locationDataManager.SetDefaultAsync(model, userId);
+        }
     }
 }

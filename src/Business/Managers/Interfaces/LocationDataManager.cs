@@ -9,5 +9,6 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     {
         Task<IReadOnlyCollection<Location>> GetLocationsAsync(int userId);
         Task CreateAsync(LocationModel model, int userId);
+        Task<int> SetDefaultAsync(LocationModel model, int userId);
     }
 }

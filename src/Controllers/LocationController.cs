@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Data;
-using Stellmart.Api.Data.Account;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -51,6 +50,23 @@ namespace Stellmart.Api.Controllers
         public async Task CreateAsync(LocationModel model)
         {
             await _locationLogic.CreateAsync(model, UserId);
+        }
+
+        /// <summary>
+        /// Set default shipping address
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route(template: "setDefaultShippingAddress")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.InternalServerError)]
+        public async Task SetDefaultShippingAddressAsync(LocationModel model)
+        {
+            await _locationLogic.SetDefaultAsync(model, UserId);
         }
     }
 }
