@@ -7,7 +7,6 @@ using Stellmart.Api.Data.Account;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Stellmart.Api.Data;
 
 namespace Stellmart.Api.Services
 {

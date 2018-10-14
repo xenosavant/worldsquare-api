@@ -1,15 +1,11 @@
 ﻿using AutoMapper;
 using Bounce.Api.Data.Search.Indexes;
-using Stellmart.Api.Business.Extensions;
 using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
 using Stellmart.Api.Data.Search.Queries;
-using Stellmart.Api.Data.ViewModels;
-using Stellmart.Api.DataAccess;
 using Stellmart.Api.Services.Interfaces;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

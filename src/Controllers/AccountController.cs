@@ -7,7 +7,6 @@ using Stellmart.Data.Account;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using Stellmart.Api.Data;
 
 namespace Stellmart.Api.Controllers
 {

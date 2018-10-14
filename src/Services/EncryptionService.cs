@@ -1,5 +1,4 @@
-﻿using Stellmart.Api.Data.ViewModels;
-using Stellmart.Api.Services.Interfaces;
+﻿using Stellmart.Api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO;

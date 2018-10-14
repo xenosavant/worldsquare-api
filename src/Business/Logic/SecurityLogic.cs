@@ -5,7 +5,6 @@ using Stellmart.Api.DataAccess;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Stellmart.Api.Services;
 
 namespace Stellmart.Api.Business.Logic
 {

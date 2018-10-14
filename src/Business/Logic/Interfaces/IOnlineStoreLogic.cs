@@ -1,11 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Stellmart.Api.Context.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Stellmart.Api.Data.ViewModels;
+﻿using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
+using Stellmart.Api.Data.ViewModels;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Stellmart.Api.Business.Logic
 {

@@ -1,8 +1,8 @@
 ﻿using stellar_dotnet_sdk;
 using stellar_dotnet_sdk.responses;
 using Stellmart.Api.Data.Horizon;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Stellmart.Api.Services.Interfaces
 {

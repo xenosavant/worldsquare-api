@@ -6,8 +6,8 @@ using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
 using System;
-using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Stellmart.Services
 {

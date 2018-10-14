@@ -1,16 +1,12 @@
-﻿using Stellmart.Api.Services.Interfaces;
+﻿using Microsoft.Azure.Search;
+using Microsoft.Azure.Search.Models;
+using Stellmart.Api.Context.Entities.Interfaces;
+using Stellmart.Api.Data.Search.Queries;
+using Stellmart.Api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Azure.Search;
-using Microsoft.Azure.Search.Models;
-using Stellmart.Api.Context.Entities.Interfaces;
-using Stellmart.Context;
-using Microsoft.EntityFrameworkCore;
-using Stellmart.Api.Business.Extensions;
-using Stellmart.Api.Data.Search.Queries;
-using Newtonsoft.Json;
 
 namespace Stellmart.Api.Services
 {
