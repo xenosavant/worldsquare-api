@@ -47,9 +47,9 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.InternalServerError)]
-        public async Task CreateAsync(LocationModel model)
+        public async Task CreateAsync(LocationModel request)
         {
-            await _locationLogic.CreateAsync(model, UserId);
+            await _locationLogic.CreateAsync(request, UserId);
         }
 
         /// <summary>
@@ -57,16 +57,33 @@ namespace Stellmart.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost]
-        [Route(template: "setDefaultShippingAddress")]
+        [HttpPatch]
+        [Route(template: "setDefault")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.Created)]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.NotFound)]
         [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.InternalServerError)]
-        public async Task SetDefaultShippingAddressAsync(LocationModel model)
+        public async Task SetDefaultAsync(LocationModel request)
         {
-            await _locationLogic.SetDefaultAsync(model, UserId);
+            await _locationLogic.SetDefaultAsync(request, UserId);
+        }
+
+        /// <summary>
+        /// Delete address
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [HttpPatch]
+        [Route(template: "delete")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(LocationModel), (int)HttpStatusCode.InternalServerError)]
+        public async Task DeleteAsync(LocationModel request)
+        {
+            await _locationLogic.DeleteAsync(request, UserId);
         }
     }
 }

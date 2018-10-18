@@ -32,5 +32,10 @@ namespace Stellmart.Api.Business.Logic
         {
             return await _locationDataManager.SetDefaultAsync(model, userId);
         }
+
+        public Task<int> DeleteAsync(LocationModel model, int userId)
+        {
+            return _locationDataManager.DeleteAsync(model, userId);
+        }
     }
 }

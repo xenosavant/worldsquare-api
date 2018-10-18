@@ -7,6 +7,7 @@ using Stellmart.Api.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Stellmart.Api.Business.Managers
@@ -24,7 +25,7 @@ namespace Stellmart.Api.Business.Managers
 
         public async Task<IReadOnlyCollection<Location>> GetLocationsAsync(int userId)
         {
-            return await _repository.GetAsync<Location>(x => x.UserId == userId) as IReadOnlyCollection<Location>;
+            return await _repository.GetAsync<Location>(x => x.UserId == userId && x.IsDeleted == false) as IReadOnlyCollection<Location>;
         }
 
         public async Task CreateAsync(LocationModel model, int userId)
@@ -78,6 +79,21 @@ namespace Stellmart.Api.Business.Managers
                     location.IsDefault = true;
                 }
 
+                return await _repository.SaveAsync();
+            }
+
+            return 400;
+        }
+
+        public async Task<int> DeleteAsync(LocationModel model, int userId)
+        {
+            var location = await _repository.GetOneAsync<Location>(x => x.Id == model.Id && x.UserId == userId);
+
+            if (location != null)
+            {
+                location.IsDeleted = true;
+
+                _repository.Update(location);
                 return await _repository.SaveAsync();
             }
 
