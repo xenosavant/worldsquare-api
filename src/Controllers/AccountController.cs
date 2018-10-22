@@ -61,5 +61,24 @@ namespace Stellmart.Api.Controllers
         {
             return await _accountService.GetSecurityQuestionsAsync();
         }
+
+        /// <summary>
+        /// Handle forgot password page postback
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpPost]
+        [Route("[action]")]
+        [Route(template: "forgotpassword")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.InternalServerError)]
+        public async Task<bool> ForgotPassword([FromBody]ForgotPasswordRequest model)
+        {
+            return await _accountService.ForgotPassword(model);
+        }
     }
 }

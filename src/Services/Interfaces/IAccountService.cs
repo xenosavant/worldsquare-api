@@ -9,5 +9,6 @@ namespace Stellmart.Api.Services.Interfaces
     {
         Task<bool> SignupAsync(ApplicationUserModel model, HttpContext httpContext);
         Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync();
+        Task<bool> ForgotPassword(ForgotPasswordRequest model);
     }
 }

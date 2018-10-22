@@ -1,11 +1,16 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
 using ServiceStack;
 using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
+using Stellmart.Api.Context;
 using Stellmart.Api.Data.Account;
+using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Stellmart.Api.Services
@@ -20,6 +25,9 @@ namespace Stellmart.Api.Services
         private readonly ICountryDataManager _countryDataManager;
         private readonly IUserDataManager _userDataManager;
         private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IOptions<HostSettings> _hostSettings;
+        private readonly IEmailTemplateService _emailTemplateService;
 
         public AccountService
             (
@@ -30,7 +38,10 @@ namespace Stellmart.Api.Services
                 ICountryResolverLogic countryResolverLogic,
                 ICountryDataManager countryDataManager,
                 IUserDataManager userDataManager,
-                IMapper mapper
+                IMapper mapper,
+                UserManager<ApplicationUser> userManager,
+                IOptions<HostSettings> hostSettings,
+                IEmailTemplateService emailTemplateService
             )
         {
             _securityQuestionDataManager = securityQuestionDataManager;
@@ -41,6 +52,9 @@ namespace Stellmart.Api.Services
             _countryDataManager = countryDataManager;
             _userDataManager = userDataManager;
             _mapper = mapper;
+            _userManager = userManager;
+            _hostSettings = hostSettings;
+            _emailTemplateService = emailTemplateService;
         }
 
         public async Task<bool> SignupAsync(ApplicationUserModel model, HttpContext httpContext)
@@ -79,6 +93,35 @@ namespace Stellmart.Api.Services
         public async Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync()
         {
             return _mapper.Map<IReadOnlyCollection<SecurityQuestionModel>>(await _securityQuestionDataManager.GetSecurityQuestionsAsync());
+        }
+
+        public async Task<bool> ForgotPassword(ForgotPasswordRequest model)
+        {
+            var user = await _userManager.FindByNameAsync(model.Email);
+            if (user == null || !(await _userManager.IsEmailConfirmedAsync(user)))
+            {
+                // Don't reveal that the user does not exist or is not confirmed
+                return true;
+            }
+
+            // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
+            // Send an email with this link
+            var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var callbackUrl = $"{ _hostSettings.Value.AppUrl }/account/resetpassword/{user.Id}/{WebUtility.UrlEncode(code)}";
+            await _emailTemplateService.SendForgotPasswordEmailAsync(model.Email, "Reset Password",
+                $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
+
+            return true;
+        }
+
+        public Task ResetPassword()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public Task ForgotPassword()
+        {
+            throw new System.NotImplementedException();
         }
     }
 }
