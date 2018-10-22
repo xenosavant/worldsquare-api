@@ -67,6 +67,7 @@ namespace Stellmart
             services.Configure<YotiSettings>(Configuration.GetSection("YotiSettings"));
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.Configure<AzureSettings>(Configuration.GetSection("AzureSettings"));
+            services.Configure<HostSettings>(Configuration.GetSection("HostSettings"));
 
             // Add di framework
             var container = new Container(new DependencyInjectionRegistry(Configuration));
