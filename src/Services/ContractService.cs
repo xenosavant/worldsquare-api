@@ -55,6 +55,8 @@ namespace Stellmart.Services
 		ws_account.Signer = Contract.WorldSquareAccount.PublicKey;
 		ws_account.Weight = 2;
 		weight.Signers.Add(ws_account);
+		//Let the SignerSecret be null
+		weight.SignerSecret = null;
 
 		var SetOptionsOp = _horizon.SetOptionsOp(escrow, weight);
 		ops.Add(SetOptionsOp);

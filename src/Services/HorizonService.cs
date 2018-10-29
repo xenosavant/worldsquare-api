@@ -6,6 +6,7 @@ using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -79,6 +80,10 @@ namespace Stellmart.Services
             foreach (HorizonAccountSignerModel SignerAccount in Weights.Signers)
             {
                 operation.SetSigner(stellar_dotnet_sdk.Signer.Ed25519PublicKey(KeyPair.FromAccountId(SignerAccount.Signer)), SignerAccount.Weight);
+            }
+            if(Weights.SignerSecret != null) {
+                var hash = Util.Hash(Encoding.UTF8.GetBytes(Weights.SignerSecret.Secret));
+                operation.SetSigner(stellar_dotnet_sdk.Signer.Sha256Hash(hash), Weights.SignerSecret.Weight);
             }
             operation.SetSourceAccount(source);
             return operation.Build();
@@ -188,6 +193,8 @@ namespace Stellmart.Services
                 HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
                 weight.MasterWeight = weight.HighThreshold = weight.MediumThreshold =
                     weight.LowThreshold = 0;
+                //Let the SignerSecret be null
+                weight.SignerSecret = null;
                 var Ops = new List<Operation>();
                 var SetOptOp = SetOptionsOp(asset.IssuerAccount, weight);
                 Ops.Add(SetOptOp);

@@ -9,5 +9,6 @@ namespace Stellmart.Api.Data.Horizon
         public int MediumThreshold { get; set; }
         public int HighThreshold { get; set; }
 	 public List<HorizonAccountSignerModel> Signers { get; set; }
+        public HorizonHashSignerModel SignerSecret { get; set;}
     }
 }
