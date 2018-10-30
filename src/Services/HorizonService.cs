@@ -42,7 +42,7 @@ namespace Stellmart.Services
         public async Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey)
         {
             // fund test acc
-            await _server.HttpClient.GetAsync($"friendbot?addr={publicKey}");
+            await Server.HttpClient.GetAsync($"friendbot?addr={publicKey}");
 
             //See our newly created account.
             return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
@@ -113,7 +113,7 @@ namespace Stellmart.Services
         {
             var bytes = Convert.FromBase64String(txnstr);
             var transactionEnvelope = stellar_dotnet_sdk.xdr.TransactionEnvelope.Decode(new stellar_dotnet_sdk.xdr.XdrDataInputStream(bytes));
-            return Transaction.FromEnvelope(transactionEnvelope);
+            return Transaction.FromEnvelopeXdr(transactionEnvelope);
         }
         
         public async Task<string> CreateTxn(HorizonKeyPairModel SourceAccount,

@@ -43,13 +43,12 @@ namespace Stellmart.Api.Config
 
             For<Server>()
                 .Singleton()
-                .Use(new Server(configuration["HorizonSettings:Server"])
-                {
-                    HttpClient = new HttpClient
+                .Use(new Server(configuration["HorizonSettings:Server"] ,
+                    new HttpClient
                     {
 			BaseAddress = new Uri(configuration["HorizonSettings:Server"])
                     }
-                });
+                ));
 
             For<ISearchService>()
                 .Singleton()
