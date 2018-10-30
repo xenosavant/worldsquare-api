@@ -109,6 +109,16 @@ namespace Stellmart.Services
                 .Build();
             return operation;
         }
+        public Operation BumpSequenceOps(HorizonKeyPairModel sourceAccount,
+                    long nextSequence)
+        {
+            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+
+            var operation = new BumpSequenceOperation.Builder(nextSequence)
+                 .SetSourceAccount(source)
+                 .Build();
+            return operation;
+        }
         private Transaction XdrStrtoTxn(string txnstr) 
         {
             var bytes = Convert.FromBase64String(txnstr);

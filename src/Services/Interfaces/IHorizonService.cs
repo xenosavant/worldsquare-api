@@ -19,6 +19,7 @@ namespace Stellmart.Api.Services.Interfaces
                     string destAccount); 
         Operation ChangeTrustOps(HorizonKeyPairModel sourceAccount, HorizonAssetModel AssetModel,
                     string limit);
+        Operation BumpSequenceOps(HorizonKeyPairModel sourceAccount, long nextSequence);
         Task<string> CreateTxn(HorizonKeyPairModel SourceAccount, List<Operation> ops,
                     HorizonTimeBoundModel Time);
         string SignTxn(HorizonKeyPairModel Account, string txnstr);
