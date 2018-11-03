@@ -2,7 +2,7 @@ using System;
 
 namespace Stellmart.Api.Data.Contract
 {
-    public enum ContractType
+    public enum ContractPreTnxType
     {
         Setup,
         PreTxnShipping, /* Phase 1 */

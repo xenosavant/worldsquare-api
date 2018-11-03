@@ -22,7 +22,7 @@ namespace Stellmart.Services
 	//TBD: Add async and await
 	public async Task<int> SetupContract(ContractParamModel ContractParam)
 	{
-		if (ContractParam.Type != ContractType.Setup)
+		if (ContractParam.Type != ContractPreTnxType.Setup)
 			return 0;
 		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
@@ -73,7 +73,7 @@ namespace Stellmart.Services
 	public async Task<int> CreateContract(ContractParamModel ContractParam)
 	{
 		var ops = new List<Operation>();
-		if (ContractParam.Type == ContractType.PreTxnAccountMerge) {
+		if (ContractParam.Type == ContractPreTnxType.PreTxnAccountMerge) {
 			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
 			Time.MinTime = ContractParam.MinTime;
 			Time.MaxTime = ContractParam.MaxTime;
@@ -83,7 +83,7 @@ namespace Stellmart.Services
 			var pretxn1 = new ContractPreTxnModel();
 			pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
 			Contract.PreTransactions.Add(pretxn1);
-		} else if (ContractParam.Type == ContractType.PreTxnSetWeight) {
+		} else if (ContractParam.Type == ContractPreTnxType.PreTxnSetWeight) {
 			HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
 			//make escrow threshold weights as 3, 

@@ -6,7 +6,7 @@ namespace Stellmart.Api.Data.Contract
 {
 	public class ContractParamModel
     {
-	public ContractType Type { get; set; }
+	public ContractPreTnxType Type { get; set; }
 	public HorizonKeyPairModel SourceAccount {get; set; }
 	public HorizonKeyPairModel EscrowAccount { get; set; }
 	public String DestAccount { get; set; }
