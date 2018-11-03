@@ -6,6 +6,7 @@ using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -41,7 +42,7 @@ namespace Stellmart.Services
         public async Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey)
         {
             // fund test acc
-            await _server.HttpClient.GetAsync($"friendbot?addr={publicKey}");
+            await Server.HttpClient.GetAsync($"friendbot?addr={publicKey}");
 
             //See our newly created account.
             return _mapper.Map<HorizonFundTestAccountModel>(await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
@@ -80,6 +81,10 @@ namespace Stellmart.Services
             {
                 operation.SetSigner(stellar_dotnet_sdk.Signer.Ed25519PublicKey(KeyPair.FromAccountId(SignerAccount.Signer)), SignerAccount.Weight);
             }
+            if(Weights.SignerSecret != null) {
+                var hash = Util.Hash(Encoding.UTF8.GetBytes(Weights.SignerSecret.Secret));
+                operation.SetSigner(stellar_dotnet_sdk.Signer.Sha256Hash(hash), Weights.SignerSecret.Weight);
+            }
             operation.SetSourceAccount(source);
             return operation.Build();
         }
@@ -104,11 +109,21 @@ namespace Stellmart.Services
                 .Build();
             return operation;
         }
+        public Operation BumpSequenceOps(HorizonKeyPairModel sourceAccount,
+                    long nextSequence)
+        {
+            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+
+            var operation = new BumpSequenceOperation.Builder(nextSequence)
+                 .SetSourceAccount(source)
+                 .Build();
+            return operation;
+        }
         private Transaction XdrStrtoTxn(string txnstr) 
         {
             var bytes = Convert.FromBase64String(txnstr);
             var transactionEnvelope = stellar_dotnet_sdk.xdr.TransactionEnvelope.Decode(new stellar_dotnet_sdk.xdr.XdrDataInputStream(bytes));
-            return Transaction.FromEnvelope(transactionEnvelope);
+            return Transaction.FromEnvelopeXdr(transactionEnvelope);
         }
         
         public async Task<string> CreateTxn(HorizonKeyPairModel SourceAccount,
@@ -157,7 +172,7 @@ namespace Stellmart.Services
             var TrustOp = ChangeTrustOps(Distributor, asset, limit);
             Ops.Add(TrustOp);
             var txnxdr = await CreateTxn(Distributor, Ops, null);
-            await SubmitTxn(txnxdr);
+            await SubmitTxn(SignTxn(Distributor, txnxdr));
             asset.State = CustomTokenState.CreateCustomToken;
             return asset;
         }
@@ -172,7 +187,7 @@ namespace Stellmart.Services
                     asset.MaxCoinLimit);
                 Ops.Add(PaymentOp);
                 var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
-                await SubmitTxn(txnxdr);
+                await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.MoveCustomToken;
                 return 0;
             } else
@@ -188,11 +203,13 @@ namespace Stellmart.Services
                 HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
                 weight.MasterWeight = weight.HighThreshold = weight.MediumThreshold =
                     weight.LowThreshold = 0;
+                //Let the SignerSecret be null
+                weight.SignerSecret = null;
                 var Ops = new List<Operation>();
                 var SetOptOp = SetOptionsOp(asset.IssuerAccount, weight);
                 Ops.Add(SetOptOp);
                 var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
-                await SubmitTxn(txnxdr);
+                await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.LockCustomToken;
                 return 0;
             } else

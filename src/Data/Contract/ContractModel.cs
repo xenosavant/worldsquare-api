@@ -5,27 +5,26 @@ using System.Collections.Generic;
 
 namespace Stellmart.Api.Data.Contract
 {
-    public enum ContractState
-	{
-		Initial,
-		Preliminary,
-		Activated,
-		Completed,
-		Contested
-	}
     public class ContractModel
     {
-	public HorizonKeyPairModel EscrowAccount { get; set; }
-	public String DestAccount { get; set; }
-	public HorizonKeyPairModel WorldSquareAccount { get; set; }
-
-	public HorizonAssetModel Asset { get; set; }
+	// Current State of the contract
+	public ContractState CurrentState { get; set; }
+	// Current Phase of the contract
+	public ContractPhaseType CurrentPhase {get; set;}
+	//Current Sequence of contract / escrow account
 	public long Sequence { get; set; }
-	public ContractState State { get; set; }
-
+	// Escrow account details
+	public HorizonKeyPairModel EscrowAccount { get; set; }
+	// Seller Account
+	public String DestAccount { get; set; }
+	//System Account
+	public HorizonKeyPairModel WorldSquareAccount { get; set; }
+	//asset details
+	public HorizonAssetModel Asset { get; set; }
+	public ICollection<ContractStateModel> States { get; set; }
 	public ICollection<ContractPhaseModel> Phases { get; set; }
 
-	/*Total list of all pre transactions and signatures irrespective of phases*/
+	/*Total list of all pre transactions, signatures, txn hash*/
 	public ICollection<ContractPreTxnModel> PreTransactions { get; set; }
 	public ICollection<String> Signatures { get; set; }
 	public ICollection<SubmitTransactionResponse> Txn {get; set; }

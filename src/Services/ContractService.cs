@@ -39,7 +39,7 @@ namespace Stellmart.Services
                 ContractParam.Asset.Amount);
 		ops.Add(PaymentOp);
 		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops, null);
-        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
+		Contract.Txn.Add(await _horizon.SubmitTxn(_horizon.SignTxn(escrow, txnxdr)));
 		//clear ops
 		ops.Clear();
 		//Escrow threshold weights are 4
@@ -55,17 +55,19 @@ namespace Stellmart.Services
 		ws_account.Signer = Contract.WorldSquareAccount.PublicKey;
 		ws_account.Weight = 2;
 		weight.Signers.Add(ws_account);
+		//Let the SignerSecret be null
+		weight.SignerSecret = null;
 
 		var SetOptionsOp = _horizon.SetOptionsOp(escrow, weight);
 		ops.Add(SetOptionsOp);
 
 		txnxdr = await _horizon.CreateTxn(escrow, ops, null);
-        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
-
+        Contract.Txn.Add(await _horizon.SubmitTxn(_horizon.SignTxn(escrow, txnxdr)));
 		Contract.Sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
 		Contract.EscrowAccount = escrow;
 		Contract.DestAccount = ContractParam.DestAccount;
-		Contract.State = ContractState.Initial;
+		Contract.CurrentState = ContractState.Initial;
+		Contract.CurrentPhase = ContractPhaseType.NoPhase;
 		return 1;
 	}
 	public async Task<int> CreateContract(ContractParamModel ContractParam)
@@ -78,7 +80,9 @@ namespace Stellmart.Services
 			var MergeOp = _horizon.CreateAccountMergeOps(Contract.EscrowAccount, Contract.DestAccount);
 			ops.Add(MergeOp);
 			//save the xdr
-			await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			var pretxn1 = new ContractPreTxnModel();
+			pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			Contract.PreTransactions.Add(pretxn1);
 		} else if (ContractParam.Type == ContractType.PreTxnSetWeight) {
 			HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
@@ -92,7 +96,9 @@ namespace Stellmart.Services
 			var SetOptionsOp = _horizon.SetOptionsOp(Contract.EscrowAccount, weight);
 			ops.Add(SetOptionsOp);
 			//save the xdr
-			await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			var pretxn2 = new ContractPreTxnModel();
+			pretxn2.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			Contract.PreTransactions.Add(pretxn2);
 		} else {
 			return 0;
 		}
@@ -104,9 +110,13 @@ namespace Stellmart.Services
        // Update the contract here
     }
 
-	public string SignContract(HorizonKeyPairModel Account)
+	public string SignContract(ContractSignatureModel signature)
 	{
 		string hash = "";
+		if(Contract.CurrentPhase != ContractPhaseType.NoPhase)
+		{
+			//todo
+		}
 		return hash;
 	}
 	public string ExecuteContract()
