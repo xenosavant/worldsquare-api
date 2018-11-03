@@ -32,7 +32,5 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual ProductShipment ProductShipment { get; set; }
 
-        public virtual ICollection<ContractSecretKey> ContractSecretKeys { get; set; }
-
     }
 }

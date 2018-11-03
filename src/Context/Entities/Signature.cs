@@ -17,6 +17,8 @@ namespace Stellmart.Api.Context.Entities
 
         public string SignatureHash { get; set; }
 
+        public string SecretKeyHash { get; set; }
+
         public DateTime SignedOn { get; set; }
 
         public virtual PreTransaction Transaction { get; set; }

@@ -25,6 +25,12 @@ namespace Stellmart.Api.Context.Entities
 
         public int? ShippingCarrierId { get; set; }
 
+        public string TrackingNumber { get; set; }
+
+        public string PackageSecretKey { get; set; }
+
+        public string BuyerSecretKey { get; set; }
+
         public int? DeliveryRequestId { get; set; }
 
         public int ShippingManifestId { get; set; }

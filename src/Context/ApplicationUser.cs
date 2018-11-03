@@ -106,7 +106,7 @@ namespace Stellmart.Api.Context
 
         public virtual ICollection<MessageThread> Threads { get; set; }
 
-        public virtual ICollection<ContractSecretKey> ContractSecretKeys { get; set; }
+        public virtual ICollection<BuyerSecretKey> BuyerSecretKeys { get; set; }
 
         public virtual ICollection<Message> Messages { get; set; }
         public virtual ICollection<KycData> KycDatas { get; set; }

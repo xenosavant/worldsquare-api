@@ -32,5 +32,8 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual ICollection<Signature> Signatures { get; set; }
 
+        public virtual ShipmentTracker Tracker { get; set; }
+
+
     }
 }

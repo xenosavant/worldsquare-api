@@ -31,7 +31,9 @@ namespace Stellmart.Context
         public DbSet<Signature> Signatures { get; set; }
         public DbSet<UserSignature> UserSignatures { get; set; }
         public DbSet<SystemSignature> SystemSignatures { get; set; }
-        public DbSet<SecretKeySignature> SecretKeySignatures { get; set; }
+
+        public DbSet<SecretKey> SecretKeys { get; set; }
+        public DbSet<BuyerSecretKey> BuyerSecretKeys { get; set; }
 
         // Entities
 
@@ -43,7 +45,6 @@ namespace Stellmart.Context
         public DbSet<GeoLocation> GeoLocations { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<ItemMetaData> ItemMetaDatas { get; set; }
-        public DbSet<ContractSecretKey> ContractSecretKeys { get; set; }
 
         public DbSet<ItemMetaDataCategory> ItemMetaDataCategories { get; set; }
 
@@ -60,7 +61,8 @@ namespace Stellmart.Context
         public DbSet<ProductShipment> ProductShipments { get; set; }
         public DbSet<Region> Regions { get; set; }
         public DbSet<Review> Reviews { get; set; }
-        
+
+        public DbSet<ShipmentTracker> ShipmentTrackers { get; set; }
         public DbSet<DeliveryService> DeliveryServices { get; set; }
         public DbSet<ServiceRequest> ServiceRequests { get; set; }
         public DbSet<DeliveryRequest> DeliveryRequests { get; set; }
@@ -131,6 +133,7 @@ namespace Stellmart.Context
                 .HasForeignKey(or => or.OnlineStoreId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+
             modelBuilder.Entity<OnlineStoreReview>()
                 .HasOne(or => or.Review)
                 .WithMany("OnlineStoreReviews")
@@ -169,16 +172,10 @@ namespace Stellmart.Context
 
             // One to many relationships
 
-            modelBuilder.Entity<ContractSecretKey>()
-               .HasOne(p => p.User)
-               .WithMany(o => o.ContractSecretKeys)
+            modelBuilder.Entity<BuyerSecretKey>()
+               .HasOne(p => p.Buyer)
+               .WithMany(o => o.BuyerSecretKeys)
                .HasForeignKey(p => p.UserId)
-               .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ContractSecretKey>()
-               .HasOne(p => p.Contract)
-               .WithMany(o => o.ContractSecretKeys)
-               .HasForeignKey(p => p.ContractId)
                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ProductShipment>()
@@ -484,6 +481,12 @@ namespace Stellmart.Context
                  .HasOne(a => a.GeoLocation)
                  .WithOne(g => g.Area)
                  .HasForeignKey<Area>(a => a.GeoLocationId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ShipmentTracker>()
+                 .HasOne(p => p.Transcaction)
+                 .WithOne(t => t.Tracker)
+                 .HasForeignKey<ShipmentTracker>(t => t.TransactionId)
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Signature>()
