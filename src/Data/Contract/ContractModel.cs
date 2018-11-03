@@ -10,7 +10,7 @@ namespace Stellmart.Api.Data.Contract
 	// Current State of the contract
 	public ContractState CurrentState { get; set; }
 	// Current Phase of the contract
-	public ContractPhase CurrentPhase {get; set;}
+	public ContractPhaseType CurrentPhase {get; set;}
 	//Current Sequence of contract / escrow account
 	public long Sequence { get; set; }
 	// Escrow account details

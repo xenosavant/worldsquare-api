@@ -6,7 +6,7 @@ namespace Stellmart.Api.Data.Contract
 {
     public class ContractPhaseModel
     {
-    public ContractPhase PhaseName { get; set; }
+    public ContractPhaseType PhaseName { get; set; }
 	public long ContractSequence { get; set; }
     public bool status {get; set;} /* true for done  */
     //Pretransactions which needs to be signed.

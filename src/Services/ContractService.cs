@@ -66,7 +66,8 @@ namespace Stellmart.Services
 		Contract.Sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
 		Contract.EscrowAccount = escrow;
 		Contract.DestAccount = ContractParam.DestAccount;
-		Contract.State = ContractState.Initial;
+		Contract.CurrentState = ContractState.Initial;
+		Contract.CurrentPhase = ContractPhaseType.NoPhase;
 		return 1;
 	}
 	public async Task<int> CreateContract(ContractParamModel ContractParam)
@@ -109,9 +110,13 @@ namespace Stellmart.Services
        // Update the contract here
     }
 
-	public string SignContract(HorizonKeyPairModel Account)
+	public string SignContract(ContractSignatureModel signature)
 	{
 		string hash = "";
+		if(Contract.CurrentPhase != ContractPhaseType.NoPhase)
+		{
+			//todo
+		}
 		return hash;
 	}
 	public string ExecuteContract()

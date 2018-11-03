@@ -22,12 +22,20 @@ namespace Stellmart.Api.Data.Contract
         Completed,
         Contested
     }
-    public enum ContractPhase
+    public enum ContractPhaseType
     {
+
+        NoPhase,
         Phase1, /* Shipping */
         Phase2, /* Delivery */
         Phase3Receipt, /* Receipt*/
         Phase3Dispute, /* Dispute */
         Phase4, /* Resolution*/
+    }
+    public enum SignatureType
+    {
+        User,
+        System,
+        SecretKey,
     }
 }
