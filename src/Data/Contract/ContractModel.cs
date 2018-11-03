@@ -8,9 +8,9 @@ namespace Stellmart.Api.Data.Contract
     public class ContractModel
     {
 	// Current State of the contract
-	public ContractState State { get; set; }
+	public ContractState CurrentState { get; set; }
 	// Current Phase of the contract
-	public ContractPhase Phase {get; set;}
+	public ContractPhase CurrentPhase {get; set;}
 	//Current Sequence of contract / escrow account
 	public long Sequence { get; set; }
 	// Escrow account details
@@ -21,6 +21,7 @@ namespace Stellmart.Api.Data.Contract
 	public HorizonKeyPairModel WorldSquareAccount { get; set; }
 	//asset details
 	public HorizonAssetModel Asset { get; set; }
+	public ICollection<ContractStateModel> States { get; set; }
 	public ICollection<ContractPhaseModel> Phases { get; set; }
 
 	/*Total list of all pre transactions, signatures, txn hash*/
