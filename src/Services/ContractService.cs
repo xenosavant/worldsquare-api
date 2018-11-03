@@ -39,7 +39,7 @@ namespace Stellmart.Services
                 ContractParam.Asset.Amount);
 		ops.Add(PaymentOp);
 		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops, null);
-        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
+		Contract.Txn.Add(await _horizon.SubmitTxn(_horizon.SignTxn(escrow, txnxdr)));
 		//clear ops
 		ops.Clear();
 		//Escrow threshold weights are 4
@@ -62,8 +62,7 @@ namespace Stellmart.Services
 		ops.Add(SetOptionsOp);
 
 		txnxdr = await _horizon.CreateTxn(escrow, ops, null);
-        Contract.Txn.Add(await _horizon.SubmitTxn(txnxdr));
-
+        Contract.Txn.Add(await _horizon.SubmitTxn(_horizon.SignTxn(escrow, txnxdr)));
 		Contract.Sequence = await _horizon.GetSequenceNumber(escrow.PublicKey);
 		Contract.EscrowAccount = escrow;
 		Contract.DestAccount = ContractParam.DestAccount;

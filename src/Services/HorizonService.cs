@@ -172,7 +172,7 @@ namespace Stellmart.Services
             var TrustOp = ChangeTrustOps(Distributor, asset, limit);
             Ops.Add(TrustOp);
             var txnxdr = await CreateTxn(Distributor, Ops, null);
-            await SubmitTxn(txnxdr);
+            await SubmitTxn(SignTxn(Distributor, txnxdr));
             asset.State = CustomTokenState.CreateCustomToken;
             return asset;
         }
@@ -187,7 +187,7 @@ namespace Stellmart.Services
                     asset.MaxCoinLimit);
                 Ops.Add(PaymentOp);
                 var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
-                await SubmitTxn(txnxdr);
+                await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.MoveCustomToken;
                 return 0;
             } else
@@ -209,7 +209,7 @@ namespace Stellmart.Services
                 var SetOptOp = SetOptionsOp(asset.IssuerAccount, weight);
                 Ops.Add(SetOptOp);
                 var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
-                await SubmitTxn(txnxdr);
+                await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.LockCustomToken;
                 return 0;
             } else
