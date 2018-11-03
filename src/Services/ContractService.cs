@@ -79,7 +79,9 @@ namespace Stellmart.Services
 			var MergeOp = _horizon.CreateAccountMergeOps(Contract.EscrowAccount, Contract.DestAccount);
 			ops.Add(MergeOp);
 			//save the xdr
-			await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			var pretxn1 = new ContractPreTxnModel();
+			pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			Contract.PreTransactions.Add(pretxn1);
 		} else if (ContractParam.Type == ContractType.PreTxnSetWeight) {
 			HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
@@ -93,7 +95,9 @@ namespace Stellmart.Services
 			var SetOptionsOp = _horizon.SetOptionsOp(Contract.EscrowAccount, weight);
 			ops.Add(SetOptionsOp);
 			//save the xdr
-			await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			var pretxn2 = new ContractPreTxnModel();
+			pretxn2.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+			Contract.PreTransactions.Add(pretxn2);
 		} else {
 			return 0;
 		}
