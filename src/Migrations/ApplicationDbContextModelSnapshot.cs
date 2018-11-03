@@ -330,31 +330,6 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("ContractPhases");
                 });
 
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ContractSecretKey", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("ContractId");
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.Property<string>("SecretKey");
-
-                    b.Property<Guid>("UniqueId");
-
-                    b.Property<int>("UserId");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ContractId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("ContractSecretKeys");
-                });
-
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Country", b =>
                 {
                     b.Property<int>("Id")
@@ -784,6 +759,8 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<string>("BuyerSecretKey");
+
                     b.Property<int>("ContractId");
 
                     b.Property<int?>("DeliveryRequestId");
@@ -800,6 +777,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("OrderId");
 
+                    b.Property<string>("PackageSecretKey");
+
                     b.Property<int?>("ReceiverId");
 
                     b.Property<int?>("SenderId");
@@ -807,6 +786,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<int?>("ShippingCarrierId");
 
                     b.Property<int>("ShippingManifestId");
+
+                    b.Property<string>("TrackingNumber");
 
                     b.Property<int?>("TradeId");
 
@@ -1138,6 +1119,28 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("Reviews");
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.SecretKey", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired();
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("Key");
+
+                    b.Property<Guid>("UniqueId");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SecretKeys");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("SecretKey");
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Service", b =>
                 {
                     b.Property<int>("Id")
@@ -1275,6 +1278,28 @@ namespace Stellmart.Api.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("ServiceRequestFulfillment");
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ShipmentTracker", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("SecretSigningKey");
+
+                    b.Property<string>("TrackingId");
+
+                    b.Property<int>("TransactionId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique();
+
+                    b.ToTable("ShipmentTrackers");
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ShippingManifest", b =>
                 {
                     b.Property<int>("Id")
@@ -1312,6 +1337,8 @@ namespace Stellmart.Api.Migrations
                     b.Property<bool>("PreSign");
 
                     b.Property<int>("PreTransactionId");
+
+                    b.Property<string>("SecretKeyHash");
 
                     b.Property<string>("SignatureHash");
 
@@ -1448,6 +1475,21 @@ namespace Stellmart.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("TradeItems");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.BuyerSecretKey", b =>
+                {
+                    b.HasBaseType("Stellmart.Api.Context.Entities.SecretKey");
+
+                    b.Property<int>("OrderId");
+
+                    b.Property<int>("UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("BuyerSecretKey");
+
+                    b.HasDiscriminator().HasValue("BuyerSecretKey");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.DeliveryService", b =>
@@ -1608,17 +1650,6 @@ namespace Stellmart.Api.Migrations
                     b.HasDiscriminator().HasValue("Trade");
                 });
 
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.SecretKeySignature", b =>
-                {
-                    b.HasBaseType("Stellmart.Api.Context.Entities.UserSignature");
-
-                    b.Property<string>("SecretKeyHash");
-
-                    b.ToTable("SecretKeySignature");
-
-                    b.HasDiscriminator().HasValue("SecretKeySignature");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("Stellmart.Api.Context.ApplicationRole")
@@ -1721,19 +1752,6 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.Entities.Contract", "Contract")
                         .WithMany("Phases")
                         .HasForeignKey("ContractId")
-                        .OnDelete(DeleteBehavior.Restrict);
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ContractSecretKey", b =>
-                {
-                    b.HasOne("Stellmart.Api.Context.Entities.Contract", "Contract")
-                        .WithMany("ContractSecretKeys")
-                        .HasForeignKey("ContractId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.ApplicationUser", "User")
-                        .WithMany("ContractSecretKeys")
-                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -2009,6 +2027,14 @@ namespace Stellmart.Api.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.ShipmentTracker", b =>
+                {
+                    b.HasOne("Stellmart.Api.Context.Entities.PreTransaction", "Transcaction")
+                        .WithOne("Tracker")
+                        .HasForeignKey("Stellmart.Api.Context.Entities.ShipmentTracker", "TransactionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Signature", b =>
                 {
                     b.HasOne("Stellmart.Api.Context.Entities.PreTransaction", "Transaction")
@@ -2067,6 +2093,14 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.Entities.CurrencyAmount", "TradeInValue")
                         .WithOne("TradeItem")
                         .HasForeignKey("Stellmart.Api.Context.TradeItem", "ValueId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.BuyerSecretKey", b =>
+                {
+                    b.HasOne("Stellmart.Api.Context.ApplicationUser", "Buyer")
+                        .WithMany("BuyerSecretKeys")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
