@@ -783,7 +783,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int?>("SenderId");
 
-                    b.Property<int?>("ShippingCarrierId");
+                    b.Property<string>("ShippingCarrierType");
 
                     b.Property<int>("ShippingManifestId");
 
@@ -809,8 +809,6 @@ namespace Stellmart.Api.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
-
-                    b.HasIndex("ShippingCarrierId");
 
                     b.HasIndex("ShippingManifestId")
                         .IsUnique();
@@ -996,23 +994,6 @@ namespace Stellmart.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("SecurityQuestions");
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.ShippingCarrier", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("Active");
-
-                    b.Property<string>("Description");
-
-                    b.Property<int>("DisplayOrder");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShippingCarriers");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ReadOnly.TimeUnit", b =>
@@ -1946,11 +1927,6 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "Sender")
                         .WithMany("SentShipments")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.Entities.ReadOnly.ShippingCarrier", "Carrier")
-                        .WithMany("Shipments")
-                        .HasForeignKey("ShippingCarrierId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Entities.ShippingManifest", "Manifest")

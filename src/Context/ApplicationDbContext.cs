@@ -85,7 +85,6 @@ namespace Stellmart.Context
         public DbSet<FulfillmentState> FulfillmentStates { get; set; }
         public DbSet<QuantityUnit> QuantityUnits { get; set; }
         public DbSet<RewardsLevel> RewardsLevels { get; set; }
-        public DbSet<ShippingCarrier> ShippingCarriers { get; set; }
         public DbSet<TimeUnit> TimeUnits { get; set; }
         public DbSet<TradeInState> TradeInStates { get; set; }
         public DbSet<TwoFactorAuthenticationType> TwoFactorAuthenticationTypes { get; set; }
@@ -272,12 +271,6 @@ namespace Stellmart.Context
                 .HasOne(s => s.Receiver)
                 .WithMany(u => u.ReceivedShipments)
                 .HasForeignKey(s => s.ReceiverId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ProductShipment>()
-                .HasOne(s => s.Carrier)
-                .WithMany(c => c.Shipments)
-                .HasForeignKey(s => s.ShippingCarrierId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ProductShipment>()

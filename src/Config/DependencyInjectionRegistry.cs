@@ -35,7 +35,7 @@ namespace Stellmart.Api.Config
             For<IUserStore<ApplicationUser>>().Use<ApplicationUserStore>();
             For<UserManager<ApplicationUser>>().Use<UserManager<ApplicationUser>>();
             For<IRepository>().Use<Repository<ApplicationDbContext>>();
-
+            For<IShippingService>().Singleton().Use<EasyPostService>();
             For<IHttpContextAccessor>().Singleton().Use<HttpContextAccessor>();
             For<IMapper>().Use(() => Mapper.Instance);
             For<IHorizonService>().Singleton().Use<HorizonService>();
@@ -59,8 +59,8 @@ namespace Stellmart.Api.Config
             For<YotiClient>()
                 .Singleton()
                 .Use(new YotiClient(configuration["YotiSettings:SdkId"], PemHelper.LoadPemFromString(configuration["YotiSettings:Pem"])));
-
-            For<IGeoIP2DatabaseReader>().Singleton().Use(new DatabaseReader(GeoIpHelper.GetGeoIpDatabaseFilename()));
+            var path = GeoIpHelper.GetGeoIpDatabaseFilename();
+            For<IGeoIP2DatabaseReader>().Singleton().Use(new DatabaseReader(path));
         }
     }
 }

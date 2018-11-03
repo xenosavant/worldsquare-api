@@ -68,6 +68,7 @@ namespace Stellmart
             services.Configure<EmailSettings>(Configuration.GetSection("EmailSettings"));
             services.Configure<AzureSettings>(Configuration.GetSection("AzureSettings"));
             services.Configure<HostSettings>(Configuration.GetSection("HostSettings"));
+            services.Configure<EasyPostSettings>(Configuration.GetSection("EasyPostSettings"));
 
             // Add di framework
             var container = new Container(new DependencyInjectionRegistry(Configuration));

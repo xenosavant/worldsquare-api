@@ -23,7 +23,7 @@ namespace Stellmart.Api.Context.Entities
 
         public bool TradeIn { get; set; }
 
-        public int? ShippingCarrierId { get; set; }
+        public string ShippingCarrierType { get; set; }
 
         public string TrackingNumber { get; set; }
 
@@ -49,8 +49,6 @@ namespace Stellmart.Api.Context.Entities
 
         [ForeignKey("ReceiverId")]
         public virtual ApplicationUser Receiver { get; set; }
-
-        public virtual ShippingCarrier Carrier { get; set; }
 
         public virtual DeliveryRequest DeliveryRequest { get; set; }
 
