@@ -700,11 +700,15 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("Submitted");
 
+                    b.Property<int?>("TrackerId");
+
                     b.Property<string>("XdrString");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ContractPhaseId");
+
+                    b.HasIndex("TrackerId");
 
                     b.ToTable("PreTransactions");
                 });
@@ -1269,13 +1273,13 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("SecretSigningKey");
 
-                    b.Property<string>("TrackingId");
+                    b.Property<int>("SignatureId");
 
-                    b.Property<int>("TransactionId");
+                    b.Property<string>("TrackingId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TransactionId")
+                    b.HasIndex("SignatureId")
                         .IsUnique();
 
                     b.ToTable("ShipmentTrackers");
@@ -1874,6 +1878,10 @@ namespace Stellmart.Api.Migrations
                         .WithMany("Transactions")
                         .HasForeignKey("ContractPhaseId")
                         .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.Entities.ShipmentTracker", "Tracker")
+                        .WithMany()
+                        .HasForeignKey("TrackerId");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.PricePerDistance", b =>
@@ -2005,9 +2013,9 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ShipmentTracker", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Entities.PreTransaction", "Transcaction")
+                    b.HasOne("Stellmart.Api.Context.Entities.SystemSignature", "Signature")
                         .WithOne("Tracker")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.ShipmentTracker", "TransactionId")
+                        .HasForeignKey("Stellmart.Api.Context.Entities.ShipmentTracker", "SignatureId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

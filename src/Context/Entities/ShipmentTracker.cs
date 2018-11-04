@@ -12,8 +12,8 @@ namespace Stellmart.Api.Context.Entities
 
         public string TrackingId { get; set; }
 
-        public int TransactionId { get; set; }
+        public int SignatureId { get; set; }
 
-        public virtual PreTransaction Transcaction { get; set; }
+        public virtual SystemSignature Signature { get; set; }
     }
 }

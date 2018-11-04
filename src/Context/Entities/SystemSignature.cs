@@ -7,5 +7,6 @@ namespace Stellmart.Api.Context.Entities
 {
     public class SystemSignature : Signature
     {
+        public virtual ShipmentTracker Tracker { get; set; }
     }
 }

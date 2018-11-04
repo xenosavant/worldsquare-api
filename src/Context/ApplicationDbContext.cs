@@ -477,9 +477,9 @@ namespace Stellmart.Context
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ShipmentTracker>()
-                 .HasOne(p => p.Transcaction)
+                 .HasOne(p => p.Signature)
                  .WithOne(t => t.Tracker)
-                 .HasForeignKey<ShipmentTracker>(t => t.TransactionId)
+                 .HasForeignKey<ShipmentTracker>(t => t.SignatureId)
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Signature>()
