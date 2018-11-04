@@ -61,7 +61,7 @@ namespace Stellmart.Api.Services
         {
             var ipAddress = _requestIpAddressLogic.Get(httpContext);
 
-            var resolvedCountryIso = _countryResolverLogic.Resolve(ipAddress);
+            var resolvedCountryIso = _countryResolverLogic.Resolve(IPAddress.Parse("193.77.124.158"));
 
             var country = await _countryDataManager.GetByIsoAsync(resolvedCountryIso);
 
@@ -107,7 +107,7 @@ namespace Stellmart.Api.Services
             // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
             // Send an email with this link
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var callbackUrl = $"{ _hostSettings.Value.AppUrl }/account/resetpassword/{user.Id}/{WebUtility.UrlEncode(code)}";
+            var callbackUrl = $"{ _hostSettings.Value.AppUrl }/reset/{WebUtility.UrlEncode(code)}";
             await _emailTemplateService.SendForgotPasswordEmailAsync(model.Email, "Reset Password",
                 $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
 

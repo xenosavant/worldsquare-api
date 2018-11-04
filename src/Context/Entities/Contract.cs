@@ -14,7 +14,7 @@ namespace Stellmart.Api.Context.Entities
         public string EscrowAccountId { get; set; }
 
         [Required]
-        public int CurrentSequenceNumber { get; set; }
+        public long CurrentSequenceNumber { get; set; }
 
         [Required]
         public int ContractStateId { get; set; }
