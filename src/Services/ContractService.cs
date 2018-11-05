@@ -27,6 +27,12 @@ namespace Stellmart.Services
 		ContractSetup.CurrentSequenceNumber = await _horizon.GetSequenceNumber(escrow.PublicKey);
 		ContractSetup.ContractStateId = (int)ContractState.Initial;
 		ContractSetup.ContractTypeId = 0;
+
+		var Phase0 = new ContractPhase();
+		Phase0.Completed=true;
+		Phase0.SequenceNumber=ContractSetup.CurrentSequenceNumber;
+
+		ContractSetup.Phases.Add(Phase0);
 		return ContractSetup;
 	}
 	public async Task<Contract> FundContract(ContractParamModel ContractParam, Contract ContractFund)
@@ -49,13 +55,12 @@ namespace Stellmart.Services
 		//Escrow threshold weights are 4
 		weight.LowThreshold = 5;
 		weight.MediumThreshold = 5;
-		weight.HighThreshold = 7;
-		//escrow master weight (1) + dest weight (1) + WorldSquare (2)
+		weight.HighThreshold = 6;
+		//escrow master weight (1) + dest weight (1) + WorldSquare (4)
 		//dest account has weight 1
 		dest_account.Signer = ContractParam.DestAccount;
 		dest_account.Weight = 1;
 		weight.Signers.Add(dest_account);
-		//Make sure that WorldSquare weight is added as 2
 		ws_account.Signer = WorldSquareAccount.PublicKey;
 		ws_account.Weight = 4;
 		weight.Signers.Add(ws_account);
@@ -66,12 +71,20 @@ namespace Stellmart.Services
 		ops.Add(SetOptionsOp);
 
 		txnxdr = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, null);
-        await _horizon.SubmitTxn(_horizon.SignTxn(ContractParam.EscrowAccount, txnxdr));
+        var response = await _horizon.SubmitTxn(_horizon.SignTxn(ContractParam.EscrowAccount, txnxdr));
+		if(response.IsSuccess() == false)
+			return null;
 
 		ContractFund.EscrowAccountId = ContractParam.EscrowAccount.PublicKey;
 		ContractFund.CurrentSequenceNumber = await _horizon.GetSequenceNumber(ContractParam.EscrowAccount.PublicKey);
 		ContractFund.ContractStateId = (int)ContractState.Initial;
 		ContractFund.ContractTypeId = 0;
+
+		var Phase1 = new ContractPhase();
+		Phase1.Completed=true;
+		Phase1.SequenceNumber=ContractFund.CurrentSequenceNumber;
+
+		ContractFund.Phases.Add(Phase1);
 		return ContractFund;
 	}
 	public async Task<Contract> CreateContract(Contract contract)
