@@ -14,7 +14,7 @@ namespace Stellmart.Api.Services.Interfaces
          */
 	Task<Contract> SetupContract();
 	 Task<Contract> FundContract(ContractParamModel ContractParam, Contract ContractFund);
-	Task<Contract> CreateContract(Contract contract);
+	Task<Contract> CreateContract(ContractParamModel ContractParam, Contract contract);
 
 	string SignContract(ContractSignatureModel signature);
 	/*Submits the transaction to the network, returns the hash of transaction*/

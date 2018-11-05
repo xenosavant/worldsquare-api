@@ -87,37 +87,37 @@ namespace Stellmart.Services
 		ContractFund.Phases.Add(Phase1);
 		return ContractFund;
 	}
-	public async Task<Contract> CreateContract(Contract contract)
+	public async Task<Contract> CreateContract(ContractParamModel ContractParam, Contract contract)
 	{
-/*
+		//todo : Add all phases pre txn here.
 		var ops = new List<Operation>();
-		if (ContractParam.Type == ContractPreTnxType.PreTxnAccountMerge) {
-			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
-			Time.MinTime = ContractParam.MinTime;
-			Time.MaxTime = ContractParam.MaxTime;
-			var MergeOp = _horizon.CreateAccountMergeOps(Contract.EscrowAccount, Contract.DestAccount);
-			ops.Add(MergeOp);
-			//save the xdr
-			var pretxn1 = new ContractPreTxnModel();
-			pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
-			Contract.PreTransactions.Add(pretxn1);
-		} else if (ContractParam.Type == ContractPreTnxType.PreTxnSetWeight) {
-			HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
-			HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
-			//make escrow threshold weights as 3, 
-			//WorldSquare (2) + Buyer (1) or WorldSquare (2) + Seller (1)
-			weight.LowThreshold = 3;
-			weight.MediumThreshold = 3;
-			weight.HighThreshold = 3;
-			Time.MinTime = ContractParam.MinTime;
-			Time.MaxTime = ContractParam.MaxTime;
-			var SetOptionsOp = _horizon.SetOptionsOp(Contract.EscrowAccount, weight);
-			ops.Add(SetOptionsOp);
-			//save the xdr
-			var pretxn2 = new ContractPreTxnModel();
-			pretxn2.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
-			Contract.PreTransactions.Add(pretxn2);
-		}
+		HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
+		Time.MinTime = ContractParam.MinTime;
+		Time.MaxTime = ContractParam.MaxTime;
+		var MergeOp = _horizon.CreateAccountMergeOps(ContractParam.EscrowAccount, ContractParam.DestAccount);
+		ops.Add(MergeOp);
+		//save the xdr
+		var pretxn1 = new ContractPreTxnModel();
+		pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+		//Contract.PreTransactions.Add(pretxn1);
+
+		// Remove changeweight since we will be using Voting to resolve dispute
+		/*
+		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
+		HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
+		//make escrow threshold weights as 3,
+		//WorldSquare (2) + Buyer (1) or WorldSquare (2) + Seller (1)
+		weight.LowThreshold = 3;
+		weight.MediumThreshold = 3;
+		weight.HighThreshold = 3;
+		Time.MinTime = ContractParam.MinTime;
+		Time.MaxTime = ContractParam.MaxTime;
+		var SetOptionsOp = _horizon.SetOptionsOp(ContractParam.EscrowAccount, weight);
+		ops.Add(SetOptionsOp);
+		//save the xdr
+		var pretxn2 = new ContractPreTxnModel();
+		pretxn2.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+		//Contract.PreTransactions.Add(pretxn2);
 		*/
 		return contract;
 	}
