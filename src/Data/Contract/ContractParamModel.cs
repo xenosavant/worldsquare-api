@@ -6,7 +6,7 @@ namespace Stellmart.Api.Data.Contract
 {
 	public class ContractParamModel
     {
-	public ContractPreTnxType Type { get; set; }
+	public int ContractTypeId;
 	public HorizonKeyPairModel SourceAccount {get; set; }
 	public HorizonKeyPairModel EscrowAccount { get; set; }
 	public String DestAccount { get; set; }
@@ -16,6 +16,5 @@ namespace Stellmart.Api.Data.Contract
 	/* Delay Param */
 	public long MinTime { get; set; }
 	public long MaxTime { get; set; }
-	public ICollection<ContractPreCondition> PreCondition { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Stellmart.Services
 		_horizon = horizon;
 	}
 
-	public async Task<Contract> SetupContract(ContractParamModel ContractParam)
+	public async Task<Contract> SetupContract()
 	{
 		var ContractSetup = new Contract();
 
@@ -29,10 +29,8 @@ namespace Stellmart.Services
 		ContractSetup.ContractTypeId = 0;
 		return ContractSetup;
 	}
-	public async Task<Contract> FundContract(ContractParamModel ContractParam)
+	public async Task<Contract> FundContract(ContractParamModel ContractParam, Contract ContractFund)
 	{
-		var ContractFund = new Contract();
-
 		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
 		HorizonAccountSignerModel ws_account = new HorizonAccountSignerModel();
@@ -76,9 +74,8 @@ namespace Stellmart.Services
 		ContractFund.ContractTypeId = 0;
 		return ContractFund;
 	}
-	public async Task<Contract> CreateContract(ContractParamModel ContractParam)
+	public async Task<Contract> CreateContract(Contract contract)
 	{
-		var Contract = new Contract();
 /*
 		var ops = new List<Operation>();
 		if (ContractParam.Type == ContractPreTnxType.PreTxnAccountMerge) {
@@ -109,7 +106,7 @@ namespace Stellmart.Services
 			Contract.PreTransactions.Add(pretxn2);
 		}
 		*/
-		return Contract;
+		return contract;
 	}
 
     public void UpdateContract(Contract contract)

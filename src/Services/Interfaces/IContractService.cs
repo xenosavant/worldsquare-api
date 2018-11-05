@@ -12,9 +12,9 @@ namespace Stellmart.Api.Services.Interfaces
 	   Add signer as destination, stellmart and change threshold weights.
 	   Returns Escrow account id
          */
-	Task<Contract> SetupContract(ContractParamModel ContractParam);
-	 Task<Contract> FundContract(ContractParamModel ContractParam);
-	Task<Contract> CreateContract(ContractParamModel ContractParam);
+	Task<Contract> SetupContract();
+	 Task<Contract> FundContract(ContractParamModel ContractParam, Contract ContractFund);
+	Task<Contract> CreateContract(Contract contract);
 
 	string SignContract(ContractSignatureModel signature);
 	/*Submits the transaction to the network, returns the hash of transaction*/
