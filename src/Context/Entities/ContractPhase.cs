@@ -13,7 +13,7 @@ namespace Stellmart.Api.Context.Entities
         public int ContractId { get; set; }
 
         [Required]
-        public int SequenceNumber { get; set; }
+        public long SequenceNumber { get; set; }
 
         [Required]
         public bool Completed { get; set; }
