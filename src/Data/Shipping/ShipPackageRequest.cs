@@ -9,6 +9,7 @@ namespace Stellmart.Api.Data.Shipping
     {
         public string TrackingId { get; set; }
         public string ShippingCarrierType { get; set; }
+        public int OrderId { get; set; }
         public int SignatureId { get; set; }
     }
 }

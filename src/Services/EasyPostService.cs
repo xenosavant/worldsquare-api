@@ -7,15 +7,22 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyPost;
 using Stellmart.Api.Data.Shipping;
+using Stellmart.Api.Business.Managers.Interfaces;
+using Stellmart.Api.Context.Entities;
 
 namespace Stellmart.Api.Services
 {
     public class EasyPostService : IShippingService
     {
 
-        public EasyPostService(IOptions<EasyPostSettings> settings)
+        private readonly IShipmentTrackerDataManager _trackerDataManager;
+        private readonly ISignatureDataManager _signatureDataManager;
+        
+
+        public EasyPostService(IOptions<EasyPostSettings> settings, ISignatureDataManager signatureDataManager)
         {
-            ClientManager.SetCurrent("EZAK91b75125309449ce815cf3b2534dd39fl7SqEmv8sZIUSHbE7O4FZg");
+            ClientManager.SetCurrent(settings.Value.ApiKey);
+            _signatureDataManager = signatureDataManager;
         }
 
         public string GeneratePostageLabelUri()
@@ -23,15 +30,17 @@ namespace Stellmart.Api.Services
             throw new NotImplementedException();
         }
 
-        public ShippingTrackerResponse GenerateShippingTracker(string carrierId, string trackingId)
+        public ShippingTrackerResponse GenerateShippingTracker(int signatureId, string carrierId, string trackingId)
         {
             var response = new ShippingTrackerResponse();
             try
             {
-                response.TackingId = Tracker.Create(carrierId, trackingId).id;
+                var result = Tracker.Create(carrierId, trackingId);
+                response.TackingId = result.id;
             }
-            catch
+            catch (Exception e)
             {
+                var error = e;
                 response.Error = true;
             }
             return response;

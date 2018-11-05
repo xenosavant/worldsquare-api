@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Shipping;
 using Stellmart.Api.Services.Interfaces;
 
@@ -13,9 +14,20 @@ namespace Stellmart.Api.Controllers
     public class ShippingController : BaseController
     {
         private readonly IShippingService _shippingService;
+        private readonly ISecretKeyDataManager _secretKeyManager;
+        private readonly IShipmentTrackerDataManager _trackerManager;
+        private readonly ISignatureDataManager _signatureManager;
+        
 
-        public ShippingController(IShippingService shippingService)
+        public ShippingController(IShippingService shippingService,
+            ISecretKeyDataManager secretKeyManager,
+            IShipmentTrackerDataManager trackerManager,
+            ISignatureDataManager signatureManager
+            )
         {
+            _secretKeyManager = secretKeyManager;
+            _trackerManager = trackerManager;
+            _signatureManager = signatureManager;
             _shippingService = shippingService;
         }
 
@@ -28,18 +40,24 @@ namespace Stellmart.Api.Controllers
         }
 
         [HttpPost]
-        [Route("GetAllShippingCarriers")]
+        [Route("ShipPackage")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
-        public ActionResult ShipPackage([FromBody] ShipPackageRequest request)
+        public async Task<ActionResult> ShipPackage([FromBody] ShipPackageRequest request)
         {
+            var signature = await _signatureManager.GetAsync(request.SignatureId);
             if (request.ShippingCarrierType != null && request.TrackingId != null)
             {
-                var trackerResponse = _shippingService.GenerateShippingTracker(request.ShippingCarrierType, request.TrackingId);
-                // create tracker
+                var secretKey = await _secretKeyManager.GetBuyerSecretKeyByOrderId(request.OrderId);
+                var trackerResponse =_shippingService.GenerateShippingTracker(request.SignatureId, request.ShippingCarrierType, request.TrackingId);
+                if (trackerResponse.Error == true)
+                {
+                    return BadRequest();
+                }
+                var tracker = _trackerManager.CreateAsync(secretKey.Key, trackerResponse.TackingId, request.SignatureId);
             }
-            // sign transaction
-
+            // TODO: sign transaction
+            return Ok();
         }
 
 

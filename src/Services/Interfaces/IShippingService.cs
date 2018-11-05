@@ -9,7 +9,7 @@ namespace Stellmart.Api.Services.Interfaces
     public interface IShippingService
     {
         void MarkShipmentAsDelivered(string trackingId);
-        ShippingTrackerResponse GenerateShippingTracker(string carrierId, string trackingId);
+        ShippingTrackerResponse GenerateShippingTracker(int signatureId, string carrierId, string trackingId);
         string GeneratePostageLabelUri();
         List<string> GetAllCarrierTypes();
 
