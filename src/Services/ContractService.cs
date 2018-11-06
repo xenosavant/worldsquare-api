@@ -45,10 +45,10 @@ namespace Stellmart.Services
 		//Transfer funds tp Escrow
         //TBD: consider other assets too
 		//TBD: transfer 1 % to WorldSquare 
-		var PaymentOp = _horizon.CreatePaymentOps(ContractParam.SourceAccount, ContractParam.EscrowAccount.PublicKey,
+		var PaymentOp = _horizon.CreatePaymentOps(ContractParam.SourceAccount.PublicKey, ContractParam.EscrowAccount.PublicKey,
                 ContractParam.Asset.Amount);
 		ops.Add(PaymentOp);
-		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount, ops, null);
+		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount.PublicKey, ops, null);
 		await _horizon.SubmitTxn(_horizon.SignTxn(ContractParam.SourceAccount, txnxdr));
 		//clear ops
 		ops.Clear();
@@ -67,10 +67,10 @@ namespace Stellmart.Services
 		//Let the SignerSecret be null
 		weight.SignerSecret = null;
 
-		var SetOptionsOp = _horizon.SetOptionsOp(ContractParam.EscrowAccount, weight);
+		var SetOptionsOp = _horizon.SetOptionsOp(ContractParam.EscrowAccount.PublicKey, weight);
 		ops.Add(SetOptionsOp);
 
-		txnxdr = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, null);
+		txnxdr = await _horizon.CreateTxn(ContractParam.EscrowAccount.PublicKey, ops, null);
         var response = await _horizon.SubmitTxn(_horizon.SignTxn(ContractParam.EscrowAccount, txnxdr));
 		if(response.IsSuccess() == false)
 			return null;
@@ -94,11 +94,11 @@ namespace Stellmart.Services
 		HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
 		Time.MinTime = ContractParam.MinTime;
 		Time.MaxTime = ContractParam.MaxTime;
-		var MergeOp = _horizon.CreateAccountMergeOps(ContractParam.EscrowAccount, ContractParam.DestAccount);
+		var MergeOp = _horizon.CreateAccountMergeOps(ContractParam.EscrowAccount.PublicKey, ContractParam.DestAccount);
 		ops.Add(MergeOp);
 		//save the xdr
 		var pretxn1 = new ContractPreTxnModel();
-		pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount, ops, Time);
+		pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount.PublicKey, ops, Time);
 		//Contract.PreTransactions.Add(pretxn1);
 
 		// Remove changeweight since we will be using Voting to resolve dispute

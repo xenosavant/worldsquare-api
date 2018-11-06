@@ -54,21 +54,21 @@ namespace Stellmart.Services
             return accountRes.SequenceNumber;
         }
 
-        public Operation CreatePaymentOps(HorizonKeyPairModel sourceAccount,
-                    String destAccount, String amount) 
+        public Operation CreatePaymentOps(String sourceAccountPublicKey,
+                    String destAccountPublicKey, String amount)
         {
-            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
             Asset native = new AssetTypeNative();
 
-            var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destAccount), native, amount)
+            var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destAccountPublicKey), native, amount)
                  .SetSourceAccount(source)
                  .Build();
             return operation;
         }
-         public Operation SetOptionsOp(HorizonKeyPairModel SourceAccount,
+         public Operation SetOptionsOp(string SourceAccountPublicKey,
             HorizonAccountWeightModel Weights)
         {
-            var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
+            var source = KeyPair.FromAccountId(SourceAccountPublicKey);
             var operation = new SetOptionsOperation.Builder();
 
             operation.SetMasterKeyWeight(Weights.MasterWeight);
@@ -88,20 +88,20 @@ namespace Stellmart.Services
             operation.SetSourceAccount(source);
             return operation.Build();
         }
-        public Operation CreateAccountMergeOps(HorizonKeyPairModel sourceAccount,
-                    String destAccount) 
+        public Operation CreateAccountMergeOps(String sourceAccountPublicKey,
+                    String destAccountPublicKey)
         {
-            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
 
-            var operation = new AccountMergeOperation.Builder(KeyPair.FromAccountId(destAccount))
+            var operation = new AccountMergeOperation.Builder(KeyPair.FromAccountId(destAccountPublicKey))
                  .SetSourceAccount(source)
                  .Build();
             return operation;
         }
-        public Operation ChangeTrustOps(HorizonKeyPairModel sourceAccount, HorizonAssetModel AssetModel,
+        public Operation ChangeTrustOps(string sourceAccountPublicKey, HorizonAssetModel AssetModel,
                     String limit)
         {
-            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
             Asset asset = new AssetTypeCreditAlphaNum4(AssetModel.Code, AssetModel.Issuer);
 
             var operation = new ChangeTrustOperation.Builder(asset, limit)
@@ -109,10 +109,10 @@ namespace Stellmart.Services
                 .Build();
             return operation;
         }
-        public Operation BumpSequenceOps(HorizonKeyPairModel sourceAccount,
+        public Operation BumpSequenceOps(string sourceAccountPublicKey,
                     long nextSequence)
         {
-            var source = KeyPair.FromSecretSeed(sourceAccount.SecretKey);
+            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
 
             var operation = new BumpSequenceOperation.Builder(nextSequence)
                  .SetSourceAccount(source)
@@ -126,11 +126,11 @@ namespace Stellmart.Services
             return Transaction.FromEnvelopeXdr(transactionEnvelope);
         }
         
-        public async Task<string> CreateTxn(HorizonKeyPairModel SourceAccount,
+        public async Task<string> CreateTxn(string SourceAccountPublicKey,
                                                 List<Operation> ops, HorizonTimeBoundModel Time)
         {
-            var source = KeyPair.FromSecretSeed(SourceAccount.SecretKey);
-            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(SourceAccount.PublicKey));
+            var source = KeyPair.FromAccountId(SourceAccountPublicKey);
+            var accountRes = await _server.Accounts.Account(source);
             var txn_builder = new Transaction.Builder(new Account(source, accountRes.SequenceNumber));
             foreach(Operation op in ops) {
                 txn_builder.AddOperation(op);
@@ -138,9 +138,8 @@ namespace Stellmart.Services
             if(Time != null)
                 txn_builder.AddTimeBounds(new TimeBounds(Time.MinTime, Time.MaxTime));
             var transaction = txn_builder.Build();
-            transaction.Sign(source);
 
-            return transaction.ToEnvelopeXdrBase64();
+            return transaction.ToUnsignedEnvelopeXdrBase64();
         }
         public string SignTxn(HorizonKeyPairModel Account, string txnstr)
         {
@@ -169,9 +168,9 @@ namespace Stellmart.Services
             asset.Issuer = KeyPair.FromAccountId(Issuer.PublicKey);
             //Create trustline from Distributor to Issuer
             var Ops = new List<Operation>();
-            var TrustOp = ChangeTrustOps(Distributor, asset, limit);
+            var TrustOp = ChangeTrustOps(Distributor.PublicKey, asset, limit);
             Ops.Add(TrustOp);
-            var txnxdr = await CreateTxn(Distributor, Ops, null);
+            var txnxdr = await CreateTxn(Distributor.PublicKey, Ops, null);
             await SubmitTxn(SignTxn(Distributor, txnxdr));
             asset.State = CustomTokenState.CreateCustomToken;
             return asset;
@@ -183,10 +182,10 @@ namespace Stellmart.Services
                 var Ops = new List<Operation>();
                 //TBD: PaymentOps supports only native currency XLM.
                 //Add support for custom token transfer.
-                var PaymentOp = CreatePaymentOps(asset.IssuerAccount, asset.Distributor.PublicKey,
+                var PaymentOp = CreatePaymentOps(asset.IssuerAccount.PublicKey, asset.Distributor.PublicKey,
                     asset.MaxCoinLimit);
                 Ops.Add(PaymentOp);
-                var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
+                var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null);
                 await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.MoveCustomToken;
                 return 0;
@@ -206,9 +205,9 @@ namespace Stellmart.Services
                 //Let the SignerSecret be null
                 weight.SignerSecret = null;
                 var Ops = new List<Operation>();
-                var SetOptOp = SetOptionsOp(asset.IssuerAccount, weight);
+                var SetOptOp = SetOptionsOp(asset.IssuerAccount.PublicKey, weight);
                 Ops.Add(SetOptOp);
-                var txnxdr = await CreateTxn(asset.IssuerAccount, Ops, null);
+                var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null);
                 await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.LockCustomToken;
                 return 0;
