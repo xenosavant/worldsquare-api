@@ -18,24 +18,26 @@ namespace Stellmart.Services
 		_horizon = horizon;
 	}
 
-	public async Task<Contract> SetupContract()
+	public async Task<Contract> SetupContract(ContractParamModel ContractParam)
 	{
-		var ContractSetup = new Contract();
+		var contract = new Contract();
 
 		HorizonKeyPairModel escrow = _horizon.CreateAccount();
-		ContractSetup.EscrowAccountId = escrow.PublicKey;
-		ContractSetup.CurrentSequenceNumber = await _horizon.GetSequenceNumber(escrow.PublicKey);
-		ContractSetup.ContractStateId = (int)ContractState.Initial;
-		ContractSetup.ContractTypeId = 0;
+		contract.EscrowAccountId = escrow.PublicKey;
+		contract.DestAccountId = ContractParam.DestAccount;
+		contract.SourceAccountId = ContractParam.SourceAccount;
+		contract.CurrentSequenceNumber = await _horizon.GetSequenceNumber(escrow.PublicKey);
+		contract.ContractStateId = (int)ContractState.Initial;
+		contract.ContractTypeId = 0;
 
 		var Phase0 = new ContractPhase();
 		Phase0.Completed=true;
-		Phase0.SequenceNumber=ContractSetup.CurrentSequenceNumber;
+		Phase0.SequenceNumber=contract.CurrentSequenceNumber;
 
-		ContractSetup.Phases.Add(Phase0);
-		return ContractSetup;
+		contract.Phases.Add(Phase0);
+		return contract;
 	}
-	public async Task<Contract> FundContract(ContractParamModel ContractParam, Contract ContractFund)
+	public async Task<Contract> FundContract(Contract contract, ContractParamModel ContractParam)
 	{
 		HorizonAccountWeightModel weight = new HorizonAccountWeightModel();
 		HorizonAccountSignerModel dest_account = new HorizonAccountSignerModel();
@@ -45,13 +47,10 @@ namespace Stellmart.Services
 		//Transfer funds tp Escrow
         //TBD: consider other assets too
 		//TBD: transfer 1 % to WorldSquare 
-		var PaymentOp = _horizon.CreatePaymentOps(ContractParam.SourceAccount.PublicKey, ContractParam.EscrowAccount.PublicKey,
+		var PaymentOp = _horizon.CreatePaymentOps(contract.SourceAccountId, contract.EscrowAccountId,
                 ContractParam.Asset.Amount);
 		ops.Add(PaymentOp);
-		var txnxdr = await _horizon.CreateTxn(ContractParam.SourceAccount.PublicKey, ops, null);
-		await _horizon.SubmitTxn(_horizon.SignTxn(ContractParam.SourceAccount, txnxdr));
-		//clear ops
-		ops.Clear();
+
 		//Escrow threshold weights are 4
 		weight.LowThreshold = 5;
 		weight.MediumThreshold = 5;
@@ -67,38 +66,40 @@ namespace Stellmart.Services
 		//Let the SignerSecret be null
 		weight.SignerSecret = null;
 
-		var SetOptionsOp = _horizon.SetOptionsOp(ContractParam.EscrowAccount.PublicKey, weight);
+		var SetOptionsOp = _horizon.SetOptionsOp(contract.EscrowAccountId, weight);
 		ops.Add(SetOptionsOp);
 
-		txnxdr = await _horizon.CreateTxn(ContractParam.EscrowAccount.PublicKey, ops, null);
-        var response = await _horizon.SubmitTxn(_horizon.SignTxn(ContractParam.EscrowAccount, txnxdr));
+		var txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null);
+		/*
+        var response = await _horizon.SubmitTxn(_horizon.SignTxn(contract.EscrowAccountId, txnxdr));
 		if(response.IsSuccess() == false)
-			return null;
+			return null;*/
 
-		ContractFund.EscrowAccountId = ContractParam.EscrowAccount.PublicKey;
-		ContractFund.CurrentSequenceNumber = await _horizon.GetSequenceNumber(ContractParam.EscrowAccount.PublicKey);
-		ContractFund.ContractStateId = (int)ContractState.Initial;
-		ContractFund.ContractTypeId = 0;
+		contract.CurrentSequenceNumber = await _horizon.GetSequenceNumber(contract.EscrowAccountId);
+		contract.ContractStateId = (int)ContractState.Initial;
 
 		var Phase1 = new ContractPhase();
 		Phase1.Completed=true;
-		Phase1.SequenceNumber=ContractFund.CurrentSequenceNumber;
+		Phase1.SequenceNumber=contract.CurrentSequenceNumber;
+		PreTransaction pretxn = new PreTransaction();
+		pretxn.XdrString = txnxdr;
+		Phase1.Transactions.Add(pretxn);
 
-		ContractFund.Phases.Add(Phase1);
-		return ContractFund;
+		contract.Phases.Add(Phase1);
+		return contract;
 	}
-	public async Task<Contract> CreateContract(ContractParamModel ContractParam, Contract contract)
+	public async Task<Contract> CreateContract(Contract contract)
 	{
 		//todo : Add all phases pre txn here.
 		var ops = new List<Operation>();
 		HorizonTimeBoundModel Time = new HorizonTimeBoundModel();
-		Time.MinTime = ContractParam.MinTime;
-		Time.MaxTime = ContractParam.MaxTime;
-		var MergeOp = _horizon.CreateAccountMergeOps(ContractParam.EscrowAccount.PublicKey, ContractParam.DestAccount);
+		//Time.MinTime = ContractParam.MinTime;
+		//Time.MaxTime = ContractParam.MaxTime;
+		var MergeOp = _horizon.CreateAccountMergeOps(contract.EscrowAccountId, contract.DestAccountId);
 		ops.Add(MergeOp);
 		//save the xdr
-		var pretxn1 = new ContractPreTxnModel();
-		pretxn1.XdrString = await _horizon.CreateTxn(ContractParam.EscrowAccount.PublicKey, ops, Time);
+		var pretxn1 = new PreTransaction();
+		pretxn1.XdrString = await _horizon.CreateTxn(contract.EscrowAccountId, ops, Time);
 		//Contract.PreTransactions.Add(pretxn1);
 
 		// Remove changeweight since we will be using Voting to resolve dispute
