@@ -18,6 +18,9 @@ namespace Stellmart.Api.Context.Entities
         public string SourceAccountId { get; set; }
 
         [Required]
+        public long BaseSequenceNumber { get; set; }
+
+        [Required]
         public long CurrentSequenceNumber { get; set; }
 
         [Required]

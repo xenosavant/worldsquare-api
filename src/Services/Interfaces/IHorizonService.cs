@@ -21,7 +21,7 @@ namespace Stellmart.Api.Services.Interfaces
                     string limit);
         Operation BumpSequenceOps(string SourceAccountPublicKey, long nextSequence);
         Task<string> CreateTxn(string SourceAccountPublicKey, List<Operation> ops,
-                    HorizonTimeBoundModel Time);
+                    HorizonTimeBoundModel Time, long sequence);
         string SignTxn(HorizonKeyPairModel Account, string txnstr);
         Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
         Task<HorizonAssetModel> CreateAsset(string name, string limit);

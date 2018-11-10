@@ -127,11 +127,16 @@ namespace Stellmart.Services
         }
         
         public async Task<string> CreateTxn(string SourceAccountPublicKey,
-                                                List<Operation> ops, HorizonTimeBoundModel Time)
+                            List<Operation> ops, HorizonTimeBoundModel Time, long seq)
         {
             var source = KeyPair.FromAccountId(SourceAccountPublicKey);
             var accountRes = await _server.Accounts.Account(source);
-            var txn_builder = new Transaction.Builder(new Account(source, accountRes.SequenceNumber));
+            Transaction.Builder txn_builder;
+            if(seq == 0) {
+                txn_builder = new Transaction.Builder(new Account(source, accountRes.SequenceNumber));
+            } else {
+                txn_builder = new Transaction.Builder(new Account(source, seq));
+            }
             foreach(Operation op in ops) {
                 txn_builder.AddOperation(op);
             }
@@ -170,7 +175,7 @@ namespace Stellmart.Services
             var Ops = new List<Operation>();
             var TrustOp = ChangeTrustOps(Distributor.PublicKey, asset, limit);
             Ops.Add(TrustOp);
-            var txnxdr = await CreateTxn(Distributor.PublicKey, Ops, null);
+            var txnxdr = await CreateTxn(Distributor.PublicKey, Ops, null, 0);
             await SubmitTxn(SignTxn(Distributor, txnxdr));
             asset.State = CustomTokenState.CreateCustomToken;
             return asset;
@@ -185,7 +190,7 @@ namespace Stellmart.Services
                 var PaymentOp = CreatePaymentOps(asset.IssuerAccount.PublicKey, asset.Distributor.PublicKey,
                     asset.MaxCoinLimit);
                 Ops.Add(PaymentOp);
-                var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null);
+                var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null, 0);
                 await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.MoveCustomToken;
                 return 0;
@@ -207,7 +212,7 @@ namespace Stellmart.Services
                 var Ops = new List<Operation>();
                 var SetOptOp = SetOptionsOp(asset.IssuerAccount.PublicKey, weight);
                 Ops.Add(SetOptOp);
-                var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null);
+                var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null, 0);
                 await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
                 asset.State = CustomTokenState.LockCustomToken;
                 return 0;
