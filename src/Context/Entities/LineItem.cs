@@ -23,6 +23,7 @@ namespace Stellmart.Api.Context.Entities
         private TradeItem TradeItem { get; set; }
 
         public virtual ShippingManifest ShippingManifest { get; set; }
+        public virtual OrderItem OrderItem { get; set; }
 
         public IItem Item { get { return InventoryItem == null ? (IItem)InventoryItem : (IItem)TradeItem; }
         }

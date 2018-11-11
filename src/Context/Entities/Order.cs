@@ -10,6 +10,7 @@ namespace Stellmart.Api.Context.Entities
     {
         public int OnlineSaleId { get; set; }
         public virtual OnlineSale Sale { get; set; }
+        public virtual ICollection<OrderItem> Items { get; set; }
         public virtual ICollection<ProductShipment> Shipments { get; set; }
     }
 }

@@ -283,16 +283,24 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<long>("BaseSequenceNumber");
+
                     b.Property<int>("ContractStateId");
 
                     b.Property<int>("ContractTypeId");
 
                     b.Property<long>("CurrentSequenceNumber");
 
+                    b.Property<string>("DestAccountId")
+                        .IsRequired();
+
                     b.Property<string>("EscrowAccountId")
                         .IsRequired();
 
                     b.Property<bool>("IsDeleted");
+
+                    b.Property<string>("SourceAccountId")
+                        .IsRequired();
 
                     b.Property<Guid>("UniqueId");
 
@@ -678,6 +686,30 @@ namespace Stellmart.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("Order");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<bool>("Fulfilled");
+
+                    b.Property<bool>("IsDeleted");
+
+                    b.Property<int>("LineItemId");
+
+                    b.Property<int>("OrderId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LineItemId")
+                        .IsUnique();
+
+                    b.HasIndex("OrderId");
+
+                    b.ToTable("OrderItem");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.PreTransaction", b =>
@@ -1323,6 +1355,9 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("PreTransactionId");
 
+                    b.Property<string>("PublicKey")
+                        .IsRequired();
+
                     b.Property<string>("SignatureHash");
 
                     b.Property<bool>("Signed");
@@ -1878,6 +1913,19 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.Entities.OnlineSale", "Sale")
                         .WithOne("Order")
                         .HasForeignKey("Stellmart.Api.Context.Entities.Order", "OnlineSaleId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.OrderItem", b =>
+                {
+                    b.HasOne("Stellmart.Api.Context.Entities.LineItem", "Item")
+                        .WithOne("OrderItem")
+                        .HasForeignKey("Stellmart.Api.Context.Entities.OrderItem", "LineItemId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.Entities.Order", "Order")
+                        .WithMany("Items")
+                        .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

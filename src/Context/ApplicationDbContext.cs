@@ -158,6 +158,12 @@ namespace Stellmart.Context
 
             // One to one relationships
 
+            modelBuilder.Entity<OrderItem>()
+               .HasOne(o => o.Item)
+               .WithOne(li => li.OrderItem)
+               .HasForeignKey<OrderItem>(o => o.LineItemId)
+               .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<OnlineSale>()
                 .HasOne(os => os.Order)
                 .WithOne(o => o.Sale)
@@ -171,6 +177,12 @@ namespace Stellmart.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             // One to many relationships
+
+            modelBuilder.Entity<OrderItem>()
+               .HasOne(i => i.Order)
+               .WithMany(o => o.Items)
+               .HasForeignKey(o => o.OrderId)
+               .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<BuyerSecretKey>()
                .HasOne(p => p.Buyer)
