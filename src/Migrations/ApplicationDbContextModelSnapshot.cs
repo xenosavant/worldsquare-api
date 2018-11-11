@@ -702,6 +702,8 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("OrderId");
 
+                    b.Property<int>("StoreId");
+
                     b.HasKey("Id");
 
                     b.HasIndex("LineItemId")

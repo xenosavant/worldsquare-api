@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Stellmart.Api.Data.Contract;
+using Stellmart.Api.Context.Entities;
 
 namespace Stellmart.Api.Business.Logic
 {
@@ -15,7 +16,7 @@ namespace Stellmart.Api.Business.Logic
         private readonly IShipmentTrackerDataManager _trackerMamager;
         private readonly ISignatureDataManager _signatureManager;
 
-        public ShippingLogic(IContractService contractService, 
+        public ShippingLogic(IContractService contractService,
             IShipmentTrackerDataManager trackerMamager,
             ISignatureDataManager signatureManager)
         {
@@ -34,6 +35,11 @@ namespace Stellmart.Api.Business.Logic
                     Secret = tracker.SecretSigningKey,
                     Signature = signature
                 });
+        }
+
+        public async Task<Order> MarkItemsAsFulfilled(Order order, List<LineItem> itemsToAdd)
+        {
+            throw new NotImplementedException();
         }
     }
 }

@@ -8,25 +8,32 @@ using Stellmart.Api.Data.Shipping;
 using Stellmart.Api.Services.Interfaces;
 using EasyPost;
 using Stellmart.Api.Business.Logic.Interfaces;
+using Stellmart.Api.Data.Contract;
 
 namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class ShippingController : BaseController
+    public class ShippingController : AuthorizedController
     {
         private readonly IShippingService _shippingService;
         private readonly ISecretKeyDataManager _secretKeyManager;
         private readonly IShipmentTrackerDataManager _trackerManager;
         private readonly ISignatureDataManager _signatureManager;
         private readonly IShippingLogic _shippingLogic;
+        private readonly IContractService _contractService;
+        private readonly IEncryptionService _encryptionService;
+        private readonly IUserDataManager _userDataManager;
 
 
         public ShippingController(IShippingService shippingService,
             ISecretKeyDataManager secretKeyManager,
             IShipmentTrackerDataManager trackerManager,
             ISignatureDataManager signatureManager,
-            IShippingLogic shippingLogic
+            IShippingLogic shippingLogic,
+            IContractService contractService,
+            IEncryptionService encryptionService,
+            IUserDataManager userDataManager
             )
         {
             _secretKeyManager = secretKeyManager;
@@ -34,6 +41,9 @@ namespace Stellmart.Api.Controllers
             _signatureManager = signatureManager;
             _shippingService = shippingService;
             _shippingLogic = shippingLogic;
+            _contractService = contractService;
+            _encryptionService = encryptionService;
+            _userDataManager = userDataManager;
         }
 
         [HttpPost]
@@ -50,7 +60,11 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult> ShipPackage([FromBody] ShipPackageRequest request)
         {
-            var signature = await _signatureManager.GetAsync(request.SignatureId);
+
+            // Create Shipment
+            // Create Contract
+            // Add Shipment to order
+            // Mark OrderItems as delivered
             if (request.ShippingCarrierType != null && request.TrackingId != null)
             {
                 var secretKey = await _secretKeyManager.GetBuyerSecretKeyByOrderId(request.OrderId);
@@ -61,7 +75,20 @@ namespace Stellmart.Api.Controllers
                 }
                 var tracker = _trackerManager.CreateAsync(secretKey.Key, trackerResponse.TackingId, request.SignatureId);
             }
-            // TODO: sign transaction
+            else
+            {
+                // set up internal service delivery contract
+            }
+            var signature = await _signatureManager.GetAsync(request.SignatureId);
+            var user = await _userDataManager.GetByIdAsync(UserId);
+            var stellarKey = _encryptionService.DecryptSecretKey(user.StellarEncryptedSecretKey, user.StellarSecretKeyIv, request.Password);
+            // TODO: we should probably verify this key is correct before we attempt to sign
+            var signatureDataModel = new ContractSignatureModel()
+            {
+                Secret = stellarKey,
+                Signature = signature
+            };
+            var success = await _contractService.SignContract(signatureDataModel);
             return Ok();
         }
 
