@@ -14,6 +14,6 @@ namespace Stellmart.Api.Context.Entities
 
         public int SignatureId { get; set; }
 
-        public virtual SystemSignature Signature { get; set; }
+        public virtual SecretSignature Signature { get; set; }
     }
 }

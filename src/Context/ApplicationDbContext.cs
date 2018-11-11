@@ -31,6 +31,7 @@ namespace Stellmart.Context
         public DbSet<Signature> Signatures { get; set; }
         public DbSet<UserSignature> UserSignatures { get; set; }
         public DbSet<SystemSignature> SystemSignatures { get; set; }
+        public DbSet<SecretSignature> SecretSignatures { get; set; }
 
         public DbSet<SecretKey> SecretKeys { get; set; }
         public DbSet<BuyerSecretKey> BuyerSecretKeys { get; set; }

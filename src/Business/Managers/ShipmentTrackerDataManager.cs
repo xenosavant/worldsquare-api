@@ -30,9 +30,16 @@ namespace Stellmart.Api.Business.Managers
             return tracker;
         }
 
-        public Task<ShipmentTracker> GetAsync(int id)
+        public Task<ShipmentTracker> GetAsync(string trackingId)
         {
-            return _repository.GetByIdAsync<ShipmentTracker>(id);
+            return _repository.GetOneAsync<ShipmentTracker>(t => t.TrackingId == trackingId, "Signature");
+        }
+
+        public async Task<ShipmentTracker> UpdateAsync(ShipmentTracker tracker)
+        {
+            _repository.Update(tracker);
+            await _repository.SaveAsync();
+            return tracker;
         }
     }
 }

@@ -10,7 +10,7 @@ using Stellmart.Context;
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181103200709_initial")]
+    [Migration("20181111152757_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -289,7 +289,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("ContractTypeId");
 
-                    b.Property<int>("CurrentSequenceNumber");
+                    b.Property<long>("CurrentSequenceNumber");
 
                     b.Property<string>("EscrowAccountId")
                         .IsRequired();
@@ -321,7 +321,7 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int>("SequenceNumber");
+                    b.Property<long>("SequenceNumber");
 
                     b.Property<int>("TimeDelay");
 
@@ -1325,8 +1325,6 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("PreTransactionId");
 
-                    b.Property<string>("SecretKeyHash");
-
                     b.Property<string>("SignatureHash");
 
                     b.Property<bool>("Signed");
@@ -1577,6 +1575,17 @@ namespace Stellmart.Api.Migrations
                     b.ToTable("DeliveryRequestFulfillment");
 
                     b.HasDiscriminator().HasValue("DeliveryRequestFulfillment");
+                });
+
+            modelBuilder.Entity("Stellmart.Api.Context.Entities.SecretSignature", b =>
+                {
+                    b.HasBaseType("Stellmart.Api.Context.Entities.Signature");
+
+                    b.Property<string>("SecretKeyHash");
+
+                    b.ToTable("SecretSignature");
+
+                    b.HasDiscriminator().HasValue("SecretSignature");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.SystemSignature", b =>
@@ -2015,7 +2024,7 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ShipmentTracker", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Entities.SystemSignature", "Signature")
+                    b.HasOne("Stellmart.Api.Context.Entities.SecretSignature", "Signature")
                         .WithOne("Tracker")
                         .HasForeignKey("Stellmart.Api.Context.Entities.ShipmentTracker", "SignatureId")
                         .OnDelete(DeleteBehavior.Restrict);

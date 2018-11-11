@@ -127,10 +127,12 @@ namespace Stellmart.Services
        // Update the contract here
     }
 
-	public string SignContract(ContractSignatureModel signature)
+	public async Task<bool> SignContract(ContractSignatureModel signature)
 	{
 		string hash = "";
-		return hash;
+        // call horizon and if successful, then update signature and return true
+        // otherwise return false
+		return true;
 	}
 	public string ExecuteContract()
 	{

@@ -311,7 +311,7 @@ namespace Stellmart.Api.Migrations
                     IsDeleted = table.Column<bool>(nullable: false),
                     UniqueId = table.Column<Guid>(nullable: false),
                     EscrowAccountId = table.Column<string>(nullable: false),
-                    CurrentSequenceNumber = table.Column<int>(nullable: false),
+                    CurrentSequenceNumber = table.Column<long>(nullable: false),
                     ContractStateId = table.Column<int>(nullable: false),
                     ContractTypeId = table.Column<int>(nullable: false)
                 },
@@ -497,7 +497,7 @@ namespace Stellmart.Api.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     IsDeleted = table.Column<bool>(nullable: false),
                     ContractId = table.Column<int>(nullable: false),
-                    SequenceNumber = table.Column<int>(nullable: false),
+                    SequenceNumber = table.Column<long>(nullable: false),
                     Completed = table.Column<bool>(nullable: false),
                     Contested = table.Column<bool>(nullable: false),
                     TimeDelay = table.Column<int>(nullable: false)
@@ -1401,8 +1401,8 @@ namespace Stellmart.Api.Migrations
                     Signed = table.Column<bool>(nullable: false),
                     SignedOn = table.Column<DateTime>(nullable: false),
                     SignatureHash = table.Column<string>(nullable: true),
-                    SecretKeyHash = table.Column<string>(nullable: true),
                     Discriminator = table.Column<string>(nullable: false),
+                    SecretKeyHash = table.Column<string>(nullable: true),
                     SignerId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>

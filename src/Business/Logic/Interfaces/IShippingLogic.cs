@@ -7,5 +7,6 @@ namespace Stellmart.Api.Business.Logic.Interfaces
 {
     public interface IShippingLogic
     {
+        Task<bool> MarkShipmentDelivered(string trackingId);
     }
 }

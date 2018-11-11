@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Shipping;
 using Stellmart.Api.Services.Interfaces;
+using EasyPost;
+using Stellmart.Api.Business.Logic.Interfaces;
 
 namespace Stellmart.Api.Controllers
 {
@@ -17,18 +19,21 @@ namespace Stellmart.Api.Controllers
         private readonly ISecretKeyDataManager _secretKeyManager;
         private readonly IShipmentTrackerDataManager _trackerManager;
         private readonly ISignatureDataManager _signatureManager;
-        
+        private readonly IShippingLogic _shippingLogic;
+
 
         public ShippingController(IShippingService shippingService,
             ISecretKeyDataManager secretKeyManager,
             IShipmentTrackerDataManager trackerManager,
-            ISignatureDataManager signatureManager
+            ISignatureDataManager signatureManager,
+            IShippingLogic shippingLogic
             )
         {
             _secretKeyManager = secretKeyManager;
             _trackerManager = trackerManager;
             _signatureManager = signatureManager;
             _shippingService = shippingService;
+            _shippingLogic = shippingLogic;
         }
 
         [HttpPost]
@@ -49,7 +54,7 @@ namespace Stellmart.Api.Controllers
             if (request.ShippingCarrierType != null && request.TrackingId != null)
             {
                 var secretKey = await _secretKeyManager.GetBuyerSecretKeyByOrderId(request.OrderId);
-                var trackerResponse =_shippingService.GenerateShippingTracker(request.SignatureId, request.ShippingCarrierType, request.TrackingId);
+                var trackerResponse = _shippingService.GenerateShippingTracker(request.SignatureId, request.ShippingCarrierType, request.TrackingId);
                 if (trackerResponse.Error == true)
                 {
                     return BadRequest();
@@ -60,6 +65,38 @@ namespace Stellmart.Api.Controllers
             return Ok();
         }
 
-
+        [HttpPost]
+        [Route("WebHook")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(400)]
+        public async Task<ActionResult> WebHook([FromBody] Event e)
+        {
+            if (e == null || e.description == null)
+            {
+                return BadRequest();
+            }
+            if (e.description == "tracker.updated")
+            {
+                var tracker = (Tracker)e.result["Tracker"];
+                if (tracker.status == "delivered")
+                {
+                    var success = await _shippingLogic.MarkShipmentDelivered(tracker.id);
+                    if (success)
+                    {
+                        return Ok();
+                    }
+                    else
+                    {
+                        return StatusCode(500);
+                    }
+                }
+                // TODO: handle other shipment states
+                return Ok();
+            }
+            else
+            {
+                return Ok();
+            }
+        }
     }
 }

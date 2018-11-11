@@ -9,6 +9,7 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     public interface IShipmentTrackerDataManager
     {
         Task<ShipmentTracker> CreateAsync(string secretKey, string trackingId, int signatureId);
-        Task<ShipmentTracker> GetAsync(int id);
+        Task<ShipmentTracker> GetAsync(string trackingId);
+        Task<ShipmentTracker> UpdateAsync(ShipmentTracker tracker);
     }
 }
