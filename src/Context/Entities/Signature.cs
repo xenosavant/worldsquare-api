@@ -14,7 +14,8 @@ namespace Stellmart.Api.Context.Entities
 
         [Required]
         public bool PreSign { get; set; }
-
+        [Required]
+        public string PublicKey { get; set; }
         public string SignatureHash { get; set; }
 
         public DateTime SignedOn { get; set; }

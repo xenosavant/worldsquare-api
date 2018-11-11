@@ -7,9 +7,7 @@ namespace Stellmart.Api.Data.Contract
 	public class ContractParamModel
     {
 	public int ContractTypeId;
-	public HorizonKeyPairModel SourceAccount {get; set; }
-	/*todo remove EscrowAccount */
-	public HorizonKeyPairModel EscrowAccount { get; set; }
+	public String SourceAccount {get; set; }
 	public String DestAccount { get; set; }
 
 	public HorizonAssetModel Asset { get; set; }

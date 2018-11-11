@@ -12,6 +12,13 @@ namespace Stellmart.Api.Context.Entities
     {
         [Required]
         public string EscrowAccountId { get; set; }
+         [Required]
+        public string DestAccountId { get; set; }
+        [Required]
+        public string SourceAccountId { get; set; }
+
+        [Required]
+        public long BaseSequenceNumber { get; set; }
 
         [Required]
         public long CurrentSequenceNumber { get; set; }
