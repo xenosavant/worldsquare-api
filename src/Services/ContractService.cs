@@ -17,7 +17,23 @@ namespace Stellmart.Services
 	{
 		_horizon = horizon;
 	}
-
+	private PreTransaction CreateSignList(PreTransaction pretxn, ICollection<string> PublicKeys)
+	{
+		foreach(string key in PublicKeys){
+			Signature sign = new UserSignature();
+			sign.PublicKey = key;
+			sign.Signed = false;
+			sign.Transaction = pretxn;
+			pretxn.Signatures.Add(sign);
+		}
+		//System Signature is common for all type of pretxn
+		Signature Systemsign = new SystemSignature();
+		Systemsign.PublicKey = WorldSquareAccount.PublicKey;
+		Systemsign.Signed = false;
+		Systemsign.Transaction = pretxn;
+		pretxn.Signatures.Add(Systemsign);
+		return pretxn;
+	}
 	public async Task<Contract> SetupContract(ContractParamModel ContractParam)
 	{
 		var contract = new Contract();
@@ -82,7 +98,7 @@ namespace Stellmart.Services
 			return null;*/
 		PreTransaction pretxn = new PreTransaction();
 		pretxn.XdrString = txnxdr;
-		Phase1.Transactions.Add(pretxn);
+		Phase1.Transactions.Add(CreateSignList(pretxn, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		contract.Phases.Add(Phase1);
 		return contract;
@@ -100,7 +116,7 @@ namespace Stellmart.Services
 		var txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase2.SequenceNumber-1);
 		PreTransaction pretxn = new PreTransaction();
 		pretxn.XdrString = txnxdr;
-		Phase2.Transactions.Add(pretxn);
+		Phase2.Transactions.Add(CreateSignList(pretxn, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		//failure txn, bump
 		//ToDo: replace bump sequence with transfer fund to source account
@@ -109,7 +125,7 @@ namespace Stellmart.Services
 		txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase2.SequenceNumber-1);
 		PreTransaction pretxnride = new PreTransaction();
 		pretxnride.XdrString = txnxdr;
-		Phase2.Transactions.Add(pretxnride);
+		Phase2.Transactions.Add(CreateSignList(pretxnride, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		contract.Phases.Add(Phase2);
 		return contract;
@@ -127,7 +143,7 @@ namespace Stellmart.Services
 		var txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase3.SequenceNumber-1);
 		PreTransaction pretxn = new PreTransaction();
 		pretxn.XdrString = txnxdr;
-		Phase3.Transactions.Add(pretxn);
+		Phase3.Transactions.Add(CreateSignList(pretxn, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		//failure txn, bump
 		BumpOp = _horizon.BumpSequenceOps(contract.EscrowAccountId, contract.BaseSequenceNumber + (2+2));
@@ -135,7 +151,7 @@ namespace Stellmart.Services
 		txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase3.SequenceNumber-1);
 		PreTransaction pretxnride = new PreTransaction();
 		pretxnride.XdrString = txnxdr;
-		Phase3.Transactions.Add(pretxnride);
+		Phase3.Transactions.Add(CreateSignList(pretxnride, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		contract.Phases.Add(Phase3);
 		return contract;
@@ -153,7 +169,7 @@ namespace Stellmart.Services
 		var txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase4.SequenceNumber-1);
 		PreTransaction pretxn = new PreTransaction();
 		pretxn.XdrString = txnxdr;
-		Phase4.Transactions.Add(pretxn);
+		Phase4.Transactions.Add(CreateSignList(pretxn, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		//success txn, merge txn
 		var MergeOp = _horizon.CreateAccountMergeOps(contract.EscrowAccountId, contract.DestAccountId);
@@ -161,7 +177,7 @@ namespace Stellmart.Services
 		txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase4.SequenceNumber-1);
 		PreTransaction pretxnmerge = new PreTransaction();
 		pretxnmerge.XdrString = txnxdr;
-		Phase4.Transactions.Add(pretxnmerge);
+		Phase4.Transactions.Add(CreateSignList(pretxnmerge, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		//failure txn, bump
 		BumpOp = _horizon.BumpSequenceOps(contract.EscrowAccountId, contract.BaseSequenceNumber + (3+1));
@@ -169,7 +185,7 @@ namespace Stellmart.Services
 		txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase4.SequenceNumber-1);
 		PreTransaction pretxnride = new PreTransaction();
 		pretxnride.XdrString = txnxdr;
-		Phase4.Transactions.Add(pretxnride);
+		Phase4.Transactions.Add(CreateSignList(pretxnride, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		contract.Phases.Add(Phase4);
 		return contract;
@@ -206,7 +222,7 @@ namespace Stellmart.Services
 
 		PreTransaction pretxn = new PreTransaction();
 		pretxn.XdrString = txnxdr;
-		Phase4D.Transactions.Add(pretxn);
+		Phase4D.Transactions.Add(CreateSignList(pretxn, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		contract.Phases.Add(Phase4D);
 		return contract;
@@ -224,7 +240,7 @@ namespace Stellmart.Services
 		var txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase5.SequenceNumber-1);
 		PreTransaction pretxnmerge = new PreTransaction();
 		pretxnmerge.XdrString = txnxdr;
-		Phase5.Transactions.Add(pretxnmerge);
+		Phase5.Transactions.Add(CreateSignList(pretxnmerge, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		//refund txn, merge txn
 		MergeOp = _horizon.CreateAccountMergeOps(contract.EscrowAccountId, contract.SourceAccountId);
@@ -232,7 +248,7 @@ namespace Stellmart.Services
 		txnxdr = await _horizon.CreateTxn(contract.EscrowAccountId, ops, null, Phase5.SequenceNumber-1);
 		PreTransaction pretxnmerge2 = new PreTransaction();
 		pretxnmerge2.XdrString = txnxdr;
-		Phase5.Transactions.Add(pretxnmerge2);
+		Phase5.Transactions.Add(CreateSignList(pretxnmerge2, new string[]{contract.DestAccountId,contract.EscrowAccountId}));
 
 		contract.Phases.Add(Phase5);
 		return contract;
