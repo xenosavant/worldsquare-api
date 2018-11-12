@@ -22,9 +22,11 @@ namespace Stellmart.Api.Services.Interfaces
         Operation BumpSequenceOps(string SourceAccountPublicKey, long nextSequence);
         Task<string> CreateTxn(string SourceAccountPublicKey, List<Operation> ops,
                     HorizonTimeBoundModel Time, long sequence);
-        string SignTxn(HorizonKeyPairModel Account, string txnstr);
+        string SignTxn(HorizonKeyPairModel Account, string secretkey, string txnstr);
         Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
         string GetPublicKey(string SecretKey);
+        int GetSignatureCount(string txnstr);
+        string SignatureHash(string txnstr, int index);
         Task<HorizonAssetModel> CreateAsset(string name, string limit);
         Task<int> MoveAsset(HorizonAssetModel asset);
         Task<int> LockAsset(HorizonAssetModel asset);

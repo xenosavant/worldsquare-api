@@ -6,6 +6,7 @@ using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace Stellmart.Services
 {
@@ -267,13 +268,53 @@ namespace Stellmart.Services
     {
        // Update the contract here
     }
-
+	private string  AddSign(string XdrString, string secretKey)
+	{
+		int count,newcount = 0;
+		count = _horizon.GetSignatureCount(XdrString);
+		_horizon.SignTxn(null, secretKey, XdrString);
+		newcount = _horizon.GetSignatureCount(XdrString);
+		if((count + 1) == newcount)
+			return _horizon.SignatureHash(XdrString, newcount-1);
+		else
+			return null;
+	}
 	public async Task<bool> SignContract(ContractSignatureModel signature)
 	{
-		string hash = "";
         // call horizon and if successful, then update signature and return true
         // otherwise return false
-		return true;
+		var sig = signature.Signature;
+		var pretxn = sig.Transaction;
+
+		if(sig.PublicKey != null) {
+			string secretKey = "";
+
+			if(signature.Secret == null)
+				//system signature
+				secretKey = String.Copy(WorldSquareAccount.SecretKey);
+			else if(_horizon.GetPublicKey(signature.Secret) == sig.PublicKey) {
+				//user signature
+				secretKey = String.Copy(signature.Secret);
+			}
+			else
+				//secret key and public key did not match
+				return false;
+
+			var hash = AddSign(pretxn.XdrString, secretKey);
+			if(hash != null) {
+				sig.SignatureHash = hash;
+				return true;
+			} else {
+				//signature list did not increment
+				return false;
+			}
+		}
+		else if(sig.PublicKey == null) {
+			//todo : add secret hash
+			return true;
+		}
+		//dead end
+		return false;
 	}
 	public string ExecuteContract()
 	{

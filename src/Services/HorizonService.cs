@@ -146,10 +146,10 @@ namespace Stellmart.Services
 
             return transaction.ToUnsignedEnvelopeXdrBase64();
         }
-        public string SignTxn(HorizonKeyPairModel Account, string txnstr)
+        public string SignTxn(HorizonKeyPairModel Account, string secretkey, string txnstr)
         {
             var txn = XdrStrtoTxn(txnstr);
-            txn.Sign(KeyPair.FromSecretSeed(Account.SecretKey));
+            txn.Sign(KeyPair.FromSecretSeed((secretkey==null)?Account.SecretKey:secretkey));
             return txn.ToEnvelopeXdrBase64();
         }
         public async Task<SubmitTransactionResponse> SubmitTxn(string txnstr)
@@ -160,6 +160,16 @@ namespace Stellmart.Services
         {
             var keypair = KeyPair.FromSecretSeed(SecretKey);
             return keypair.AccountId;
+        }
+        public int GetSignatureCount(string txnstr)
+        {
+            var txn = XdrStrtoTxn(txnstr);
+            return txn.Signatures.Count;
+        }
+        public string SignatureHash(string txnstr, int index)
+        {
+            var txn = XdrStrtoTxn(txnstr);
+            return Encoding.UTF8.GetString(txn.Signatures[index].Signature.InnerValue);
         }
         public async Task<HorizonAssetModel> CreateAsset(string name, string limit)
         {
@@ -181,7 +191,7 @@ namespace Stellmart.Services
             var TrustOp = ChangeTrustOps(Distributor.PublicKey, asset, limit);
             Ops.Add(TrustOp);
             var txnxdr = await CreateTxn(Distributor.PublicKey, Ops, null, 0);
-            await SubmitTxn(SignTxn(Distributor, txnxdr));
+            await SubmitTxn(SignTxn(Distributor, null, txnxdr));
             asset.State = CustomTokenState.CreateCustomToken;
             return asset;
         }
@@ -196,7 +206,7 @@ namespace Stellmart.Services
                     asset.MaxCoinLimit);
                 Ops.Add(PaymentOp);
                 var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null, 0);
-                await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
+                await SubmitTxn(SignTxn(asset.IssuerAccount, null, txnxdr));
                 asset.State = CustomTokenState.MoveCustomToken;
                 return 0;
             } else
@@ -218,7 +228,7 @@ namespace Stellmart.Services
                 var SetOptOp = SetOptionsOp(asset.IssuerAccount.PublicKey, weight);
                 Ops.Add(SetOptOp);
                 var txnxdr = await CreateTxn(asset.IssuerAccount.PublicKey, Ops, null, 0);
-                await SubmitTxn(SignTxn(asset.IssuerAccount, txnxdr));
+                await SubmitTxn(SignTxn(asset.IssuerAccount, null, txnxdr));
                 asset.State = CustomTokenState.LockCustomToken;
                 return 0;
             } else
