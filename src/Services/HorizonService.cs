@@ -156,6 +156,11 @@ namespace Stellmart.Services
         {
             return await _server.SubmitTransaction(XdrStrtoTxn(txnstr));
         }
+        public string GetPublicKey(string SecretKey)
+        {
+            var keypair = KeyPair.FromSecretSeed(SecretKey);
+            return keypair.AccountId;
+        }
         public async Task<HorizonAssetModel> CreateAsset(string name, string limit)
         {
             HorizonAssetModel asset = new HorizonAssetModel();

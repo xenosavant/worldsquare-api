@@ -24,6 +24,7 @@ namespace Stellmart.Api.Services.Interfaces
                     HorizonTimeBoundModel Time, long sequence);
         string SignTxn(HorizonKeyPairModel Account, string txnstr);
         Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
+        string GetPublicKey(string SecretKey);
         Task<HorizonAssetModel> CreateAsset(string name, string limit);
         Task<int> MoveAsset(HorizonAssetModel asset);
         Task<int> LockAsset(HorizonAssetModel asset);
