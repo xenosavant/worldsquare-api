@@ -11,5 +11,6 @@ namespace Stellmart.Api.Services.Interfaces
         Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync();
         Task<bool> ForgotPassword(ForgotPasswordRequest model);
         Task<bool> ResetPassword(ResetPasswordRequest model);
+        Task<bool> ConfirmEmail(ConfirmEmailRequest model);
     }
 }

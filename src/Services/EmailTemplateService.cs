@@ -1,6 +1,8 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
+using Stellmart.Api.Context;
 using Stellmart.Api.Data.Account;
 using Stellmart.Api.Data.Email;
 using Stellmart.Api.Data.Enums;
@@ -72,7 +74,7 @@ namespace Stellmart.Api.Services
             await _emailService.SendEmailAsync(emailModel);
         }
 
-        public Task SendGettingStartedAsync(string userId)
+        public Task SendGettingStartedAsync(ApplicationUser user)
         {
             throw new System.NotImplementedException();
         }
@@ -82,9 +84,28 @@ namespace Stellmart.Api.Services
             throw new System.NotImplementedException();
         }
 
-        public Task SendWelcomeMailAsync(string userId, string code)
+        public async Task SendWelcomeMailAsync(ApplicationUser user, string code)
         {
-            throw new System.NotImplementedException();
+            if (user != null)
+            {
+                // var body = await _emailService.ReadEmailTemplateFromHttpAsync("Welcome.html");
+                // body = body.Replace("[customer_name]", user.Email);
+                // body = body.Replace("[name_app]", "Worldsquare");
+
+                var callbackUrl = $"{_hostSettings.Value.AppUrl}confirm-email/{user.Id}/{WebUtility.UrlEncode(code)}";
+
+                // body = body.Replace("[confirm_url]", callbackUrl);
+
+                var emailModel = new LogEmailModel
+                {
+                    To = user.Email,
+                    Subject = "Welcome to Worldsquare!",
+                    Content = $"Please confirm your email by clicking here: <a href='{callbackUrl}'>link</a>",
+                    Type = EmailMessageTypes.NewAccountWelcomeEmail
+                };
+
+                await _emailService.SendEmailAsync(emailModel);
+            }
         }
     }
 }

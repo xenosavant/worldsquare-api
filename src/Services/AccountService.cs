@@ -87,7 +87,17 @@ namespace Stellmart.Api.Services
                 CountryId = country.Id
             };
 
-            return await _userDataManager.SignupAsync(userModel);
+            var success = await _userDataManager.SignupAsync(userModel);
+
+            if (success)
+            {
+                var user = await _userManager.FindByEmailAsync(model.Email);
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                await _emailTemplateService.SendWelcomeMailAsync(user, code);
+            }
+
+            return success;
         }
 
         public async Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync()
@@ -104,10 +114,8 @@ namespace Stellmart.Api.Services
                 return true;
             }
 
-            // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=532713
-            // Send an email with this link
             var code = await _userManager.GeneratePasswordResetTokenAsync(user);
-            var callbackUrl = $"{_hostSettings.Value.AppUrl}resetpassword/{user.Id}/{WebUtility.UrlEncode(code)}";
+            var callbackUrl = $"{_hostSettings.Value.AppUrl}reset-password/{user.Id}/{WebUtility.UrlEncode(code)}";
             await _emailTemplateService.SendForgotPasswordEmailAsync(model.Email, "Reset Password",
                 $"Please reset your password by clicking here: <a href='{callbackUrl}'>link</a>");
 
@@ -123,7 +131,20 @@ namespace Stellmart.Api.Services
                 return true;
             }
 
-            var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+            return true;
+        }
+
+        public async Task<bool> ConfirmEmail(ConfirmEmailRequest model)
+        {
+            var user = await _userManager.FindByIdAsync(model.UserId);
+
+            if (await _userManager.IsEmailConfirmedAsync(user))
+            {
+                return true;
+            }
+
+            await _userManager.ConfirmEmailAsync(user, model.Code);
             return true;
         }
     }

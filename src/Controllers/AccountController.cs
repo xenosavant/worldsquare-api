@@ -85,13 +85,30 @@ namespace Stellmart.Api.Controllers
         [HttpPost]
         [Route(template: "resetpassword")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(ForgotPasswordRequest), (int)HttpStatusCode.InternalServerError)]
-        public async Task<bool> ResetPassword([FromBody]ResetPasswordRequest model)
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.InternalServerError)]
+        public async Task<bool> ResetPasswordAsync([FromBody]ResetPasswordRequest model)
         {
             return await _accountService.ResetPassword(model);
+        }
+
+        /// <summary>
+        /// Confirm email request
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPost]
+        [Route(template: "confirmemail")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(ResetPasswordRequest), (int)HttpStatusCode.InternalServerError)]
+        public async Task<bool> ConfirmEmail([FromBody]ConfirmEmailRequest model)
+        {
+            return await _accountService.ConfirmEmail(model);
         }
     }
 }
