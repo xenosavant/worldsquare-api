@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using stellar_dotnet_sdk;
 using stellar_dotnet_sdk.responses;
@@ -10,6 +6,10 @@ using stellar_dotnet_sdk.xdr;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
 using Asset = stellar_dotnet_sdk.Asset;
 using Operation = stellar_dotnet_sdk.Operation;
 using Signer = stellar_dotnet_sdk.Signer;
@@ -138,25 +138,25 @@ namespace Stellmart.Services
             return Transaction.FromEnvelopeXdr(transactionEnvelope);
         }
 
-        public async Task<string> CreateTransaction(string sourceAccountPublicKey, List<Operation> ops, HorizonTimeBoundModel time, long seq)
+        public async Task<string> CreateTransaction(string sourceAccountPublicKey, List<Operation> operations, HorizonTimeBoundModel time, long sequence)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
             var accountRes = await _server.Accounts.Account(source);
 
             Transaction.Builder transactionBuilder;
 
-            if (seq == 0)
+            if (sequence == 0)
             {
                 transactionBuilder = new Transaction.Builder(new Account(source, accountRes.SequenceNumber));
             }
             else
             {
-                transactionBuilder = new Transaction.Builder(new Account(source, seq));
+                transactionBuilder = new Transaction.Builder(new Account(source, sequence));
             }
 
-            foreach (var op in ops)
+            foreach (var operation in operations)
             {
-                transactionBuilder.AddOperation(op);
+                transactionBuilder.AddOperation(operation);
             }
 
             if (time != null)

@@ -10,23 +10,18 @@ namespace Stellmart.Api.Services.Interfaces
     {
         HorizonKeyPairModel CreateAccount();
         Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
-	    Task<long> GetSequenceNumber(string PublicKey);
-        Operation CreatePaymentOperation(string sourceAccountPublicKey,
-            string destAccountPublicKey, string amount);
-        Operation SetOptionsOperation(string SourceAccountPublicKey,
-            HorizonAccountWeightModel Weights);
-        Operation CreateAccountMergeOperation(string SourceAccountPublicKey,
-                    string destAccountPublicKey);
-        Operation ChangeTrustOperation(string SourceAccountPublicKey, HorizonAssetModel AssetModel,
-                    string limit);
-        Operation BumpSequenceOperation(string SourceAccountPublicKey, long nextSequence);
-        Task<string> CreateTransaction(string SourceAccountPublicKey, List<Operation> ops,
-                    HorizonTimeBoundModel Time, long sequence);
-        string SignTransaction(HorizonKeyPairModel Account, string secretkey, string txnstr);
-        Task<SubmitTransactionResponse> SubmitTransaction(string txnstr);
-        string GetPublicKey(string SecretKey);
-        int GetSignatureCount(string txnstr);
-        string SignatureHash(string txnstr, int index);
+	    Task<long> GetSequenceNumber(string publicKey);
+        Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey, string amount);
+        Operation SetOptionsOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weights);
+        Operation CreateAccountMergeOperation(string sourceAccountPublicKey, string destinationAccountPublicKey);
+        Operation ChangeTrustOperation(string sourceAccountPublicKey, HorizonAssetModel assetModel, string limit);
+        Operation BumpSequenceOperation(string sourceAccountPublicKey, long nextSequence);
+        Task<string> CreateTransaction(string sourceAccountPublicKey, List<Operation> operations, HorizonTimeBoundModel time, long sequence);
+        string SignTransaction(HorizonKeyPairModel account, string secretKey, string xdrTransaction);
+        Task<SubmitTransactionResponse> SubmitTransaction(string xdrTransaction);
+        string GetPublicKey(string secretKey);
+        int GetSignatureCount(string xdrTransaction);
+        string SignatureHash(string xdrTransaction, int index);
         Task<HorizonAssetModel> CreateAsset(string name, string limit);
         Task<int> MoveAsset(HorizonAssetModel asset);
         Task<int> LockAsset(HorizonAssetModel asset);
