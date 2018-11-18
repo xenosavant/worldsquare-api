@@ -11,19 +11,19 @@ namespace Stellmart.Api.Services.Interfaces
         HorizonKeyPairModel CreateAccount();
         Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
 	    Task<long> GetSequenceNumber(string PublicKey);
-        Operation CreatePaymentOps(string sourceAccountPublicKey,
+        Operation CreatePaymentOperation(string sourceAccountPublicKey,
             string destAccountPublicKey, string amount);
-        Operation SetOptionsOp(string SourceAccountPublicKey,
+        Operation SetOptionsOperation(string SourceAccountPublicKey,
             HorizonAccountWeightModel Weights);
-        Operation CreateAccountMergeOps(string SourceAccountPublicKey,
+        Operation CreateAccountMergeOperation(string SourceAccountPublicKey,
                     string destAccountPublicKey);
-        Operation ChangeTrustOps(string SourceAccountPublicKey, HorizonAssetModel AssetModel,
+        Operation ChangeTrustOperation(string SourceAccountPublicKey, HorizonAssetModel AssetModel,
                     string limit);
-        Operation BumpSequenceOps(string SourceAccountPublicKey, long nextSequence);
-        Task<string> CreateTxn(string SourceAccountPublicKey, List<Operation> ops,
+        Operation BumpSequenceOperation(string SourceAccountPublicKey, long nextSequence);
+        Task<string> CreateTransaction(string SourceAccountPublicKey, List<Operation> ops,
                     HorizonTimeBoundModel Time, long sequence);
-        string SignTxn(HorizonKeyPairModel Account, string secretkey, string txnstr);
-        Task<SubmitTransactionResponse> SubmitTxn(string txnstr);
+        string SignTransaction(HorizonKeyPairModel Account, string secretkey, string txnstr);
+        Task<SubmitTransactionResponse> SubmitTransaction(string txnstr);
         string GetPublicKey(string SecretKey);
         int GetSignatureCount(string txnstr);
         string SignatureHash(string txnstr, int index);
