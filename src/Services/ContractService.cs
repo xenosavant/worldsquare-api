@@ -43,6 +43,7 @@ namespace Stellmart.Services
 		contract.EscrowAccountId = escrow.PublicKey;
 		contract.DestAccountId = ContractParam.DestAccount;
 		contract.SourceAccountId = ContractParam.SourceAccount;
+		//sequence number should be invalid since account is not active ?
 		contract.BaseSequenceNumber = contract.CurrentSequenceNumber =
 							await _horizon.GetSequenceNumber(escrow.PublicKey);
 		contract.ContractStateId = (int)ContractState.Initial;
@@ -264,9 +265,30 @@ namespace Stellmart.Services
 		return contract;
 	}
 
+	private long GetCurrentTime()
+	{
+		return (long)(DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
+	}
     public void UpdateContract(Contract contract)
     {
-       // Update the contract here
+		var enumerator = contract.Phases.GetEnumerator();
+		long  move = contract.CurrentSequenceNumber - contract.BaseSequenceNumber;
+		for(long i=0; i<=move; i++) {
+			enumerator.MoveNext();
+		}
+		var phase = enumerator.Current;
+		if(phase.Completed) {
+			Console.WriteLine("Error: Sequence number and phase.completed not matching\n");
+			return;
+		}
+		foreach(PreTransaction pretxn in phase.Transactions) {
+			foreach(Signature sign in pretxn.Signatures) {
+				if(sign.Signed) {
+					//all signatures obtained , verify if we can submit
+				} else
+					break;
+			}
+		}
     }
 	private string  AddSign(string XdrString, string secretKey)
 	{
@@ -289,23 +311,28 @@ namespace Stellmart.Services
 		if(sig.PublicKey != null) {
 			string secretKey = "";
 
-			if(signature.Secret == null)
+			if(signature.Secret == null) {
 				//system signature
 				secretKey = String.Copy(WorldSquareAccount.SecretKey);
-			else if(_horizon.GetPublicKey(signature.Secret) == sig.PublicKey) {
+			} else if(_horizon.GetPublicKey(signature.Secret) == sig.PublicKey) {
 				//user signature
 				secretKey = String.Copy(signature.Secret);
 			}
-			else
+			else {
 				//secret key and public key did not match
+				Console.WriteLine("secret key and public key did not match");
 				return false;
+			}
 
 			var hash = AddSign(pretxn.XdrString, secretKey);
 			if(hash != null) {
 				sig.SignatureHash = hash;
+				sig.Signed = true;
+				sig.SignedOn = DateTime.UtcNow;
 				return true;
 			} else {
 				//signature list did not increment
+				Console.WriteLine("secret key and public key did not match");
 				return false;
 			}
 		}
