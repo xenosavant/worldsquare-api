@@ -25,7 +25,7 @@ namespace Stellmart.Api.Data.Contract
 	public ICollection<ContractPhaseModel> Phases { get; set; }
 
 	/*Total list of all pre transactions, signatures, txn hash*/
-	public ICollection<ContractPreTxnModel> PreTransactions { get; set; }
+	public ICollection<ContractPreTransactionModel> PreTransactions { get; set; }
 	public ICollection<String> Signatures { get; set; }
 	public ICollection<SubmitTransactionResponse> Txn {get; set; }
     }

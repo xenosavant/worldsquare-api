@@ -1,7 +1,6 @@
-﻿using Stellmart.Api.Data.Contract;
-using Stellmart.Api.Data.Horizon;
+﻿using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Data.Contract;
 using System.Threading.Tasks;
-using Stellmart.Api.Context.Entities;
 
 
 namespace Stellmart.Api.Services.Interfaces
@@ -9,11 +8,11 @@ namespace Stellmart.Api.Services.Interfaces
     public interface IContractService
     {
 	/* Create and fund escrow account.
-	   Add signer as destination, stellmart and change threshold weights.
+	   Add signer as destination, worldsquare and change threshold weights.
 	   Returns Escrow account id
          */
-	Task<Contract> SetupContract(ContractParamModel ContractParam);
-	 Task<Contract> FundContract(Contract contract, ContractParamModel ContractParam);
+	Task<Contract> SetupContract(ContractParameterModel contractParamModel);
+	Task<Contract> FundContract(Contract contract, ContractParameterModel contractParamModel);
 	Task<Contract> CreateContract(Contract contract);
 
     Task<bool> SignContract(ContractSignatureModel signature);

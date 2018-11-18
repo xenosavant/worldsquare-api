@@ -10,7 +10,7 @@ namespace Stellmart.Api.Data.Contract
 	public long ContractSequence { get; set; }
     public bool status {get; set;} /* true for done  */
     //Pretransactions which needs to be signed.
-    public ICollection<ContractPreTxnModel> PreTransactions { get; set; }
+    public ICollection<ContractPreTransactionModel> PreTransactions { get; set; }
     //Contains list of signatures required to proceed further along with time delay
 	public ContractPreCondition Condition {get; set;}
     }

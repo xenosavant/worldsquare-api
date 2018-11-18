@@ -9,6 +9,6 @@ namespace Stellmart.Api.Data.Contract
     public ContractState StateName { get; set; }
     public bool status {get; set;} /* true for done  */
 	public long ContractSequence { get; set; }
-	public ICollection<ContractPreTxnModel> PreTransactions { get; set; }
+	public ICollection<ContractPreTransactionModel> PreTransactions { get; set; }
     }
 }
