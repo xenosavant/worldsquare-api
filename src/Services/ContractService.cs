@@ -323,11 +323,28 @@ namespace Stellmart.Services
             return contract;
         }
 
-        private long GetCurrentTime()
+        private long GetCurrentTimeinSeconds()
         {
             return (long) (DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds;
         }
 
+        private long ConvertDatetoSeconds(DateTime Date)
+        {
+            return (long) (Date.ToUniversalTime() - new DateTime(1970, 1, 1)).TotalSeconds;
+        }
+
+        private bool VerifyTimeBound(DateTime minimum, DateTime maximum)
+        {
+            bool NoDelay = true;
+            long CurrentTime = GetCurrentTimeinSeconds();
+            if(minimum != null && CurrentTime < ConvertDatetoSeconds(minimum)) {
+                NoDelay = false;
+            }
+            if(maximum != null && CurrentTime > ConvertDatetoSeconds(maximum)) {
+                NoDelay = false;
+            }
+            return NoDelay;
+        }
         public void UpdateContract(Contract contract)
         {
             var enumerator = contract.Phases.GetEnumerator();
@@ -363,26 +380,30 @@ namespace Stellmart.Services
             return null;
         }
 
-        public async Task<bool> SignContract(ContractSignatureModel signature)
+        public async Task<bool> SignContract(ContractSignatureModel SignatureModel)
         {
             // call horizon and if successful, then update signature and return true
             // otherwise return false
-            var sig = signature.Signature;
-            var pretxn = sig.Transaction;
+            var signature = SignatureModel.Signature;
+            var Pretransaction = signature.Transaction;
 
-            if (sig.PublicKey != null)
+            if(! VerifyTimeBound(Pretransaction.MinimumTime, Pretransaction.MaximumTime)) {
+                Console.WriteLine("time bound delay verification failed");
+                return false;
+            }
+            if (signature.PublicKey != null)
             {
                 var secretKey = "";
 
-                if (signature.Secret == null)
+                if (SignatureModel.Secret == null)
                 {
                     //system signature
                     secretKey = string.Copy(_worldSquareAccount.SecretKey);
                 }
-                else if (_horizonService.GetPublicKey(signature.Secret) == sig.PublicKey)
+                else if (_horizonService.GetPublicKey(SignatureModel.Secret) == signature.PublicKey)
                 {
                     //user signature
-                    secretKey = string.Copy(signature.Secret);
+                    secretKey = string.Copy(SignatureModel.Secret);
                 }
                 else
                 {
@@ -391,12 +412,12 @@ namespace Stellmart.Services
                     return false;
                 }
 
-                var hash = AddSign(pretxn.XdrString, secretKey);
+                var hash = AddSign(Pretransaction.XdrString, secretKey);
                 if (hash != null)
                 {
-                    sig.SignatureHash = hash;
-                    sig.Signed = true;
-                    sig.SignedOn = DateTime.UtcNow;
+                    signature.SignatureHash = hash;
+                    signature.Signed = true;
+                    signature.SignedOn = DateTime.UtcNow;
                     return true;
                 }
 
@@ -405,7 +426,7 @@ namespace Stellmart.Services
                 return false;
             }
 
-            if (sig.PublicKey == null) return true;
+            if (signature.PublicKey == null) return true;
             //dead end
             return false;
         }

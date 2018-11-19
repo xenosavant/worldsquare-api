@@ -53,8 +53,8 @@ namespace Stellmart.Services
 
         public async Task<long> GetSequenceNumber(string publicKey)
         {
-            var accountRes = await _server.Accounts.Account(KeyPair.FromAccountId(publicKey));
-            return accountRes.SequenceNumber;
+            var AccountResponse = await _server.Accounts.Account(KeyPair.FromAccountId(publicKey));
+            return AccountResponse.SequenceNumber;
         }
 
         public Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey,
@@ -141,13 +141,13 @@ namespace Stellmart.Services
         public async Task<string> CreateTransaction(string sourceAccountPublicKey, List<Operation> operations, HorizonTimeBoundModel time, long sequence)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
-            var accountRes = await _server.Accounts.Account(source);
+            var AccountResponse = await _server.Accounts.Account(source);
 
             Transaction.Builder transactionBuilder;
 
             if (sequence == 0)
             {
-                transactionBuilder = new Transaction.Builder(new Account(source, accountRes.SequenceNumber));
+                transactionBuilder = new Transaction.Builder(new Account(source, AccountResponse.SequenceNumber));
             }
             else
             {
