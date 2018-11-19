@@ -357,16 +357,25 @@ namespace Stellmart.Services
                 return;
             }
 
-            foreach (var pretxn in phase.Transactions)
-            foreach (var sign in pretxn.Signatures)
-                if (sign.Signed)
-                {
-                    //all signatures obtained , verify if we can submit
+            foreach (var pretransaction in phase.Transactions) {
+                bool flag = true;
+                foreach (var sign in pretransaction.Signatures) {
+                    if (sign.Signed == false)
+                    {
+                        flag = false;
+                        break;
+                    }
                 }
-                else
-                {
-                    break;
+                //all signatures obtained , verify if we can submit
+                if(flag && VerifyTimeBound(pretransaction.MinimumTime, pretransaction.MaximumTime)) {
+                     _horizonService.SubmitTransaction(pretransaction.XdrString);
+                     pretransaction.Submitted = true;
+                     phase.Completed = true;
+                     /* todo update sequence number*/
+                     //contract.CurrentSequenceNumber = _horizonService.GetSequenceNumber(contract.EscrowAccountId);
+                     break;
                 }
+            }
         }
 
         private string AddSign(string XdrString, string secretKey)
