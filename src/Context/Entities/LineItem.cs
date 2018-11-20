@@ -17,15 +17,12 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         public int Quantity { get; set; }
 
-        public int? ShippingManifestId { get; set; }
+        public InventoryItem InventoryItem { get; set; }
+        public TradeItem TradeItem { get; set; }
 
-        private InventoryItem InventoryItem { get; set; }
-        private TradeItem TradeItem { get; set; }
-
-        public virtual ShippingManifest ShippingManifest { get; set; }
-        public virtual OrderItem OrderItem { get; set; }
-
-        public IItem Item { get { return InventoryItem == null ? (IItem)InventoryItem : (IItem)TradeItem; }
+        public IItem Item
+        {
+            get { return InventoryItem == null ? (IItem)InventoryItem : (IItem)TradeItem; }
         }
     }
 }

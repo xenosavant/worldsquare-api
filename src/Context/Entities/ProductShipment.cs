@@ -33,11 +33,7 @@ namespace Stellmart.Api.Context.Entities
 
         public int? DeliveryRequestId { get; set; }
 
-        public int ShippingManifestId { get; set; }
-
         public int OrderId { get; set; }
-
-        public int ContractId { get; set; }
 
         [Required]
         public int FulfillmentStateId { get; set; }
@@ -52,13 +48,11 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual DeliveryRequest DeliveryRequest { get; set; }
 
-        public virtual ShippingManifest Manifest { get; set; }
-
         public virtual Order Order { get; set; }
 
         public virtual Trade Trade { get; set; }
 
-        public virtual Contract Contract { get; set; }
+        public virtual ICollection<OrderItem> Items { get; set; }
 
     }
 }

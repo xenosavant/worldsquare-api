@@ -17,32 +17,26 @@ namespace Stellmart.Api.Controllers
     public class ShippingController : AuthorizedController
     {
         private readonly IShippingService _shippingService;
-        private readonly ISecretKeyDataManager _secretKeyManager;
         private readonly IShipmentTrackerDataManager _trackerManager;
         private readonly ISignatureDataManager _signatureManager;
         private readonly IShippingLogic _shippingLogic;
         private readonly IContractService _contractService;
-        private readonly IEncryptionService _encryptionService;
         private readonly IUserDataManager _userDataManager;
 
 
         public ShippingController(IShippingService shippingService,
-            ISecretKeyDataManager secretKeyManager,
             IShipmentTrackerDataManager trackerManager,
             ISignatureDataManager signatureManager,
             IShippingLogic shippingLogic,
             IContractService contractService,
-            IEncryptionService encryptionService,
             IUserDataManager userDataManager
             )
         {
-            _secretKeyManager = secretKeyManager;
             _trackerManager = trackerManager;
             _signatureManager = signatureManager;
             _shippingService = shippingService;
             _shippingLogic = shippingLogic;
             _contractService = contractService;
-            _encryptionService = encryptionService;
             _userDataManager = userDataManager;
         }
 
@@ -60,35 +54,24 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult> ShipPackage([FromBody] ShipPackageRequest request)
         {
-
-            // Create Shipment
-            // Create Contract
-            // Add Shipment to order
-            // Mark OrderItems as delivered
             if (request.ShippingCarrierType != null && request.TrackingId != null)
             {
-                var secretKey = await _secretKeyManager.GetBuyerSecretKeyByOrderId(request.OrderId);
-                var trackerResponse = _shippingService.GenerateShippingTracker(request.SignatureId, request.ShippingCarrierType, request.TrackingId);
+                var trackerResponse = _shippingService.GenerateShippingTracker(request.ShippingCarrierType, request.TrackingId);
                 if (trackerResponse.Error == true)
                 {
                     return BadRequest();
                 }
-                var tracker = _trackerManager.CreateAsync(secretKey.Key, trackerResponse.TackingId, request.SignatureId);
+                await _shippingLogic.CreateAsync(new ShipPackageData(request)
+                {
+                    EasyPostTrackerId = trackerResponse.TackingId,
+                    CurrentUserId = UserId
+                });
             }
             else
             {
-                // set up internal service delivery contract
-            }
-            var signature = await _signatureManager.GetAsync(request.SignatureId);
-            var user = await _userDataManager.GetByIdAsync(UserId);
-            var stellarKey = _encryptionService.DecryptSecretKey(user.StellarEncryptedSecretKey, user.StellarSecretKeyIv, request.Password);
-            // TODO: we should probably verify this key is correct before we attempt to sign
-            var signatureDataModel = new ContractSignatureModel()
-            {
-                Secret = stellarKey,
-                Signature = signature
-            };
-            var success = await _contractService.SignContract(signatureDataModel);
+                // In v2 we will allow this condition
+                return BadRequest();
+            }            
             return Ok();
         }
 

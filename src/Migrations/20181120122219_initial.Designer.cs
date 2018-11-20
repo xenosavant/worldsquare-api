@@ -10,8 +10,8 @@ using Stellmart.Context;
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20181111213354_add-store-id-to-order-items")]
-    partial class addstoreidtoorderitems
+    [Migration("20181120122219_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -533,21 +533,13 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("Quantity");
 
-                    b.Property<int?>("ShippingManifestId");
-
                     b.Property<int?>("TradeItemId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("InventoryItemId")
-                        .IsUnique()
-                        .HasFilter("[InventoryItemId] IS NOT NULL");
+                    b.HasIndex("InventoryItemId");
 
-                    b.HasIndex("ShippingManifestId");
-
-                    b.HasIndex("TradeItemId")
-                        .IsUnique()
-                        .HasFilter("[TradeItemId] IS NOT NULL");
+                    b.HasIndex("TradeItemId");
 
                     b.ToTable("LineItems");
                 });
@@ -696,22 +688,33 @@ namespace Stellmart.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<bool>("Fulfilled");
+                    b.Property<int?>("ContractId");
+
+                    b.Property<int?>("InventoryItemId");
 
                     b.Property<bool>("IsDeleted");
 
-                    b.Property<int>("LineItemId");
-
                     b.Property<int>("OrderId");
+
+                    b.Property<int?>("ProductShipmentId");
 
                     b.Property<int>("StoreId");
 
+                    b.Property<int?>("TradeItemId");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("LineItemId")
-                        .IsUnique();
+                    b.HasIndex("ContractId")
+                        .IsUnique()
+                        .HasFilter("[ContractId] IS NOT NULL");
+
+                    b.HasIndex("InventoryItemId");
 
                     b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductShipmentId");
+
+                    b.HasIndex("TradeItemId");
 
                     b.ToTable("OrderItem");
                 });
@@ -801,8 +804,6 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("BuyerSecretKey");
 
-                    b.Property<int>("ContractId");
-
                     b.Property<int?>("DeliveryRequestId");
 
                     b.Property<bool>("FulfilledInternally");
@@ -825,8 +826,6 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("ShippingCarrierType");
 
-                    b.Property<int>("ShippingManifestId");
-
                     b.Property<string>("TrackingNumber");
 
                     b.Property<int?>("TradeId");
@@ -837,9 +836,6 @@ namespace Stellmart.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ContractId")
-                        .IsUnique();
-
                     b.HasIndex("DeliveryRequestId")
                         .IsUnique()
                         .HasFilter("[DeliveryRequestId] IS NOT NULL");
@@ -849,9 +845,6 @@ namespace Stellmart.Api.Migrations
                     b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
-
-                    b.HasIndex("ShippingManifestId")
-                        .IsUnique();
 
                     b.HasIndex("TradeId");
 
@@ -1319,19 +1312,6 @@ namespace Stellmart.Api.Migrations
                         .IsUnique();
 
                     b.ToTable("ShipmentTrackers");
-                });
-
-            modelBuilder.Entity("Stellmart.Api.Context.Entities.ShippingManifest", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<bool>("IsDeleted");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ShippingManifests");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Signature", b =>
@@ -1841,18 +1821,13 @@ namespace Stellmart.Api.Migrations
             modelBuilder.Entity("Stellmart.Api.Context.Entities.LineItem", b =>
                 {
                     b.HasOne("Stellmart.Api.Context.Entities.InventoryItem", "InventoryItem")
-                        .WithOne("LineItem")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.LineItem", "InventoryItemId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.Entities.ShippingManifest", "ShippingManifest")
                         .WithMany("LineItems")
-                        .HasForeignKey("ShippingManifestId")
+                        .HasForeignKey("InventoryItemId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.TradeItem", "TradeItem")
-                        .WithOne("LineItem")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.LineItem", "TradeItemId")
+                        .WithMany("LineItems")
+                        .HasForeignKey("TradeItemId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -1922,14 +1897,29 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.OrderItem", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Entities.LineItem", "Item")
+                    b.HasOne("Stellmart.Api.Context.Entities.Contract", "Contract")
                         .WithOne("OrderItem")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.OrderItem", "LineItemId")
+                        .HasForeignKey("Stellmart.Api.Context.Entities.OrderItem", "ContractId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.Entities.InventoryItem", "InventoryItem")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("InventoryItemId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Entities.Order", "Order")
                         .WithMany("Items")
                         .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.Entities.ProductShipment", "Shipment")
+                        .WithMany("Items")
+                        .HasForeignKey("ProductShipmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.TradeItem", "TradeItem")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("TradeItemId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -1973,11 +1963,6 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.ProductShipment", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.Entities.Contract", "Contract")
-                        .WithOne("ProductShipment")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.ProductShipment", "ContractId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Stellmart.Api.Context.Entities.DeliveryRequest", "DeliveryRequest")
                         .WithOne("Shipment")
                         .HasForeignKey("Stellmart.Api.Context.Entities.ProductShipment", "DeliveryRequestId")
@@ -1996,11 +1981,6 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.ApplicationUser", "Sender")
                         .WithMany("SentShipments")
                         .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.Entities.ShippingManifest", "Manifest")
-                        .WithOne("Shipment")
-                        .HasForeignKey("Stellmart.Api.Context.Entities.ProductShipment", "ShippingManifestId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Entities.Trade", "Trade")

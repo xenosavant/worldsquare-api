@@ -33,15 +33,17 @@ namespace Stellmart.Api.Business.Managers
         public async Task<Order> FulfillOrderItems(int orderId, List<LineItem> items)
         {
             var order = await GetOrder(orderId);
-            foreach (var item in items)
-            {
-                var orderItem = order.Items.Where(oi => oi.LineItemId == item.Id).FirstOrDefault();
-                if (orderItem != null)
-                {
-                    orderItem.Fulfilled = true;
-                    _repository.Update(orderItem);
-                }
-            }
+            // TODO: we only need to add the shipmentid here to fulfill
+
+            //foreach (var item in items)
+            //{
+            //    var orderItem = order.Items.Where(oi => oi.LineItemId == item.Id).FirstOrDefault();
+            //    if (orderItem != null)
+            //    {
+            //        orderItem.Fulfilled = true;
+            //        _repository.Update(orderItem);
+            //    }
+            //}
             await _repository.SaveAsync();
             return order;
         }
