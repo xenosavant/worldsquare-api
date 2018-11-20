@@ -37,7 +37,7 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual ServiceRequestFulfillment Fulfillment { get; set; }
 
-        public virtual ProductShipment ProductShipment { get; set; }
+        public virtual OrderItem OrderItem { get; set; }
 
     }
 }

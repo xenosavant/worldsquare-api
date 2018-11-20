@@ -34,7 +34,9 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual Listing Listing { get; set; }
 
-        public virtual LineItem LineItem { get; set; }
+        public virtual ICollection<LineItem> LineItems { get; set; }
+
+        public virtual ICollection<OrderItem> OrderItems { get; set; }
 
     }
 }

@@ -35,7 +35,9 @@ namespace Stellmart.Api.Context
 
         public virtual ItemMetaData ItemMetaData { get; set; }
 
-        public virtual LineItem LineItem { get; set; }
+        public virtual ICollection<LineItem> LineItems { get; set; }
+
+        public virtual ICollection<OrderItem> OrderItems { get; set; }
 
         public IList<Field> GetFields()
         {

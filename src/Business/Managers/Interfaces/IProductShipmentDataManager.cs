@@ -5,11 +5,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Business.Logic.Interfaces
+namespace Stellmart.Api.Business.Managers.Interfaces
 {
-    public interface IShippingLogic
+    public interface IProductShipmentDataManager
     {
-        Task<bool> MarkShipmentDelivered(string trackingId);
         Task<ProductShipment> CreateAsync(ShipPackageData data);
     }
 }

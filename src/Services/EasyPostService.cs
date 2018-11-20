@@ -30,7 +30,7 @@ namespace Stellmart.Api.Services
             throw new NotImplementedException();
         }
 
-        public ShippingTrackerResponse GenerateShippingTracker(int signatureId, string carrierId, string trackingId)
+        public ShippingTrackerResponse GenerateShippingTracker(string carrierId, string trackingId)
         {
             var response = new ShippingTrackerResponse();
             try

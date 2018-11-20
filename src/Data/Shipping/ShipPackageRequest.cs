@@ -12,7 +12,6 @@ namespace Stellmart.Api.Data.Shipping
         public string TrackingId { get; set; }
         public string ShippingCarrierType { get; set; }
         public int OrderId { get; set; }
-        public int SignatureId { get; set; }
-        public List<LineItem> Items { get; set; }
+        public List<OrderItem> Items { get; set; }
     }
 }

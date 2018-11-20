@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Data.Contract;
 using Stellmart.Api.DataAccess;
 
 namespace Stellmart.Api.Business.Managers
@@ -17,9 +18,12 @@ namespace Stellmart.Api.Business.Managers
             _repository = repository;
         }
 
-        public Task<Signature> GetAsync(int id)
+        public Task<UserSignature> GetUserSignatureAsync(GetSignatureModel data)
         {
-            return _repository.GetByIdAsync<Signature>(id);
+            return _repository.GetOneAsync<UserSignature>(
+                s => s.Transaction.Phase.ContractId == data.ContractId &&
+                s.SignerId == data.UserId &&
+                s.Transaction.Phase.SequenceNumber == data.PhaseNumber);
         }
     }
 }
