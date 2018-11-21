@@ -164,42 +164,67 @@ namespace Stellmart.Services
             //failure txn, bump
             //ToDo: replace bump sequence with transfer fund to source account
             bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (1 + 3));
+
             operations.Add(bumpOperation);
+
             xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, phaseTwo.SequenceNumber - 1);
-            var pretxnride = new PreTransaction();
-            pretxnride.XdrString = xdrTransaction;
-            phaseTwo.Transactions.Add(
-                CreateSignatureList(pretxnride, new[] {contract.DestAccountId, contract.EscrowAccountId}));
+
+            var preTransactionRide = new PreTransaction();
+
+            preTransactionRide.XdrString = xdrTransaction;
+            //use the same publicKeys as above
+            signatureList = CreateSignatureList(preTransactionRide, publicKeys);
+
+            phaseTwo.Transactions.Add(signatureList);
 
             contract.Phases.Add(phaseTwo);
+
             return contract;
         }
 
         private async Task<Contract> ConstructPhase3(Contract contract)
         {
             var Phase3 = new ContractPhase();
-            var ops = new List<Operation>();
+            var operations = new List<Operation>();
 
             Phase3.SequenceNumber = contract.BaseSequenceNumber + 3;
 
             //success txn, bump to next
             var BumpOp =
                 _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (2 + 1));
-            ops.Add(BumpOp);
-            var txnxdr =
-                await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase3.SequenceNumber - 1);
-            var pretxn = new PreTransaction();
-            pretxn.XdrString = txnxdr;
-            Phase3.Transactions.Add(CreateSignatureList(pretxn, new[] {contract.DestAccountId, contract.EscrowAccountId}));
+
+            operations.Add(BumpOp);
+
+            var xdrTransaction =
+                await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase3.SequenceNumber - 1);
+
+            var preTransaction = new PreTransaction();
+
+            preTransaction.XdrString = xdrTransaction;
+
+            var publicKeys = new[]
+	    {
+                contract.DestAccountId, contract.EscrowAccountId
+            };
+
+            var signatureList = CreateSignatureList(preTransaction, publicKeys);
+
+            Phase3.Transactions.Add(signatureList);
 
             //failure txn, bump
             BumpOp = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (2 + 2));
-            ops.Add(BumpOp);
-            txnxdr = await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase3.SequenceNumber - 1);
-            var pretxnride = new PreTransaction();
-            pretxnride.XdrString = txnxdr;
-            Phase3.Transactions.Add(
-                CreateSignatureList(pretxnride, new[] {contract.DestAccountId, contract.EscrowAccountId}));
+
+            operations.Add(BumpOp);
+
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase3.SequenceNumber - 1);
+
+            var preTransactionRide = new PreTransaction();
+
+            preTransactionRide.XdrString = xdrTransaction;
+
+            signatureList = CreateSignatureList(preTransactionRide, publicKeys);
+
+            Phase3.Transactions.Add(signatureList);
 
             contract.Phases.Add(Phase3);
             return contract;
@@ -208,37 +233,60 @@ namespace Stellmart.Services
         private async Task<Contract> ConstructPhase4(Contract contract)
         {
             var Phase4 = new ContractPhase();
-            var ops = new List<Operation>();
+            var operations = new List<Operation>();
 
             Phase4.SequenceNumber = contract.BaseSequenceNumber + 4;
 
             //dispute txn, bump to next
-            var BumpOp =
+            var BumpOperation =
                 _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (3 + 1));
-            ops.Add(BumpOp);
-            var txnxdr =
-                await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase4.SequenceNumber - 1);
-            var pretxn = new PreTransaction();
-            pretxn.XdrString = txnxdr;
-            Phase4.Transactions.Add(CreateSignatureList(pretxn, new[] {contract.DestAccountId, contract.EscrowAccountId}));
+
+            operations.Add(BumpOperation);
+
+            var xdrTransaction =
+                await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase4.SequenceNumber - 1);
+
+            var preTransaction = new PreTransaction();
+
+            preTransaction.XdrString = xdrTransaction;
+
+            var publicKeys = new[]
+            {
+                contract.DestAccountId, contract.EscrowAccountId
+            };
+
+            var signatureList = CreateSignatureList(preTransaction, publicKeys);
+
+            Phase4.Transactions.Add(signatureList);
 
             //success txn, merge txn
-            var MergeOp = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
-            ops.Add(MergeOp);
-            txnxdr = await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase4.SequenceNumber - 1);
-            var pretxnmerge = new PreTransaction();
-            pretxnmerge.XdrString = txnxdr;
-            Phase4.Transactions.Add(CreateSignatureList(pretxnmerge,
-                new[] {contract.DestAccountId, contract.EscrowAccountId}));
+            var MergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
+
+            operations.Add(MergeOperation);
+
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase4.SequenceNumber - 1);
+
+            var preTransactionMerge = new PreTransaction();
+
+            preTransactionMerge.XdrString = xdrTransaction;
+
+            signatureList = CreateSignatureList(preTransactionMerge, publicKeys);
+
+            Phase4.Transactions.Add(signatureList);
 
             //failure txn, bump
-            BumpOp = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (3 + 1));
-            ops.Add(BumpOp);
-            txnxdr = await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase4.SequenceNumber - 1);
-            var pretxnride = new PreTransaction();
-            pretxnride.XdrString = txnxdr;
-            Phase4.Transactions.Add(
-                CreateSignatureList(pretxnride, new[] {contract.DestAccountId, contract.EscrowAccountId}));
+            BumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (3 + 1));
+            operations.Add(BumpOperation);
+
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase4.SequenceNumber - 1);
+
+            var preTransactionRide = new PreTransaction();
+
+            preTransactionRide.XdrString = xdrTransaction;
+
+            signatureList = CreateSignatureList(preTransactionRide, publicKeys);
+
+            Phase4.Transactions.Add(signatureList);
 
             contract.Phases.Add(Phase4);
             return contract;
@@ -247,13 +295,17 @@ namespace Stellmart.Services
         private async Task<Contract> ConstructPhase4Dispute(Contract contract)
         {
             var Phase4D = new ContractPhase();
-            var ops = new List<Operation>();
+
+            var operations = new List<Operation>();
 
             Phase4D.SequenceNumber = contract.BaseSequenceNumber + 5;
 
             var weight = new HorizonAccountWeightModel();
+
             var dest_account = new HorizonAccountSignerModel();
+
             var ws_account = new HorizonAccountSignerModel();
+
             weight.Signers = new List<HorizonAccountSignerModel>();
 
             weight.LowThreshold = 5;
@@ -269,15 +321,23 @@ namespace Stellmart.Services
             //Let the SignerSecret be null
             weight.SignerSecret = null;
 
-            var SetOptionsOp = _horizonService.SetOptionsOperation(contract.EscrowAccountId, weight);
-            ops.Add(SetOptionsOp);
+            var SetOptionsOperation = _horizonService.SetOptionsOperation(contract.EscrowAccountId, weight);
+            operations.Add(SetOptionsOperation);
 
-            var txnxdr =
-                await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase4D.SequenceNumber - 1);
+            var xdrTransaction =
+                await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase4D.SequenceNumber - 1);
 
-            var pretxn = new PreTransaction();
-            pretxn.XdrString = txnxdr;
-            Phase4D.Transactions.Add(CreateSignatureList(pretxn, new[] {contract.DestAccountId, contract.EscrowAccountId}));
+            var preTransaction = new PreTransaction();
+            preTransaction.XdrString = xdrTransaction;
+
+            var publicKeys = new[]
+            {
+                contract.DestAccountId, contract.EscrowAccountId
+            };
+
+            var signatureList = CreateSignatureList(preTransaction, publicKeys);
+
+            Phase4D.Transactions.Add(signatureList);
 
             contract.Phases.Add(Phase4D);
             return contract;
@@ -286,28 +346,45 @@ namespace Stellmart.Services
         private async Task<Contract> ConstructPhase5(Contract contract)
         {
             var Phase5 = new ContractPhase();
-            var ops = new List<Operation>();
+            var operations = new List<Operation>();
 
             Phase5.SequenceNumber = contract.BaseSequenceNumber + 6;
 
             //release txn, merge txn
-            var MergeOp = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
-            ops.Add(MergeOp);
-            var txnxdr =
-                await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase5.SequenceNumber - 1);
-            var pretxnmerge = new PreTransaction();
-            pretxnmerge.XdrString = txnxdr;
-            Phase5.Transactions.Add(CreateSignatureList(pretxnmerge,
-                new[] {contract.DestAccountId, contract.EscrowAccountId}));
+            var MergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
+
+            operations.Add(MergeOperation);
+
+            var xdrTransaction =
+                await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase5.SequenceNumber - 1);
+
+            var preTransactionMerge = new PreTransaction();
+
+            preTransactionMerge.XdrString = xdrTransaction;
+
+            var publicKeys = new[]
+            {
+                contract.DestAccountId, contract.EscrowAccountId
+            };
+
+            var signatureList = CreateSignatureList(preTransactionMerge, publicKeys);
+
+            Phase5.Transactions.Add(signatureList);
 
             //refund txn, merge txn
-            MergeOp = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.SourceAccountId);
-            ops.Add(MergeOp);
-            txnxdr = await _horizonService.CreateTransaction(contract.EscrowAccountId, ops, null, Phase5.SequenceNumber - 1);
-            var pretxnmerge2 = new PreTransaction();
-            pretxnmerge2.XdrString = txnxdr;
-            Phase5.Transactions.Add(CreateSignatureList(pretxnmerge2,
-                new[] {contract.DestAccountId, contract.EscrowAccountId}));
+            MergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.SourceAccountId);
+
+            operations.Add(MergeOperation);
+
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, Phase5.SequenceNumber - 1);
+
+            var preTransactionMergeRefund = new PreTransaction();
+
+            preTransactionMergeRefund.XdrString = xdrTransaction;
+
+            signatureList = CreateSignatureList(preTransactionMergeRefund, publicKeys);
+
+            Phase5.Transactions.Add(signatureList);
 
             contract.Phases.Add(Phase5);
             return contract;
@@ -316,9 +393,13 @@ namespace Stellmart.Services
         public async Task<Contract> CreateContract(Contract contract)
         {
             contract = await ConstructPhaseTwo(contract);
+
             contract = await ConstructPhase3(contract);
+
             contract = await ConstructPhase4(contract);
+
             contract = await ConstructPhase4Dispute(contract);
+
             contract = await ConstructPhase5(contract);
             return contract;
         }
@@ -336,7 +417,9 @@ namespace Stellmart.Services
         private bool VerifyTimeBound(DateTime minimum, DateTime maximum)
         {
             bool NoDelay = true;
+
             long CurrentTime = GetCurrentTimeinSeconds();
+
             if(minimum != null && CurrentTime < ConvertDatetoSeconds(minimum)) {
                 NoDelay = false;
             }
@@ -348,8 +431,11 @@ namespace Stellmart.Services
         public void UpdateContract(Contract contract)
         {
             var enumerator = contract.Phases.GetEnumerator();
+
             var move = contract.CurrentSequenceNumber - contract.BaseSequenceNumber;
+
             for (long i = 0; i <= move; i++) enumerator.MoveNext();
+
             var phase = enumerator.Current;
             if (phase.Completed)
             {
@@ -357,19 +443,23 @@ namespace Stellmart.Services
                 return;
             }
 
-            foreach (var pretransaction in phase.Transactions) {
+            foreach (var preTransaction in phase.Transactions) {
                 bool flag = true;
-                foreach (var sign in pretransaction.Signatures) {
+
+                foreach (var sign in preTransaction.Signatures) {
                     if (sign.Signed == false)
                     {
                         flag = false;
+
                         break;
                     }
                 }
                 //all signatures obtained , verify if we can submit
-                if(flag && VerifyTimeBound(pretransaction.MinimumTime, pretransaction.MaximumTime)) {
-                     _horizonService.SubmitTransaction(pretransaction.XdrString);
-                     pretransaction.Submitted = true;
+                if(flag && VerifyTimeBound(preTransaction.MinimumTime, preTransaction.MaximumTime)) {
+                     _horizonService.SubmitTransaction(preTransaction.XdrString);
+
+                     preTransaction.Submitted = true;
+
                      phase.Completed = true;
                      /* todo update sequence number*/
                      //contract.CurrentSequenceNumber = _horizonService.GetSequenceNumber(contract.EscrowAccountId);
@@ -381,11 +471,15 @@ namespace Stellmart.Services
         private string AddSign(string XdrString, string secretKey)
         {
             int count, newcount = 0;
+
             count = _horizonService.GetSignatureCount(XdrString);
+
             _horizonService.SignTransaction(null, secretKey, XdrString);
+
             newcount = _horizonService.GetSignatureCount(XdrString);
             if (count + 1 == newcount)
                 return _horizonService.SignatureHash(XdrString, newcount - 1);
+
             return null;
         }
 
@@ -394,9 +488,9 @@ namespace Stellmart.Services
             // call horizon and if successful, then update signature and return true
             // otherwise return false
             var signature = SignatureModel.Signature;
-            var Pretransaction = signature.Transaction;
+            var preTransaction = signature.Transaction;
 
-            if(! VerifyTimeBound(Pretransaction.MinimumTime, Pretransaction.MaximumTime)) {
+            if(! VerifyTimeBound(preTransaction.MinimumTime, preTransaction.MaximumTime)) {
                 Console.WriteLine("time bound delay verification failed");
                 return false;
             }
@@ -421,11 +515,13 @@ namespace Stellmart.Services
                     return false;
                 }
 
-                var hash = AddSign(Pretransaction.XdrString, secretKey);
+                var hash = AddSign(preTransaction.XdrString, secretKey);
                 if (hash != null)
                 {
                     signature.SignatureHash = hash;
+
                     signature.Signed = true;
+
                     signature.SignedOn = DateTime.UtcNow;
                     return true;
                 }
@@ -447,3 +543,4 @@ namespace Stellmart.Services
         }
     }
 }
+
