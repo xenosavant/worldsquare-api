@@ -15,7 +15,7 @@ namespace Stellmart.Api.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController : BaseController
+    public class AccountController : AuthorizedController
     {
         private readonly IMapper _mapper;
         private readonly IAccountService _accountService;
@@ -31,6 +31,7 @@ namespace Stellmart.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route(template: "signup")]
         [Produces("application/json")]
@@ -48,16 +49,35 @@ namespace Stellmart.Api.Controllers
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet]
         [Route(template: "securityquestions")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.Created)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.BadRequest)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.NotFound)]
-        [ProducesResponseType(typeof(SignupResponse), (int)HttpStatusCode.InternalServerError)]
-        public async Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync()
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IReadOnlyCollection<SecurityQuestionsResponse>> GetSecurityQuestionsAsync()
         {
             return await _accountService.GetSecurityQuestionsAsync();
+        }
+
+        /// <summary>
+        /// Get security questions for user
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet]
+        [Route(template: "securityquestionsforuser")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.Created)]
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.BadRequest)]
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.NotFound)]
+        [ProducesResponseType(typeof(SecurityQuestionsResponse), (int)HttpStatusCode.InternalServerError)]
+        public async Task<IReadOnlyCollection<SecurityQuestionsResponse>> GetSecurityQuestionsForUserAsync([FromQuery]SecurityQuestionsRequest request)
+        {
+            return await _accountService.GetSecurityQuestionsForUserAsync(request);
         }
 
         /// <summary>
@@ -65,6 +85,7 @@ namespace Stellmart.Api.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route(template: "forgotpassword")]
         [Produces("application/json")]
@@ -82,6 +103,7 @@ namespace Stellmart.Api.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route(template: "resetpassword")]
         [Produces("application/json")]
@@ -99,6 +121,7 @@ namespace Stellmart.Api.Controllers
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
+        [AllowAnonymous]
         [HttpPost]
         [Route(template: "confirmemail")]
         [Produces("application/json")]

@@ -100,9 +100,9 @@ namespace Stellmart.Api.Services
             return success;
         }
 
-        public async Task<IReadOnlyCollection<SecurityQuestionModel>> GetSecurityQuestionsAsync()
+        public async Task<IReadOnlyCollection<SecurityQuestionsResponse>> GetSecurityQuestionsAsync()
         {
-            return _mapper.Map<IReadOnlyCollection<SecurityQuestionModel>>(await _securityQuestionDataManager.GetSecurityQuestionsAsync());
+            return _mapper.Map<IReadOnlyCollection<SecurityQuestionsResponse>>(await _securityQuestionDataManager.GetSecurityQuestionsAsync());
         }
 
         public async Task<bool> ForgotPassword(ForgotPasswordRequest model)
@@ -146,6 +146,11 @@ namespace Stellmart.Api.Services
 
             await _userManager.ConfirmEmailAsync(user, model.Code);
             return true;
+        }
+
+        public async Task<IReadOnlyCollection<SecurityQuestionsResponse>> GetSecurityQuestionsForUserAsync(SecurityQuestionsRequest request)
+        {
+            return _mapper.Map<IReadOnlyCollection<SecurityQuestionsResponse>>(await _securityQuestionDataManager.GetSecurityQuestionsForUserAsync(request));
         }
     }
 }

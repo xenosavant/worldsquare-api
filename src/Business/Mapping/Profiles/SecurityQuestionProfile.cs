@@ -8,8 +8,12 @@ namespace Stellmart.Api.Business.Mapping.Profiles
     {
         public SecurityQuestionProfile()
         {
-            CreateMap<SecurityQuestion, SecurityQuestionModel>()
+            CreateMap<SecurityQuestion, SecurityQuestionsResponse>()
                 .ForMember(dest => dest.Question, opts => opts.MapFrom(src => src.Description))
+                .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<string, SecurityQuestionsResponse>()
+                .ForMember(dest => dest.Question, opts => opts.MapFrom(src => src))
                 .ForAllOtherMembers(x => x.Ignore());
         }
     }

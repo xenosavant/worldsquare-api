@@ -1,6 +1,6 @@
 ﻿namespace Stellmart.Api.Data.Account
 {
-    public class SecurityQuestionModel
+    public class SecurityQuestionsResponse
     {
         public string Question { get; set; }
     }
