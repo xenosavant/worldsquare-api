@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MaxMind.GeoIP2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Search;
@@ -14,7 +15,7 @@ using Stellmart.Services;
 using StructureMap;
 using System;
 using System.Net.Http;
-using MaxMind.GeoIP2;
+using EasyPost;
 using Yoti.Auth;
 
 namespace Stellmart.Api.Config
@@ -59,8 +60,12 @@ namespace Stellmart.Api.Config
             For<YotiClient>()
                 .Singleton()
                 .Use(new YotiClient(configuration["YotiSettings:SdkId"], PemHelper.LoadPemFromString(configuration["YotiSettings:Pem"])));
+
             var path = GeoIpHelper.GetGeoIpDatabaseFilename();
             For<IGeoIP2DatabaseReader>().Singleton().Use(new DatabaseReader(path));
+
+            // EasyPost
+            ClientManager.SetCurrent(configuration["EasyPost:ApiKey"]);
         }
     }
 }

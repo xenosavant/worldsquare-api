@@ -1,14 +1,9 @@
-﻿using Microsoft.Extensions.Options;
-using Stellmart.Api.Data.Settings;
+﻿using EasyPost;
+using Stellmart.Api.Business.Managers.Interfaces;
+using Stellmart.Api.Data.Shipping;
 using Stellmart.Api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using EasyPost;
-using Stellmart.Api.Data.Shipping;
-using Stellmart.Api.Business.Managers.Interfaces;
-using Stellmart.Api.Context.Entities;
 
 namespace Stellmart.Api.Services
 {
@@ -17,12 +12,11 @@ namespace Stellmart.Api.Services
 
         private readonly IShipmentTrackerDataManager _trackerDataManager;
         private readonly ISignatureDataManager _signatureDataManager;
-        
 
-        public EasyPostService(IOptions<EasyPostSettings> settings, ISignatureDataManager signatureDataManager)
+        public EasyPostService(ISignatureDataManager signatureDataManager, IShipmentTrackerDataManager trackerDataManager)
         {
-            ClientManager.SetCurrent(settings.Value.ApiKey);
             _signatureDataManager = signatureDataManager;
+            _trackerDataManager = trackerDataManager;
         }
 
         public string GeneratePostageLabelUri()

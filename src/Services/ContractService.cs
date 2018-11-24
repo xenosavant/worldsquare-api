@@ -18,6 +18,7 @@ namespace Stellmart.Services
         public ContractService(IHorizonService horizonService)
         {
             _horizonService = horizonService;
+            // get worldSuareAccount from somewhere (keyvault or similar)
         }
 
         private PreTransaction CreateSignatureList(PreTransaction preTransaction, IReadOnlyCollection<string> publicKeys)

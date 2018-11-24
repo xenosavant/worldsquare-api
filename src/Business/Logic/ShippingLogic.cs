@@ -61,7 +61,7 @@ namespace Stellmart.Api.Business.Logic
                             ContractId = item.Contract.Id,
                             PhaseNumber = item.Contract.CurrentSequenceNumber - item.Contract.BaseSequenceNumber
                         });
-                    var success = await _contractService.SignContract(
+                    var success = _contractService.SignContract(
                         new ContractSignatureModel()
                         {
                             Signature = signature,
@@ -82,7 +82,7 @@ namespace Stellmart.Api.Business.Logic
             // Get all item trackers with the id
             var tracker = await _trackerManager.GetAsync(trackingId);
             var signature = tracker.Signature;
-            return await _contractService.SignContract(
+            return _contractService.SignContract(
                 new ContractSignatureModel()
                 {
                     Secret = tracker.SecretSigningKey,
