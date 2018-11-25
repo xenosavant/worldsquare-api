@@ -19,7 +19,7 @@ namespace WorldSquare.Api.Tests.Services
         private IHorizonService _subjectUnderTest;
         private readonly IOptions<HorizonSettings> _horizonSettingsMock;
         private readonly IMapper _mapperMock;
-        private readonly IHorizonServerManager _horizonServerManager;
+        private readonly IHorizonServerManager _horizonServerManagerMock;
 
         private const string horizonServer = "https://horizon-testnet.stellar.org/";
 
@@ -31,9 +31,9 @@ namespace WorldSquare.Api.Tests.Services
             });
 
             _mapperMock = Substitute.For<IMapper>();
-            _horizonServerManager = Substitute.For<IHorizonServerManager>();
+            _horizonServerManagerMock = Substitute.For<IHorizonServerManager>();
 
-            _subjectUnderTest = new HorizonService(_horizonSettingsMock, _mapperMock, _horizonServerManager);
+            _subjectUnderTest = new HorizonService(_horizonSettingsMock, _mapperMock, _horizonServerManagerMock);
         }
 
         [Fact]
@@ -55,8 +55,8 @@ namespace WorldSquare.Api.Tests.Services
                 PublicKey = accountResponse.KeyPair.AccountId
             });
 
-            _horizonServerManager.FundTestAccountAsync(accountResponse.KeyPair.AccountId).Returns(Task.CompletedTask);
-            _horizonServerManager.GetAccountAsync(accountResponse.KeyPair.AccountId).Returns(accountResponse);
+            _horizonServerManagerMock.FundTestAccountAsync(accountResponse.KeyPair.AccountId).Returns(Task.CompletedTask);
+            _horizonServerManagerMock.GetAccountAsync(accountResponse.KeyPair.AccountId).Returns(accountResponse);
 
             var account = await _subjectUnderTest.FundTestAccountAsync(keyPair.AccountId);
 
