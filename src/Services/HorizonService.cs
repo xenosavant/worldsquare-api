@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Stellmart.Api.Business.Managers.Interfaces;
 using Asset = stellar_dotnet_sdk.Asset;
 using Operation = stellar_dotnet_sdk.Operation;
 using Signer = stellar_dotnet_sdk.Signer;
@@ -20,15 +21,15 @@ namespace Stellmart.Services
 {
     public class HorizonService : IHorizonService
     {
-        private readonly Server _server;
         private readonly IOptions<HorizonSettings> _horizonSettings;
         private readonly IMapper _mapper;
+        private readonly IHorizonServerManager _horizonServerManager;
 
-        public HorizonService(IOptions<HorizonSettings> horizonSettings, IMapper mapper, Server server)
+        public HorizonService(IOptions<HorizonSettings> horizonSettings, IMapper mapper, IHorizonServerManager horizonServerManager)
         {
             _horizonSettings = horizonSettings;
             _mapper = mapper;
-            _server = server;
+            _horizonServerManager = horizonServerManager;
 
             if (_horizonSettings.Value.Server.Contains("testnet"))
                 Network.UseTestNetwork();
@@ -44,17 +45,17 @@ namespace Stellmart.Services
         public async Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey)
         {
             // fund test acc
-            await Server.HttpClient.GetAsync($"friendbot?addr={publicKey}");
+            await _horizonServerManager.FundTestAccountAsync(publicKey);
 
             //See our newly created account.
-            return _mapper.Map<HorizonFundTestAccountModel>(
-                await _server.Accounts.Account(KeyPair.FromAccountId(publicKey)));
+            var accountResponse = await _horizonServerManager.GetAccountAsync(publicKey);
+            return _mapper.Map<HorizonFundTestAccountModel>(accountResponse);
         }
 
         public async Task<long> GetSequenceNumber(string publicKey)
         {
-            var AccountResponse = await _server.Accounts.Account(KeyPair.FromAccountId(publicKey));
-            return AccountResponse.SequenceNumber;
+            var accountResponse = await _horizonServerManager.GetAccountAsync(publicKey);
+            return accountResponse.SequenceNumber;
         }
 
         public Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey,
@@ -140,18 +141,17 @@ namespace Stellmart.Services
 
         public async Task<string> CreateTransaction(string sourceAccountPublicKey, List<Operation> operations, HorizonTimeBoundModel time, long sequence)
         {
-            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
-            var AccountResponse = await _server.Accounts.Account(source);
+            var accountResponse = await _horizonServerManager.GetAccountAsync(sourceAccountPublicKey);
 
             Transaction.Builder transactionBuilder;
 
             if (sequence == 0)
             {
-                transactionBuilder = new Transaction.Builder(new Account(source, AccountResponse.SequenceNumber));
+                transactionBuilder = new Transaction.Builder(new Account(accountResponse.KeyPair, accountResponse.SequenceNumber));
             }
             else
             {
-                transactionBuilder = new Transaction.Builder(new Account(source, sequence));
+                transactionBuilder = new Transaction.Builder(new Account(accountResponse.KeyPair, sequence));
             }
 
             foreach (var operation in operations)
@@ -182,7 +182,7 @@ namespace Stellmart.Services
         {
             var transaction = ConvertXdrToTransaction(xdrTransaction);
 
-            return await _server.SubmitTransaction(transaction);
+            return await _horizonServerManager.SubmitTransaction(transaction);
         }
 
         public string GetPublicKey(string secretKey)
