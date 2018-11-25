@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Net.Http;
+using AutoMapper;
+using EasyPost;
 using MaxMind.GeoIP2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,9 +16,6 @@ using Stellmart.Api.Services.Interfaces;
 using Stellmart.Context;
 using Stellmart.Services;
 using StructureMap;
-using System;
-using System.Net.Http;
-using EasyPost;
 using Yoti.Auth;
 
 namespace Stellmart.Api.Config
@@ -40,26 +40,27 @@ namespace Stellmart.Api.Config
             For<IHttpContextAccessor>().Singleton().Use<HttpContextAccessor>();
             For<IMapper>().Use(() => Mapper.Instance);
             For<IHorizonService>().Singleton().Use<HorizonService>();
-
-
+            
             For<Server>()
                 .Singleton()
-                .Use(new Server(configuration["HorizonSettings:Server"] ,
+                .Use(new Server(configuration["HorizonSettings:Server"],
                     new HttpClient
                     {
-			BaseAddress = new Uri(configuration["HorizonSettings:Server"])
+                        BaseAddress = new Uri(configuration["HorizonSettings:Server"])
                     }
                 ));
 
             For<ISearchService>()
                 .Singleton()
                 .Use(new AzureSearchService(
-                    new SearchServiceClient(configuration["AzureSearch:ServiceName"], new SearchCredentials(configuration["AzureSearch:ApiKey"]))
-                    ));
+                    new SearchServiceClient(configuration["AzureSearch:ServiceName"],
+                        new SearchCredentials(configuration["AzureSearch:ApiKey"]))
+                ));
 
             For<YotiClient>()
                 .Singleton()
-                .Use(new YotiClient(configuration["YotiSettings:SdkId"], PemHelper.LoadPemFromString(configuration["YotiSettings:Pem"])));
+                .Use(new YotiClient(configuration["YotiSettings:SdkId"],
+                    PemHelper.LoadPemFromString(configuration["YotiSettings:Pem"])));
 
             var path = GeoIpHelper.GetGeoIpDatabaseFilename();
             For<IGeoIP2DatabaseReader>().Singleton().Use(new DatabaseReader(path));
