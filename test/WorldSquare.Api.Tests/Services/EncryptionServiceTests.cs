@@ -1,27 +1,25 @@
-﻿using NUnit.Framework;
-using Stellmart.Api.Services;
+﻿using Stellmart.Api.Services;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
+using Xunit;
 
 namespace Stellmart.Api.Tests
 {
-    [TestFixture]
     public class EncryptionServiceTests
     {
-        private IEncryptionService _encryptionService;
+        private IEncryptionService _subjectUnderTest;
 
         private string _key => "SAV76USXIJOBMEQXPANUOQM6F5LIOTLPDIDVRJBFFE2MDJXG24TAPUU7";
 
-        [SetUp]
-        public void Init()
+        public EncryptionServiceTests()
         {
-            _encryptionService = new EncryptionService();
+            _subjectUnderTest = new EncryptionService();
         }
 
-        [Test]
+        [Fact]
         public void TestEncryptDecryptRecoveryKey()
         {
-            byte[] iv = _encryptionService.GenerateIv();
+            byte[] iv = _subjectUnderTest.GenerateIv();
 
             var answers =
             new List<string>()
@@ -32,19 +30,19 @@ namespace Stellmart.Api.Tests
                 "purple",
                 "witchitah"
             };
-            var encrypted = _encryptionService.EncryptRecoveryKey(_key, answers, iv);
-            var decrypted = _encryptionService.DecryptRecoveryKey(encrypted, answers, iv);
-            Assert.AreEqual(_key, decrypted);
+            var encrypted = _subjectUnderTest.EncryptRecoveryKey(_key, answers, iv);
+            var decrypted = _subjectUnderTest.DecryptRecoveryKey(encrypted, answers, iv);
+            Assert.Equal(_key, decrypted);
         }
 
-        [Test]
+        [Fact]
         public void TestEncryptDecryptSecretKey()
         {
-            byte[] iv = _encryptionService.GenerateIv();
+            byte[] iv = _subjectUnderTest.GenerateIv();
             var password = "ksdjf*KAJSDF123ksdjf*KAJSDF123";
-            var encrypted = _encryptionService.EncryptSecretKey(_key, iv, password);
-            var decrypted = _encryptionService.DecryptSecretKey(encrypted, iv, password);
-            Assert.AreEqual(_key, decrypted);
+            var encrypted = _subjectUnderTest.EncryptSecretKey(_key, iv, password);
+            var decrypted = _subjectUnderTest.DecryptSecretKey(encrypted, iv, password);
+            Assert.Equal(_key, decrypted);
         }
 
     }
