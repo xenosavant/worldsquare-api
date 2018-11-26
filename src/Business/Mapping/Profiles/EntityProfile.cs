@@ -85,6 +85,22 @@ namespace Stellmart.Api.Business.Mapping.Profiles
                     id => new ItemMetaDataCategory() { CategoryId = id})))
                 .ForAllOtherMembers(x => x.Ignore());
 
+            CreateMap<Cart, CartViewModel>()
+                .ForMember(dest => dest.LineItems, opts => opts.MapFrom(src => src.LineItems))
+                .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<LineItem, LineItemViewModel>()
+                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
+                .ForMember(dest => dest.ItemConditionId, opts => opts.MapFrom(src => src.InventoryItem.Listing.ItemMetaData.ItemConditionId))
+                .ForMember(dest => dest.Title, opts => opts.MapFrom(src => src.InventoryItem.Listing.Title))
+                .ForMember(dest => dest.Description, opts => opts.MapFrom(src => src.InventoryItem.Listing.Description))
+                .ForMember(dest => dest.Descriptors, opts => opts.MapFrom(src => src.InventoryItem.Descriptors))
+                .ForMember(dest => dest.UnitTypeId, opts => opts.MapFrom(src => src.InventoryItem.Listing.UnitTypeId))
+                .ForMember(dest => dest.CurrencyAmount, opts => opts.MapFrom(src => src.InventoryItem.Price.Amount))
+                .ForMember(dest => dest.CurrencyTypeId, opts => opts.MapFrom(src => src.InventoryItem.Price.CurrencyTypeId))
+                .ForMember(dest => dest.Quantity, opts => opts.MapFrom(src => src.Quantity))
+                .ForAllOtherMembers(x => x.Ignore());
+
         }
     }
 }

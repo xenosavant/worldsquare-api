@@ -16,9 +16,11 @@ namespace Stellmart.Api.Context.Entities
 
         [Required]
         public int Quantity { get; set; }
+        public int CartId { get; set; }
 
         public InventoryItem InventoryItem { get; set; }
         public TradeItem TradeItem { get; set; }
+        public Cart Cart {get; set; }
 
         public IItem Item
         {

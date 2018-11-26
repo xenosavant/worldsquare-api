@@ -477,9 +477,9 @@ namespace Stellmart.Context
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<LineItem>()
-                 .HasOne(l => l.TradeItem)
+                 .HasOne(l => l.Cart)
                  .WithMany(i => i.LineItems)
-                 .HasForeignKey(l => l.TradeItemId)
+                 .HasForeignKey(l => l.CartId)
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Area>()
