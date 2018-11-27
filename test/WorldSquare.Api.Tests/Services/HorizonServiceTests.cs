@@ -9,6 +9,7 @@ using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
 using Stellmart.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -47,7 +48,11 @@ namespace WorldSquare.Api.Tests.Services
 
             var accountResponse = new AccountResponse(keyPair)
             {
-                KeyPair = keyPair
+                KeyPair = keyPair,
+                Balances = new[]
+                {
+                    new Balance("XLM", "XLM", "xxx", "10000", "xxx", "xxx", "xxx")
+                }
             };
 
             _mapperMock.Map<HorizonFundTestAccountModel>(Arg.Any<AccountResponse>()).Returns(new HorizonFundTestAccountModel()
