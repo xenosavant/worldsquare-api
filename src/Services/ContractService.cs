@@ -45,7 +45,7 @@ namespace Stellmart.Services
             return preTransaction;
         }
 
-        public async Task<Contract> SetupContractAsync(ContractParameterModel contractParameterModel)
+        public async Task<Contract> SetupContractAsync()
         {
             var escrow = _horizonService.CreateAccount();
 
@@ -54,8 +54,6 @@ namespace Stellmart.Services
             var contract = new Contract
             {
                 EscrowAccountId = escrow.PublicKey,
-                DestAccountId = contractParameterModel.DestinationAccount,
-                SourceAccountId = contractParameterModel.SourceAccount,
                 BaseSequenceNumber = sequenceNumber,
                 CurrentSequenceNumber = sequenceNumber,
                 ContractStateId = (int)ContractState.Initial,
@@ -77,6 +75,8 @@ namespace Stellmart.Services
             var phaseOne = new ContractPhase();
             var operations = new List<Operation>();
 
+            contract.DestAccountId = contractParameterModel.DestinationAccount;
+            contract.SourceAccountId = contractParameterModel.SourceAccount;
             //for phase 1, its base sequence number +1
             phaseOne.SequenceNumber = contract.BaseSequenceNumber + 1;
 
@@ -98,7 +98,7 @@ namespace Stellmart.Services
 
             //escrow master weight (1) + dest weight (1) + WorldSquare (4)
             //dest account has weight 1
-            destinationAccount.Signer = contractParameterModel.DestinationAccount;
+            destinationAccount.Signer = contract.DestAccountId;
             destinationAccount.Weight = 1;
             weight.Signers.Add(destinationAccount);
             worldSquareAccount.Signer = _worldSquareAccount.PublicKey;

@@ -10,7 +10,7 @@ namespace Stellmart.Api.Services.Interfaces
            Add signer as destination, worldsquare and change threshold weights.
            Returns Escrow account id
              */
-        Task<Contract> SetupContractAsync(ContractParameterModel contractParameterModel);
+        Task<Contract> SetupContractAsync();
         Task<Contract> FundContractAsync(Contract contract, ContractParameterModel contractParameterModel);
         Task<Contract> CreateContractAsync(Contract contract);
 
