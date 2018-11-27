@@ -39,7 +39,7 @@ namespace Stellmart.Services
 
         public HorizonKeyPairModel CreateAccount()
         {
-            return _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
+            return _horizonServerManager.CreateAccount();
         }
 
         public async Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey)
