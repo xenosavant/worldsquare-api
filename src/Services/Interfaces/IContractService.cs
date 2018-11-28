@@ -15,8 +15,5 @@ namespace Stellmart.Api.Services.Interfaces
         Task<Contract> CreateContractAsync(Contract contract);
 
         bool SignContract(ContractSignatureModel signature);
-
-        /*Submits the transaction to the network, returns the hash of transaction*/
-        string ExecuteContract();
     }
 }

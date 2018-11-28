@@ -540,11 +540,5 @@ namespace Stellmart.Services
             //dead end
             return false;
         }
-
-        public string ExecuteContract()
-        {
-            const string hash = "";
-            return hash;
-        }
     }
 }
