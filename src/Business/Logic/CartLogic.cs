@@ -13,29 +13,41 @@ namespace Stellmart.Api.Business.Logic
     {
         private readonly ICartDataManager _dataManager;
         private readonly IInventoryItemDataManager _itemDataManager;
+        private readonly ILineItemDataManager _lineItemDataManager;
 
-        public CartLogic(ICartDataManager dataManager, IInventoryItemDataManager itemDataManager)
+        public CartLogic(ICartDataManager dataManager, 
+            IInventoryItemDataManager itemDataManager, 
+            ILineItemDataManager lineItemDataManager)
         {
             _dataManager = dataManager;
             _itemDataManager = itemDataManager;
+            _lineItemDataManager = lineItemDataManager;
         }
 
-        public async Task<Cart> AddItemToCart(InventoryItemDetailViewModel item, int userId)
+        public async Task<Cart> AddItemToCart(InventoryItem item, int userId)
         {
             var cart = await _dataManager.GetAsync(userId);
-            var inventoryItem = await _itemDataManager.GetById(item.Id);
             if (cart == null)
             {
-                cart = await _dataManager.CreateAsync(inventoryItem, userId);
+                cart = await _dataManager.CreateAsync(item, userId);
             }
             else
             {
-                cart.LineItems.Add(
-                    new LineItem()
-                    {
-                        InventoryItemId = item.Id, 
-                        Quantity = 1
-                    });
+                if (cart.LineItems.Select(li => li.InventoryItemId).Contains(item.Id))
+                {
+                    var lineItem = cart.LineItems.Where(li => li.InventoryItemId == item.Id).First();
+                    lineItem.Quantity++;
+                    _lineItemDataManager.Update(lineItem);
+                }
+                else
+                {
+                    cart.LineItems.Add(
+                        new LineItem()
+                        {
+                            InventoryItemId = item.Id,
+                            Quantity = 1
+                        });
+                }
                 cart = await _dataManager.SaveAsync(cart);
             }
             return cart;

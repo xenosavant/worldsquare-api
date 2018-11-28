@@ -15,20 +15,23 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    //[Authorize]
     public class CartController : AuthorizedController
     {
         private readonly ICartDataManager _dataManager;
         private readonly ICartLogic _cartLogic;
         private readonly ILineItemDataManager _lineItemDataManager;
+        private readonly IInventoryItemDataManager _itemDataManager;
         private readonly IMapper _mapper;
 
         public CartController(ICartDataManager dataManager,
             ILineItemDataManager lineItemDataManager,
+            IInventoryItemDataManager inventoryManager,
+            IInventoryItemDataManager itemDataManager,
             IMapper mapper,
             ICartLogic cartLogic)
         {
             _dataManager = dataManager;
+            _itemDataManager = itemDataManager;
             _lineItemDataManager = lineItemDataManager;
             _mapper = mapper;
             _cartLogic = cartLogic;
@@ -39,8 +42,13 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<CartViewModel>> AddItem([FromBody] InventoryItemDetailViewModel item)
         {
-            var cart = await _cartLogic.AddItemToCart(item, UserId);
-            return Ok(_mapper.Map<CartViewModel>(await _dataManager.SaveAsync(cart)));
+            var inventoryItem = await _itemDataManager.GetById(item.Id);
+            if (inventoryItem == null)
+            {
+                return BadRequest();
+            }
+            var cart = await _cartLogic.AddItemToCart(inventoryItem, UserId);
+            return Ok(_mapper.Map<CartViewModel>(cart));
         }
 
         [HttpGet]
@@ -57,6 +65,7 @@ namespace Stellmart.Api.Controllers
         }
 
         [HttpPatch]
+        [Route("{id:int}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<LineItemViewModel>> Patch(int id, [FromBody] Delta<LineItem> delta)
@@ -66,16 +75,17 @@ namespace Stellmart.Api.Controllers
             {
                 return Unauthorized();
             }
-            await _lineItemDataManager.UpdateAsync(item, delta);
+            await _lineItemDataManager.UpdateAndSaveAsync(item, delta);
             return Ok(_mapper.Map<LineItemViewModel>(item));
         }
 
         [HttpDelete]
+        [Route("{id:int}")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
-        public async Task<ActionResult> RemoveItem(int lineItemId)
+        public async Task<ActionResult> RemoveItem(int id)
         {
-            var lineItem = await _lineItemDataManager.GetAsync(lineItemId);
+            var lineItem = await _lineItemDataManager.GetAsync(id);
             if (lineItem.Cart.UserId != UserId)
             {
                 return BadRequest();

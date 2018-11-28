@@ -20,10 +20,10 @@ namespace Stellmart.Api.DataAccess
         public virtual void Create<TEntity>(TEntity entity, int? createdBy = null)
             where TEntity : class, IEntity
         {
-            ((IAuditableEntity)entity).CreatedDate = DateTime.UtcNow;
 
             if (createdBy.HasValue && createdBy.Value > 0 && entity is IAuditableEntity)
             {
+                ((IAuditableEntity)entity).CreatedDate = DateTime.UtcNow;
                 ((IAuditableEntity)entity).CreatedBy = (int)createdBy;
             }
 

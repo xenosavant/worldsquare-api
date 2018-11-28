@@ -12,7 +12,7 @@ namespace Stellmart.Api.Business.Managers
     {
         private readonly IRepository _repository;
 
-        public static string NavigationProperties => "Price,UnitType,Thread";
+        public static string NavigationProperties => "Price";
 
         public InventoryItemDataManager(IRepository repository)
         {

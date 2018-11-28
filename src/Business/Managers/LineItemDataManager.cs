@@ -23,7 +23,7 @@ namespace Stellmart.Api.Business.Managers
             return await _repository.GetOneAsync<LineItem>(l => l.Id == id, "Cart");
         }
 
-        public async Task<LineItem> UpdateAsync(LineItem item, Delta<LineItem> delta)
+        public async Task<LineItem> UpdateAndSaveAsync(LineItem item, Delta<LineItem> delta)
         {
             delta.Patch(item);
             _repository.Update(item);
@@ -31,11 +31,17 @@ namespace Stellmart.Api.Business.Managers
             return item;
         }
 
+
         public async Task DeleteAsync(LineItem item)
         {
             item.IsDeleted = true;
             _repository.Update(item);
             await _repository.SaveAsync();
+        }
+
+        public void Update(LineItem item)
+        {
+            _repository.Update(item);
         }
     }
 }

@@ -9,6 +9,6 @@ namespace Stellmart.Api.Business.Logic.Interfaces
 {
     public interface ICartLogic
     {
-        Task<Cart> AddItemToCart(InventoryItemDetailViewModel item, int userId);
+        Task<Cart> AddItemToCart(InventoryItem item, int userId);
     }
 }

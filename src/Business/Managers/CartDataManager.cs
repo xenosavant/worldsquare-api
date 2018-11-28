@@ -20,22 +20,31 @@ namespace Stellmart.Api.Business.Managers
         public async Task<Cart> GetAsync(int userId)
         {
             var cart = await _repository.GetOneAsync<Cart>(c => c.UserId == userId, "LineItems.InventoryItem.Listing.ItemMetaData");
-            cart.LineItems = cart.LineItems.Where(l => !l.IsDeleted).ToList();
+            if (cart != null)
+            {
+                cart.LineItems = cart.LineItems.Where(l => !l.IsDeleted).ToList();
+            }
             return cart;
         }
 
         public async Task<Cart> CreateAsync(InventoryItem item, int userId)
         {
+            LineItem lineItem = null;
+            if (item != null)
+            {
+                lineItem = new LineItem()
+                {
+                    InventoryItem = item,
+                    Quantity = 1
+                };
+            }
             var cart = new Cart()
             {
                 UserId = userId,
-                LineItems = new List<LineItem>()
+                LineItems = lineItem == null ? null : 
+                new List<LineItem>()
                 {
-                    new LineItem()
-                    {
-                        InventoryItem = item,
-                        Quantity = 1
-                    }
+                    lineItem
                 }
             };
             _repository.Create(cart);
@@ -45,9 +54,10 @@ namespace Stellmart.Api.Business.Managers
 
         public async Task<Cart> SaveAsync(Cart cart)
         {
-            _repository.Create(cart);
+            _repository.Update(cart);
             await _repository.SaveAsync();
-            return await GetAsync(cart.UserId);
+            cart  = await GetAsync(cart.UserId);
+            return cart;
         }
     }
 }

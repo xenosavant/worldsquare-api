@@ -10,7 +10,8 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     public interface ILineItemDataManager
     {
         Task<LineItem> GetAsync(int id);
-        Task<LineItem> UpdateAsync(LineItem item, Delta<LineItem> delta);
+        Task<LineItem> UpdateAndSaveAsync(LineItem item, Delta<LineItem> delta);
+        void Update(LineItem item);
         Task DeleteAsync(LineItem item);
     }
 }
