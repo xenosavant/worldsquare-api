@@ -109,8 +109,8 @@ namespace Stellmart.Services
             //Let the SignerSecret be null
             weight.SignerSecret = null;
 
-            var setOptionsOperation = _horizonService.SetOptionsOperation(contract.EscrowAccountId, weight);
-            operations.Add(setOptionsOperation);
+            var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
+            operations.Add(setOptionsWeightOperation);
 
             var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, phaseOne.SequenceNumber - 1);
             
@@ -336,8 +336,8 @@ namespace Stellmart.Services
             //Let the SignerSecret be null
             weight.SignerSecret = null;
 
-            var setOptionsOperation = _horizonService.SetOptionsOperation(contract.EscrowAccountId, weight);
-            operations.Add(setOptionsOperation);
+            var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
+            operations.Add(setOptionsWeightOperation);
 
             var xdrTransaction =
                 await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, phaseFourDispute.SequenceNumber - 1);
