@@ -3,7 +3,7 @@ using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Stellmart.Api.Tests
+namespace WorldSquare.Api.Tests.Services
 {
     public class EncryptionServiceTests
     {

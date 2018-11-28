@@ -9,6 +9,7 @@ using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
 using Stellmart.Services;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,7 +22,11 @@ namespace WorldSquare.Api.Tests.Services
         private readonly IMapper _mapperMock;
         private readonly IHorizonServerManager _horizonServerManagerMock;
 
-        private const string horizonServer = "https://horizon-testnet.stellar.org/";
+        private const string _horizonServer = "https://horizon-testnet.stellar.org/";
+
+        // generated secret seed with RNGCryptoServiceProvider and converted to base64string
+        private const string _secretSeed = "G3fQ8T/duAPYASsMnV7vwOdcXN2to7eA/FHkT9OEkvA=";
+        private byte[] _byteSecretSeed;
 
         public HorizonServiceTests()
         {
@@ -30,6 +35,8 @@ namespace WorldSquare.Api.Tests.Services
                 Server = "testnet"
             });
 
+            _byteSecretSeed = Convert.FromBase64String(_secretSeed);
+
             _mapperMock = Substitute.For<IMapper>();
             _horizonServerManagerMock = Substitute.For<IHorizonServerManager>();
 
@@ -37,17 +44,37 @@ namespace WorldSquare.Api.Tests.Services
         }
 
         [Fact]
-        public async Task FundTestAccountAsync_ProvidePublicKey_GetKeyPair()
+        public void CreateAccount_GetKeyPair()
         {
-            // generated secret seed with RNGCryptoServiceProvider and converted to base64string
-            const string secretSeed = "G3fQ8T/duAPYASsMnV7vwOdcXN2to7eA/FHkT9OEkvA=";
-            var byteSecretSeed = Convert.FromBase64String(secretSeed);
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
 
-            var keyPair = KeyPair.FromSecretSeed(byteSecretSeed);
+            var horizonKeyPairModel = new HorizonKeyPairModel
+            {
+                PublicKey = keyPair.AccountId,
+                SecretKey = keyPair.SecretSeed
+            };
+            
+            _horizonServerManagerMock.CreateAccount().Returns(horizonKeyPairModel);
+
+            var result = _subjectUnderTest.CreateAccount();
+
+            Assert.NotNull(result);
+            Assert.Equal(keyPair.AccountId, result.PublicKey);
+            Assert.Equal(keyPair.SecretSeed, result.SecretKey);
+        }
+
+        [Fact]
+        public async Task FundTestAccountAsync_ProvidePublicKey_GetFundedAccount()
+        {
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
 
             var accountResponse = new AccountResponse(keyPair)
             {
-                KeyPair = keyPair
+                KeyPair = keyPair,
+                Balances = new[]
+                {
+                    new Balance("XLM", "XLM", "xxx", "10000", "xxx", "xxx", "xxx")
+                }
             };
 
             _mapperMock.Map<HorizonFundTestAccountModel>(Arg.Any<AccountResponse>()).Returns(new HorizonFundTestAccountModel()

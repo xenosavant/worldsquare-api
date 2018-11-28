@@ -39,7 +39,7 @@ namespace Stellmart.Services
 
         public HorizonKeyPairModel CreateAccount()
         {
-            return _mapper.Map<HorizonKeyPairModel>(KeyPair.Random());
+            return _horizonServerManager.CreateAccount();
         }
 
         public async Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey)
@@ -72,7 +72,7 @@ namespace Stellmart.Services
             return operation;
         }
 
-        public Operation SetOptionsOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weights)
+        public Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weights)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
             var operation = new SetOptionsOperation.Builder();
@@ -97,7 +97,14 @@ namespace Stellmart.Services
             operation.SetSourceAccount(source);
             return operation.Build();
         }
+        public Operation SetOptionsNoOpsOperation(string secondSignerAccountPublicKey)
+        {
+            var source = KeyPair.FromAccountId(secondSignerAccountPublicKey);
+            var operation = new SetOptionsOperation.Builder();
 
+            operation.SetSourceAccount(source);
+            return operation.Build();
+        }
         public Operation CreateAccountMergeOperation(string sourceAccountPublicKey, string destAccountPublicKey)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
@@ -271,8 +278,8 @@ namespace Stellmart.Services
 
                 //Let the SignerSecret be null
                 var operations = new List<Operation>();
-                var setOptionsOperation = SetOptionsOperation(asset.IssuerAccount.PublicKey, weight);
-                operations.Add(setOptionsOperation);
+                var setOptionsWeightOperation = SetOptionsWeightOperation(asset.IssuerAccount.PublicKey, weight);
+                operations.Add(setOptionsWeightOperation);
 
                 var xdrTransaction = await CreateTransaction(asset.IssuerAccount.PublicKey, operations, null, 0);
                 await SubmitTransaction(SignTransaction(asset.IssuerAccount, null, xdrTransaction));
