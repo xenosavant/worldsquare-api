@@ -13,7 +13,7 @@ namespace Stellmart.Api.Context.Entities
 
         public override void Update(IContractService contractService)
         { 
-            // update contract for all product shipments
+            // update contract for all order items
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using stellar_dotnet_sdk;
+﻿using Microsoft.Extensions.Options;
+using stellar_dotnet_sdk;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
+using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -15,10 +17,14 @@ namespace Stellmart.Services
         private readonly IHorizonService _horizonService;
         private readonly HorizonKeyPairModel _worldSquareAccount;
 
-        public ContractService(IHorizonService horizonService)
+        public ContractService(IHorizonService horizonService, IOptions<SignatureSettings> settings)
         {
             _horizonService = horizonService;
-            // get worldSuareAccount from somewhere (keyvault or similar)
+            _worldSquareAccount = new HorizonKeyPairModel()
+            {
+                PublicKey = settings.Value.MasterPublicKey,
+                SecretKey = settings.Value.MasterSecrectKey
+            };
         }
 
         private PreTransaction CreateSignatureList(PreTransaction preTransaction, IReadOnlyCollection<string> publicKeys)
@@ -62,7 +68,7 @@ namespace Stellmart.Services
 
             var phaseZero = new ContractPhase
             {
-                Completed = true,
+                Completed = false,
                 SequenceNumber = sequenceNumber,
                 Contract = contract,
                 Contested = false

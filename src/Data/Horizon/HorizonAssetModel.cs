@@ -8,9 +8,10 @@ namespace Stellmart.Api.Data.Horizon
         MoveCustomToken,
         LockCustomToken
     }
+
     public class HorizonAssetModel
     {
-	public bool IsNative { get; set; }
+	    public bool IsNative { get; set; }
         public string Code { get; set; }
         public KeyPair Issuer { get; set; }
         public string Amount {get; set;}

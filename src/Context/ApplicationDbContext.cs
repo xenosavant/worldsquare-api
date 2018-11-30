@@ -79,7 +79,6 @@ namespace Stellmart.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<ItemCondition> ItemConditions { get; set; }
         public DbSet<ContractState> ContractStates { get; set; }
-        public DbSet<ContractType> ContractTypes { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<DistanceUnit> DistanceUnits { get; set; }
         public DbSet<FulfillmentState> FulfillmentStates { get; set; }
@@ -528,12 +527,6 @@ namespace Stellmart.Context
                 .HasOne(c => c.State)
                 .WithMany(u => u.Contracts)
                 .HasForeignKey(c => c.ContractStateId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Contract>()
-                .HasOne(c => c.Type)
-                .WithMany(u => u.Contracts)
-                .HasForeignKey(c => c.ContractTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CurrencyAmount>()

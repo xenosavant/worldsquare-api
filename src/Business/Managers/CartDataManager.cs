@@ -11,15 +11,16 @@ namespace Stellmart.Api.Business.Managers
     public class CartDataManager : ICartDataManager
     {
         private readonly IRepository _repository;
+        private readonly string navigationProperties = "LineItems.InventoryItem.Listing.ItemMetaData";
 
         public CartDataManager(IRepository repository)
         {
             _repository = repository;
         }
 
-        public async Task<Cart> GetAsync(int userId)
+        public async Task<Cart> GetAsync(int userId, string properties = null)
         {
-            var cart = await _repository.GetOneAsync<Cart>(c => c.UserId == userId, "LineItems.InventoryItem.Listing.ItemMetaData");
+            var cart = await _repository.GetOneAsync<Cart>(c => c.UserId == userId, properties ?? navigationProperties);
             if (cart != null)
             {
                 cart.LineItems = cart.LineItems.Where(l => !l.IsDeleted).ToList();

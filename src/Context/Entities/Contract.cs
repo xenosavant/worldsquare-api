@@ -31,8 +31,6 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual ContractState State { get; set; }
 
-        public virtual ContractType Type { get; set; }
-
         public virtual ICollection<ContractPhase> Phases { get; set; }
 
         public virtual ServiceRequestFulfillment Fulfillment { get; set; }

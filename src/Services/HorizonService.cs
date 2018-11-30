@@ -241,11 +241,11 @@ namespace Stellmart.Services
             return asset;
         }
 
-        public async Task<int> MoveAsset(HorizonAssetModel asset)
+        public async Task<bool> MoveAsset(HorizonAssetModel asset)
         {
             if (asset.State != CustomTokenState.CreateCustomToken)
             {
-                return -1;
+                return false;
             }
 
             var operations = new List<Operation>();
@@ -258,11 +258,11 @@ namespace Stellmart.Services
             var xdrTransaction = await CreateTransaction(asset.IssuerAccount.PublicKey, operations, null, 0);
             await SubmitTransaction(SignTransaction(asset.IssuerAccount, null, xdrTransaction));
             asset.State = CustomTokenState.MoveCustomToken;
-            return 0;
+            return true;
 
         }
 
-        public async Task<int> LockAsset(HorizonAssetModel asset)
+        public async Task<bool> LockAsset(HorizonAssetModel asset)
         {
             if (asset.State == CustomTokenState.MoveCustomToken)
             {
@@ -286,10 +286,27 @@ namespace Stellmart.Services
                 var xdrTransaction = await CreateTransaction(asset.IssuerAccount.PublicKey, operations, null, 0);
                 await SubmitTransaction(SignTransaction(asset.IssuerAccount, null, xdrTransaction));
                 asset.State = CustomTokenState.LockCustomToken;
-                return 0;
+                return true;
             }
 
-            return -1;
+            return false;
+        }
+
+        public async Task<bool> TransferAsset(HorizonTransferModel payment)
+        {
+            var operations = new List<Operation>();
+            var paymentOperation = CreatePaymentOperation(payment.SourceAccount.PublicKey, payment.SourceAccount.SecretKey, payment.Asset.Amount);
+            operations.Add(paymentOperation);
+            var xdrTransaction = await CreateTransaction(payment.SourceAccount.PublicKey, operations, null, 0);
+            var response = await SubmitTransaction(SignTransaction(payment.SourceAccount, null, xdrTransaction));
+            if (response.IsSuccess())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
     }
 }

@@ -24,8 +24,9 @@ namespace Stellmart.Api.Services.Interfaces
         int GetSignatureCount(string xdrTransaction);
         string SignatureHash(string xdrTransaction, int index);
         Task<HorizonAssetModel> CreateAsset(string name, string limit);
-        Task<int> MoveAsset(HorizonAssetModel asset);
-        Task<int> LockAsset(HorizonAssetModel asset);
+        Task<bool> MoveAsset(HorizonAssetModel asset);
+        Task<bool> LockAsset(HorizonAssetModel asset);
+        Task<bool> TransferAsset(HorizonTransferModel payment);
 
 
 

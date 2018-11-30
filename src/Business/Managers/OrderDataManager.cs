@@ -30,20 +30,9 @@ namespace Stellmart.Api.Business.Managers
             return order;
         }
 
-        public async Task<Order> FulfillOrderItems(int orderId, List<LineItem> items)
+        public async Task<Order> CreateAsync(Order order)
         {
-            var order = await GetOrder(orderId);
-            // TODO: we only need to add the shipmentid here to fulfill
-
-            //foreach (var item in items)
-            //{
-            //    var orderItem = order.Items.Where(oi => oi.LineItemId == item.Id).FirstOrDefault();
-            //    if (orderItem != null)
-            //    {
-            //        orderItem.Fulfilled = true;
-            //        _repository.Update(orderItem);
-            //    }
-            //}
+            _repository.Create(order);
             await _repository.SaveAsync();
             return order;
         }

@@ -5,8 +5,7 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities.ReadOnly
 {
-    public class ContractType : LookupData
+    public class PaymentType : LookupData
     {
-        public virtual ICollection<Contract> Contracts { get; set; }
     }
 }

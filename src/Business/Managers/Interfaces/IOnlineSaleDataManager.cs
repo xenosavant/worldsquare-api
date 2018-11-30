@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Business.Managers.Interfaces
 {
-    public interface IOrderDataManager
+    public interface IOnlineSaleDataManager
     {
-        Task<Order> GetOrder(int id);
-        Task<Order> UpdateOrder(Order order);
-        Task<Order> CreateAsync(Order order);
+        Task<OnlineSale> CreateAsync();
     }
 }

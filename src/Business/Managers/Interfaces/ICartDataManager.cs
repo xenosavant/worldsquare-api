@@ -9,7 +9,7 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     public interface ICartDataManager
     {
         Task<Cart> CreateAsync(InventoryItem item, int userId);
-        Task<Cart> GetAsync(int userId);
+        Task<Cart> GetAsync(int userId, string properties = null);
         Task<Cart> SaveAsync(Cart cart);
     }
 }
