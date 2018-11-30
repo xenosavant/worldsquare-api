@@ -27,7 +27,7 @@ namespace Stellmart.Context
         public DbSet<OnlineStore> OnlineStores { get; set; }
         public DbSet<DistributionCenter> DistributionCenters { get; set; }
 
-
+        
         public DbSet<Signature> Signatures { get; set; }
         public DbSet<UserSignature> UserSignatures { get; set; }
         public DbSet<SystemSignature> SystemSignatures { get; set; }

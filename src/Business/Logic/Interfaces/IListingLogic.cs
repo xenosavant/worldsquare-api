@@ -9,7 +9,7 @@ namespace Stellmart.Api.Business.Logic.Interfaces
     {
         Task<IEnumerable<Listing>> GetAsync(int? onlineStoreId,
             string category, int? conditionId, string searchString,
-            double? usdMin, double? usdMax);
+            double? usdMin, double? usdMax, int? page, int? pageLength);
         Task<Listing> GetById(int id);
         Task<Listing> CreateAsync(int userId, Listing listing);
         Task<Listing> UpdateAsync(int userId, Listing listing, Delta<Listing> delta);

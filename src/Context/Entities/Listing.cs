@@ -21,8 +21,6 @@ namespace Stellmart.Api.Context.Entities
 
         public bool Flagged { get; set; }
 
-        public int? ThreadId { get; set; }
-
         public bool Internal { get; set; }
 
         public int UnitTypeId { get; set; }
@@ -32,8 +30,6 @@ namespace Stellmart.Api.Context.Entities
         public virtual QuantityUnit UnitType { get; set; }
 
         public virtual OnlineStore OnlineStore { get; set; }
-
-        public virtual MessageThread Thread { get; set; }
 
         public virtual ItemMetaData ItemMetaData { get; set; }
 

@@ -33,7 +33,7 @@ namespace Stellmart.Api.Business.Logic
 
         public async Task<IEnumerable<Listing>> GetAsync(int? onlineStroreId,  string category,
             int? conditionId, string searchString, double? usdMin,
-            double? usdMax)
+            double? usdMax, int? page, int? pageLength)
         {
             var query = new ItemSearchQuery()
             {
@@ -44,6 +44,10 @@ namespace Stellmart.Api.Business.Logic
                 MaximumPriceUsd = usdMax
             };
             var ids = (await _searchService.SearchAsync<Listing, ItemSearchQuery>(searchString + "~1", query)).ToList();
+            if (page != null && pageLength != null)
+            {
+                ids = ids.Skip(((int)page - 1) * (int)pageLength).Take((int)pageLength).ToList();
+            }
             return await _listingManager.GetAsync(ids);
         } 
 

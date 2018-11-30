@@ -15,7 +15,7 @@ namespace Stellmart.Api.Business.Managers
         private readonly IRepository _repository;
 
         public static string NavigationProperties => "InventoryItems.Price," +
-            "Thread,UnitType,ItemMetaData.ItemMetaDataCategories.Category";
+            "UnitType,ItemMetaData.ItemMetaDataCategories.Category";
 
         public ListingDataManager(IRepository repository)
         {

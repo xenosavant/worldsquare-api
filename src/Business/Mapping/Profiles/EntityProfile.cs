@@ -41,6 +41,23 @@ namespace Stellmart.Api.Business.Mapping.Profiles
                 .ForMember(dest => dest.ItemMetaData, opts => opts.MapFrom(src => src.ItemMetaData))
                 .ForAllOtherMembers(x => x.Ignore());
 
+            CreateMap<Listing, ListingDetailViewModel>()
+                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
+                .ForMember(dest => dest.OnlineStoreId, opts => opts.MapFrom(src => src.ServiceId))
+                .ForMember(dest => dest.Title, opts => opts.MapFrom(src => src.Title))
+                .ForMember(dest => dest.Description, opts => opts.MapFrom(src => src.Description))
+                .ForMember(dest => dest.InventoryItems, opts => opts.MapFrom(src => src.InventoryItems))
+                .ForMember(dest => dest.ItemConditionId, opts => opts.MapFrom(src => src.ItemMetaData.ItemConditionId))
+                .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<InventoryItem, InventoryItemDetailViewModel>()
+                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Descriptors, opts => opts.MapFrom(src => src.Descriptors))
+                .ForMember(dest => dest.CurrencyAmount, opts => opts.MapFrom(src => src.Price.Amount))
+                .ForMember(dest => dest.CurrencyTypeId, opts => opts.MapFrom(src => src.Price.CurrencyTypeId))
+                .ForAllOtherMembers(x => x.Ignore());
+
+
             CreateMap<InventoryItemViewModel, InventoryItem>()
                 .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
                 .ForMember(dest => dest.SKU, opts => opts.MapFrom(src => src.SKU))

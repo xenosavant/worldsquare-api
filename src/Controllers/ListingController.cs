@@ -12,8 +12,9 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class ListingController : AuthorizedController
+    public class ListingController : BaseController
     {
+        private readonly int UserId = 1;
         private readonly IListingLogic _listingLogic;
         private readonly IListingDataManager _listingDataManager;
         private readonly IMapper _mapper;
@@ -31,7 +32,7 @@ namespace Stellmart.Api.Controllers
         [HttpGet]
         [Route("")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<ListingViewModel>>> Get(
+        public async Task<ActionResult<IEnumerable<ListingDetailViewModel>>> Get(
             //[ModelBinder(
             //typeof(CommaDelimitedArrayModelBinder))]
             [FromQuery]
@@ -40,9 +41,12 @@ namespace Stellmart.Api.Controllers
             int? conditionId,
             string searchstring,
             double? usdMin,
-            double? usdMax)
+            double? usdMax,
+            int? page, 
+            int? pageLength)
         {
-            return _mapper.Map<List<ListingViewModel>>(await _listingLogic.GetAsync(onlineStoreId, category, conditionId, searchstring, usdMin, usdMax));
+            return _mapper.Map<List<ListingDetailViewModel>>(await _listingLogic.GetAsync(onlineStoreId, category, 
+                conditionId, searchstring, usdMin, usdMax, page, pageLength));
         }
 
         [HttpGet]
