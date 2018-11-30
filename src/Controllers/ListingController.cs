@@ -12,9 +12,8 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class ListingController : BaseController
+    public class ListingController : AuthorizedController
     {
-        private readonly int UserId = 1;
         private readonly IListingLogic _listingLogic;
         private readonly IListingDataManager _listingDataManager;
         private readonly IMapper _mapper;
