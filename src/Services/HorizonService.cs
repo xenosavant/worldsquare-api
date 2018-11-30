@@ -83,9 +83,11 @@ namespace Stellmart.Services
             operation.SetHighThreshold(weights.HighThreshold);
 
             /*BUG: Second signer is not getting added */
-            foreach (var signerAccount in weights.Signers)
-            {
-                operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromAccountId(signerAccount.Signer)), signerAccount.Weight);
+            if(weights.Signers != null) {
+                foreach (var signerAccount in weights.Signers)
+                {
+                    operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromAccountId(signerAccount.Signer)), signerAccount.Weight);
+                }
             }
 
             if (weights.SignerSecret != null)
