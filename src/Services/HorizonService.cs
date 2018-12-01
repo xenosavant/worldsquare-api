@@ -99,7 +99,7 @@ namespace Stellmart.Services
             operation.SetSourceAccount(source);
             return operation.Build();
         }
-        public Operation SetOptionsNoOpsOperation(string secondSignerAccountPublicKey)
+        public Operation SetOptionsSingleSignerOperation(string secondSignerAccountPublicKey)
         {
             var source = KeyPair.FromAccountId(secondSignerAccountPublicKey);
             var operation = new SetOptionsOperation.Builder();

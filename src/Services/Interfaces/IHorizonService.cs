@@ -13,7 +13,7 @@ namespace Stellmart.Api.Services.Interfaces
 	    Task<long> GetSequenceNumber(string publicKey);
         Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey, string amount);
         Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weights);
-        Operation SetOptionsNoOpsOperation(string secondSignerAccountPublicKey);
+        Operation SetOptionsSingleSignerOperation(string secondSignerAccountPublicKey);
         Operation CreateAccountMergeOperation(string sourceAccountPublicKey, string destinationAccountPublicKey);
         Operation ChangeTrustOperation(string sourceAccountPublicKey, HorizonAssetModel assetModel, string limit);
         Operation BumpSequenceOperation(string sourceAccountPublicKey, long nextSequence);
