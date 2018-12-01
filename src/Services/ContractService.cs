@@ -70,7 +70,6 @@ namespace Stellmart.Services
             {
                 Completed = false,
                 SequenceNumber = sequenceNumber,
-                Contract = contract,
                 Contested = false
             };
 
@@ -130,7 +129,6 @@ namespace Stellmart.Services
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
 
             phaseOne.Transactions.Add(signatureList);
-            phaseOne.Contract = contract;
 
             contract.Phases.Add(phaseOne);
             return contract;
@@ -181,7 +179,6 @@ namespace Stellmart.Services
             signatureList = CreateSignatureList(preTransactionRide, publicKeys);
 
             phaseTwo.Transactions.Add(signatureList);
-            phaseTwo.Contract = contract;
 
             contract.Phases.Add(phaseTwo);
 
@@ -233,7 +230,6 @@ namespace Stellmart.Services
             signatureList = CreateSignatureList(preTransactionRide, publicKeys);
 
             phaseThree.Transactions.Add(signatureList);
-            phaseThree.Contract = contract;
 
             contract.Phases.Add(phaseThree);
             return contract;
@@ -299,7 +295,6 @@ namespace Stellmart.Services
             signatureList = CreateSignatureList(preTransactionRide, publicKeys);
 
             phaseFour.Transactions.Add(signatureList);
-            phaseFour.Contract = contract;
 
             contract.Phases.Add(phaseFour);
             return contract;
@@ -348,7 +343,6 @@ namespace Stellmart.Services
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
 
             phaseFourDispute.Transactions.Add(signatureList);
-            phaseFourDispute.Contract = contract;
 
             contract.Phases.Add(phaseFourDispute);
             return contract;
@@ -398,7 +392,6 @@ namespace Stellmart.Services
             signatureList = CreateSignatureList(preTransactionMergeRefund, publicKeys);
 
             phaseFive.Transactions.Add(signatureList);
-            phaseFive.Contract = contract;
 
             contract.Phases.Add(phaseFive);
             return contract;
