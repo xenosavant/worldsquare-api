@@ -57,7 +57,24 @@ namespace Stellmart.Services
             var accountResponse = await _horizonServerManager.GetAccountAsync(publicKey);
             return accountResponse.SequenceNumber;
         }
-
+        //Native balance example ("GAMUNY3XR53RJFUIIZDLKJFSLXAX4EJRGGPO7SXNNNR2PUGH2JSZXKKI", "native", null)
+        public async Task<string> GetAccountBalance(string AccountPublicKey, string AssetType,
+                string AssetIssuerPublicKey)
+        {
+            var accountResponse = await _horizonServerManager.GetAccountAsync(AccountPublicKey);
+            var balances = accountResponse.Balances;
+            foreach(Balance balance in balances)
+            {
+                if(balance.AssetType.Equals(AssetType)) {
+                    if(AssetType.Equals("native"))
+                        return balance.BalanceString;
+                    else if(balance.Equals(AssetIssuerPublicKey))
+                        return balance.BalanceString;
+                    else return null;
+                }
+            }
+            return null;
+        }
         public Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey,
             string amount)
         {

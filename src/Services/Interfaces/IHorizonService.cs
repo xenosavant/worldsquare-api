@@ -11,6 +11,7 @@ namespace Stellmart.Api.Services.Interfaces
         HorizonKeyPairModel CreateAccount();
         Task<HorizonFundTestAccountModel> FundTestAccountAsync(string publicKey);
 	    Task<long> GetSequenceNumber(string publicKey);
+        Task<string> GetAccountBalance(string AccountPublicKey, string AssetType, string AssetIssuerPublicKey);
         Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey, string amount);
         Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weights);
         Operation SetOptionsSingleSignerOperation(string secondSignerAccountPublicKey);
