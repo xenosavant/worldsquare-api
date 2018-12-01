@@ -72,28 +72,32 @@ namespace Stellmart.Services
             return operation;
         }
 
-        public Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weights)
+        public Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weight)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
             var operation = new SetOptionsOperation.Builder();
 
-            operation.SetMasterKeyWeight(weights.MasterWeight);
-            operation.SetLowThreshold(weights.LowThreshold);
-            operation.SetMediumThreshold(weights.MediumThreshold);
-            operation.SetHighThreshold(weights.HighThreshold);
+            if(weight.MasterWeight >= 0)
+                operation.SetMasterKeyWeight(weight.MasterWeight);
+            if(weight.LowThreshold >= 0)
+                operation.SetLowThreshold(weight.LowThreshold);
+            if(weight.MediumThreshold >= 0)
+                operation.SetMediumThreshold(weight.MediumThreshold);
+            if(weight.HighThreshold >= 0)
+                operation.SetHighThreshold(weight.HighThreshold);
 
             /*BUG: Second signer is not getting added */
-            if(weights.Signers != null) {
-                foreach (var signerAccount in weights.Signers)
+            if(weight.Signers != null) {
+                foreach (var signerAccount in weight.Signers)
                 {
                     operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromAccountId(signerAccount.Signer)), signerAccount.Weight);
                 }
             }
 
-            if (weights.SignerSecret != null)
+            if (weight.SignerSecret != null)
             {
-                var hash = Util.Hash(Encoding.UTF8.GetBytes(weights.SignerSecret.Secret));
-                operation.SetSigner(Signer.Sha256Hash(hash), weights.SignerSecret.Weight);
+                var hash = Util.Hash(Encoding.UTF8.GetBytes(weight.SignerSecret.Secret));
+                operation.SetSigner(Signer.Sha256Hash(hash), weight.SignerSecret.Weight);
             }
 
             operation.SetSourceAccount(source);
@@ -271,11 +275,7 @@ namespace Stellmart.Services
                 //Its the responsibility of the Distribution account to transfer the tokens to others.
                 var weight = new HorizonAccountWeightModel
                 {
-                    MasterWeight = 0,
-                    HighThreshold = 0,
-                    MediumThreshold = 0,
-                    LowThreshold = 0,
-                    SignerSecret = null
+                    MasterWeight = 0
                 };
 
                 //Let the SignerSecret be null

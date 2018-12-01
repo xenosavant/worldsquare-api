@@ -88,32 +88,24 @@ namespace Stellmart.Services
             //for phase 1, its base sequence number +1
             phaseOne.SequenceNumber = contract.BaseSequenceNumber + 1;
 
-            var weight = new HorizonAccountWeightModel();
-            var destinationAccount = new HorizonAccountSignerModel();
-            var worldSquareAccount = new HorizonAccountSignerModel();
-            weight.Signers = new List<HorizonAccountSignerModel>();
+            var weight = new HorizonAccountWeightModel() {
+                Signers = new List<HorizonAccountSignerModel>(){
+                    new HorizonAccountSignerModel {
+                        Signer = contract.DestAccountId,
+                        Weight = 1
+                    },
+                    new HorizonAccountSignerModel {
+                        Signer = _worldSquareAccount.PublicKey,
+                        Weight = 4
+                    },
+                },
+                LowThreshold = 5,
+                MediumThreshold = 5,
+                HighThreshold = 6,
+            };
 
-            //Transfer funds tp Escrow
-            //TBD: consider other assets too
-            //TBD: transfer 1 % to WorldSquare 
             var paymentOperation = _horizonService.CreatePaymentOperation(contract.SourceAccountId, contract.EscrowAccountId, contractParameterModel.Asset.Amount);
             operations.Add(paymentOperation);
-
-            //Escrow threshold weights are 4
-            weight.LowThreshold = 5;
-            weight.MediumThreshold = 5;
-            weight.HighThreshold = 6;
-
-            //escrow master weight (1) + dest weight (1) + WorldSquare (4)
-            //dest account has weight 1
-            destinationAccount.Signer = contract.DestAccountId;
-            destinationAccount.Weight = 1;
-            weight.Signers.Add(destinationAccount);
-            worldSquareAccount.Signer = _worldSquareAccount.PublicKey;
-            worldSquareAccount.Weight = 4;
-            weight.Signers.Add(worldSquareAccount);
-            //Let the SignerSecret be null
-            weight.SignerSecret = null;
 
             var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
             operations.Add(setOptionsWeightOperation);
@@ -321,26 +313,21 @@ namespace Stellmart.Services
 
             phaseFourDispute.SequenceNumber = contract.BaseSequenceNumber + 5;
 
-            var weight = new HorizonAccountWeightModel();
-
-            var destinationAccount = new HorizonAccountSignerModel();
-
-            var worldSquareAccount = new HorizonAccountSignerModel();
-
-            weight.Signers = new List<HorizonAccountSignerModel>();
-
-            weight.LowThreshold = 5;
-            weight.MediumThreshold = 5;
-            weight.HighThreshold = 6;
-
-            destinationAccount.Signer = contract.DestAccountId;
-            destinationAccount.Weight = 1;
-            weight.Signers.Add(destinationAccount);
-            worldSquareAccount.Signer = _worldSquareAccount.PublicKey;
-            worldSquareAccount.Weight = 4;
-            weight.Signers.Add(worldSquareAccount);
-            //Let the SignerSecret be null
-            weight.SignerSecret = null;
+            var weight = new HorizonAccountWeightModel() {
+                Signers = new List<HorizonAccountSignerModel>(){
+                    new HorizonAccountSignerModel {
+                        Signer = contract.DestAccountId,
+                        Weight = 0
+                    },
+                    new HorizonAccountSignerModel {
+                        Signer = _worldSquareAccount.PublicKey,
+                        Weight = 4
+                    },
+                },
+                LowThreshold = 4,
+                MediumThreshold = 4,
+                HighThreshold = 4,
+            };
 
             var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
             operations.Add(setOptionsWeightOperation);
