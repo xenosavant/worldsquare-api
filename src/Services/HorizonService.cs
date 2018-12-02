@@ -76,17 +76,25 @@ namespace Stellmart.Services
             return null;
         }
         public Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey,
-            string amount)
+            HorizonAssetModel horizonAsset)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
-            Asset native = new AssetTypeNative();
 
-            var operation =
-                new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), native, amount)
+            if(horizonAsset.IsNative) {
+                Asset asset = new AssetTypeNative();
+                var operation =
+                new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), asset, horizonAsset.Amount)
                     .SetSourceAccount(source)
                     .Build();
-
-            return operation;
+                return operation;
+            } else {
+                Asset asset = new AssetTypeCreditAlphaNum4(horizonAsset.Code, horizonAsset.Issuer);
+                var operation =
+                new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), asset, horizonAsset.Amount)
+                    .SetSourceAccount(source)
+                    .Build();
+                return operation;
+            }
         }
 
         public Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weight)
@@ -268,19 +276,14 @@ namespace Stellmart.Services
             {
                 return false;
             }
+            //TBD: bad coding, create different class for new asset created by us
+            asset.Amount = asset.MaxCoinLimit;
 
-            var operations = new List<Operation>();
+            var result = await PaymentTransaction(asset.IssuerAccount, asset.Distributor.PublicKey, asset);
+            if(result)
+                asset.State = CustomTokenState.MoveCustomToken;
 
-            //TBD: PaymentOps supports only native currency XLM.
-            //Add support for custom token transfer.
-            var paymentOperation = CreatePaymentOperation(asset.IssuerAccount.PublicKey, asset.Distributor.PublicKey, asset.MaxCoinLimit);
-            operations.Add(paymentOperation);
-
-            var xdrTransaction = await CreateTransaction(asset.IssuerAccount.PublicKey, operations, null, 0);
-            await SubmitTransaction(SignTransaction(asset.IssuerAccount, null, xdrTransaction));
-            asset.State = CustomTokenState.MoveCustomToken;
-            return true;
-
+            return result;
         }
 
         public async Task<bool> LockAsset(HorizonAssetModel asset)
@@ -308,14 +311,17 @@ namespace Stellmart.Services
 
             return false;
         }
-
-        public async Task<bool> TransferAsset(HorizonTransferModel payment)
+        public async Task<bool> PaymentTransaction(HorizonKeyPairModel Source, string DestinationPublicKey,
+                    HorizonAssetModel asset)
         {
             var operations = new List<Operation>();
-            var paymentOperation = CreatePaymentOperation(payment.SourceAccount.PublicKey, payment.SourceAccount.SecretKey, payment.Asset.Amount);
+
+            var paymentOperation = CreatePaymentOperation(DestinationPublicKey, Source.PublicKey, asset);
             operations.Add(paymentOperation);
-            var xdrTransaction = await CreateTransaction(payment.SourceAccount.PublicKey, operations, null, 0);
-            var response = await SubmitTransaction(SignTransaction(payment.SourceAccount, null, xdrTransaction));
+
+            var xdrTransaction = await CreateTransaction(Source.PublicKey, operations, null, 0);
+
+            var response = await SubmitTransaction(SignTransaction(Source, null, xdrTransaction));
             if (response.IsSuccess())
             {
                 return true;

@@ -103,7 +103,11 @@ namespace Stellmart.Services
                 HighThreshold = 6,
             };
 
-            var paymentOperation = _horizonService.CreatePaymentOperation(contract.SourceAccountId, contract.EscrowAccountId, contractParameterModel.Asset.Amount);
+            var asset = new HorizonAssetModel {
+                IsNative = true,
+                Amount = contractParameterModel.Asset.Amount
+            };
+            var paymentOperation = _horizonService.CreatePaymentOperation(contract.SourceAccountId, contract.EscrowAccountId, asset);
             operations.Add(paymentOperation);
 
             var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
