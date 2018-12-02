@@ -18,6 +18,8 @@ namespace Stellmart.Api.Services.Interfaces
         Operation CreateAccountMergeOperation(string sourceAccountPublicKey, string destinationAccountPublicKey);
         Operation ChangeTrustOperation(string sourceAccountPublicKey, HorizonAssetModel assetModel, string limit);
         Operation BumpSequenceOperation(string sourceAccountPublicKey, long nextSequence);
+        Operation CreateAccountOperation(string sourceAccountPublicKey, string destAccountPublicey,
+                            string amount);
         Task<string> CreateTransaction(string sourceAccountPublicKey, List<Operation> operations, HorizonTimeBoundModel time, long sequence);
         string SignTransaction(HorizonKeyPairModel account, string secretKey, string xdrTransaction);
         Task<SubmitTransactionResponse> SubmitTransaction(string xdrTransaction);

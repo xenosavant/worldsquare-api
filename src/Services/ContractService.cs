@@ -56,16 +56,17 @@ namespace Stellmart.Services
         {
             var escrow = _horizonService.CreateAccount();
 
-            var asset = new HorizonAssetModel() {
-                IsNative = true,
-                Amount = _minimumFund
-            };
-
-            /* Fund the escrow account with minimum fund, this is important
+            /* Create the escrow account with minimum fund, this is important
             * to register the account on network so that we obtain escrow sequence
             */
-            if(!await _horizonService.PaymentTransaction(_worldSquareAccount, escrow.PublicKey, asset))
-                return null;
+            var operations = new List<Operation>();
+
+            var createAccountOperation = _horizonService.CreateAccountOperation(_worldSquareAccount.PublicKey,
+                    escrow.PublicKey,  _minimumFund);
+                operations.Add(createAccountOperation);
+
+            var xdrTransaction = await _horizonService.CreateTransaction(_worldSquareAccount.PublicKey, operations, null, 0);
+            await _horizonService.SubmitTransaction(_horizonService.SignTransaction(_worldSquareAccount, null, xdrTransaction));
 
             var sequenceNumber = await _horizonService.GetSequenceNumber(escrow.PublicKey);
 

@@ -169,7 +169,18 @@ namespace Stellmart.Services
 
             return operation;
         }
+        public Operation CreateAccountOperation(string sourceAccountPublicKey, string destAccountPublicey,
+                            string amount)
+        {
+            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
 
+            var dest = KeyPair.FromAccountId(destAccountPublicey);
+            var operation = new CreateAccountOperation.Builder(dest, amount)
+                .SetSourceAccount(source)
+                .Build();
+
+            return operation;
+        }
         private Transaction ConvertXdrToTransaction(string transaction)
         {
             var bytes = Convert.FromBase64String(transaction);
