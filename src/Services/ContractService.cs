@@ -16,6 +16,7 @@ namespace Stellmart.Services
     {
         private readonly IHorizonService _horizonService;
         private readonly HorizonKeyPairModel _worldSquareAccount;
+        private readonly String _minimumFund;
 
         public ContractService(IHorizonService horizonService, IOptions<SignatureSettings> settings)
         {
@@ -54,6 +55,17 @@ namespace Stellmart.Services
         public async Task<Contract> SetupContractAsync()
         {
             var escrow = _horizonService.CreateAccount();
+
+            var asset = new HorizonAssetModel() {
+                IsNative = true,
+                Amount = _minimumFund
+            };
+
+            /* Fund the escrow account with minimum fund, this is important
+            * to register the account on network so that we obtain escrow sequence
+            */
+            if(!await _horizonService.PaymentTransaction(_worldSquareAccount, escrow.PublicKey, asset))
+                return null;
 
             var sequenceNumber = await _horizonService.GetSequenceNumber(escrow.PublicKey);
 
