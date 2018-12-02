@@ -1,12 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Stellmart.Api.Data.Checkout;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Stellmart.Api.Data.Enums;
 using Stellmart.Api.Business.Logic.Interfaces;
+using Stellmart.Api.Data.Checkout;
+using Stellmart.Api.Data.Enums;
+using System.Threading.Tasks;
 
 namespace Stellmart.Api.Controllers
 {
