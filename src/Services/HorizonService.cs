@@ -57,49 +57,78 @@ namespace Stellmart.Services
             var accountResponse = await _horizonServerManager.GetAccountAsync(publicKey);
             return accountResponse.SequenceNumber;
         }
-
+        //Native balance example ("GAMUNY3XR53RJFUIIZDLKJFSLXAX4EJRGGPO7SXNNNR2PUGH2JSZXKKI", "native", null)
+        public async Task<string> GetAccountBalance(string AccountPublicKey, string AssetType,
+                string AssetIssuerPublicKey)
+        {
+            var accountResponse = await _horizonServerManager.GetAccountAsync(AccountPublicKey);
+            var balances = accountResponse.Balances;
+            foreach(Balance balance in balances)
+            {
+                if(balance.AssetType.Equals(AssetType)) {
+                    if(AssetType.Equals("native"))
+                        return balance.BalanceString;
+                    else if(balance.Equals(AssetIssuerPublicKey))
+                        return balance.BalanceString;
+                    else return null;
+                }
+            }
+            return null;
+        }
         public Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey,
-            string amount)
+            HorizonAssetModel horizonAsset)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
-            Asset native = new AssetTypeNative();
 
-            var operation =
-                new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), native, amount)
+            if(horizonAsset.IsNative) {
+                Asset asset = new AssetTypeNative();
+                var operation =
+                new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), asset, horizonAsset.Amount)
                     .SetSourceAccount(source)
                     .Build();
-
-            return operation;
+                return operation;
+            } else {
+                Asset asset = new AssetTypeCreditAlphaNum4(horizonAsset.Code, horizonAsset.Issuer);
+                var operation =
+                new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), asset, horizonAsset.Amount)
+                    .SetSourceAccount(source)
+                    .Build();
+                return operation;
+            }
         }
 
-        public Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weights)
+        public Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weight)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
             var operation = new SetOptionsOperation.Builder();
 
-            operation.SetMasterKeyWeight(weights.MasterWeight);
-            operation.SetLowThreshold(weights.LowThreshold);
-            operation.SetMediumThreshold(weights.MediumThreshold);
-            operation.SetHighThreshold(weights.HighThreshold);
+            if(weight.MasterWeight >= 0)
+                operation.SetMasterKeyWeight(weight.MasterWeight);
+            if(weight.LowThreshold >= 0)
+                operation.SetLowThreshold(weight.LowThreshold);
+            if(weight.MediumThreshold >= 0)
+                operation.SetMediumThreshold(weight.MediumThreshold);
+            if(weight.HighThreshold >= 0)
+                operation.SetHighThreshold(weight.HighThreshold);
 
             /*BUG: Second signer is not getting added */
-            if(weights.Signers != null) {
-                foreach (var signerAccount in weights.Signers)
+            if(weight.Signers != null) {
+                foreach (var signerAccount in weight.Signers)
                 {
                     operation.SetSigner(Signer.Ed25519PublicKey(KeyPair.FromAccountId(signerAccount.Signer)), signerAccount.Weight);
                 }
             }
 
-            if (weights.SignerSecret != null)
+            if (weight.SignerSecret != null)
             {
-                var hash = Util.Hash(Encoding.UTF8.GetBytes(weights.SignerSecret.Secret));
-                operation.SetSigner(Signer.Sha256Hash(hash), weights.SignerSecret.Weight);
+                var hash = Util.Hash(Encoding.UTF8.GetBytes(weight.SignerSecret.Secret));
+                operation.SetSigner(Signer.Sha256Hash(hash), weight.SignerSecret.Weight);
             }
 
             operation.SetSourceAccount(source);
             return operation.Build();
         }
-        public Operation SetOptionsNoOpsOperation(string secondSignerAccountPublicKey)
+        public Operation SetOptionsSingleSignerOperation(string secondSignerAccountPublicKey)
         {
             var source = KeyPair.FromAccountId(secondSignerAccountPublicKey);
             var operation = new SetOptionsOperation.Builder();
@@ -140,7 +169,18 @@ namespace Stellmart.Services
 
             return operation;
         }
+        public Operation CreateAccountOperation(string sourceAccountPublicKey, string destAccountPublicey,
+                            string amount)
+        {
+            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
 
+            var dest = KeyPair.FromAccountId(destAccountPublicey);
+            var operation = new CreateAccountOperation.Builder(dest, amount)
+                .SetSourceAccount(source)
+                .Build();
+
+            return operation;
+        }
         private Transaction ConvertXdrToTransaction(string transaction)
         {
             var bytes = Convert.FromBase64String(transaction);
@@ -247,19 +287,14 @@ namespace Stellmart.Services
             {
                 return false;
             }
+            //TBD: bad coding, create different class for new asset created by us
+            asset.Amount = asset.MaxCoinLimit;
 
-            var operations = new List<Operation>();
+            var result = await PaymentTransaction(asset.IssuerAccount, asset.Distributor.PublicKey, asset);
+            if(result)
+                asset.State = CustomTokenState.MoveCustomToken;
 
-            //TBD: PaymentOps supports only native currency XLM.
-            //Add support for custom token transfer.
-            var paymentOperation = CreatePaymentOperation(asset.IssuerAccount.PublicKey, asset.Distributor.PublicKey, asset.MaxCoinLimit);
-            operations.Add(paymentOperation);
-
-            var xdrTransaction = await CreateTransaction(asset.IssuerAccount.PublicKey, operations, null, 0);
-            await SubmitTransaction(SignTransaction(asset.IssuerAccount, null, xdrTransaction));
-            asset.State = CustomTokenState.MoveCustomToken;
-            return true;
-
+            return result;
         }
 
         public async Task<bool> LockAsset(HorizonAssetModel asset)
@@ -271,11 +306,7 @@ namespace Stellmart.Services
                 //Its the responsibility of the Distribution account to transfer the tokens to others.
                 var weight = new HorizonAccountWeightModel
                 {
-                    MasterWeight = 0,
-                    HighThreshold = 0,
-                    MediumThreshold = 0,
-                    LowThreshold = 0,
-                    SignerSecret = null
+                    MasterWeight = 0
                 };
 
                 //Let the SignerSecret be null
@@ -291,14 +322,17 @@ namespace Stellmart.Services
 
             return false;
         }
-
-        public async Task<bool> TransferAsset(HorizonTransferModel payment)
+        public async Task<bool> PaymentTransaction(HorizonKeyPairModel Source, string DestinationPublicKey,
+                    HorizonAssetModel asset)
         {
             var operations = new List<Operation>();
-            var paymentOperation = CreatePaymentOperation(payment.SourceAccount.PublicKey, payment.SourceAccount.SecretKey, payment.Asset.Amount);
+
+            var paymentOperation = CreatePaymentOperation(DestinationPublicKey, Source.PublicKey, asset);
             operations.Add(paymentOperation);
-            var xdrTransaction = await CreateTransaction(payment.SourceAccount.PublicKey, operations, null, 0);
-            var response = await SubmitTransaction(SignTransaction(payment.SourceAccount, null, xdrTransaction));
+
+            var xdrTransaction = await CreateTransaction(Source.PublicKey, operations, null, 0);
+
+            var response = await SubmitTransaction(SignTransaction(Source, null, xdrTransaction));
             if (response.IsSuccess())
             {
                 return true;
