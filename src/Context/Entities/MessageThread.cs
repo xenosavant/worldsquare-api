@@ -13,5 +13,7 @@ namespace Stellmart.Api.Context.Entities
         public virtual ApplicationUser Initiator { get; set; }
 
         public virtual ICollection<Message> Messages { get; set; }
+
+        public virtual ICollection<ListingMessageThread> ListingMessageThreads { get; set; }
     }
 }

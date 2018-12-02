@@ -34,5 +34,7 @@ namespace Stellmart.Api.Context.Entities
 
         public ICollection<ServiceRequestFulfillment> Fulfillments { get; set; }
 
+        public ICollection<Review> Reviews { get; set; }
+
     }
 }

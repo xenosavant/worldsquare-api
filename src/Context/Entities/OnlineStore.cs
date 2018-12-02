@@ -14,15 +14,10 @@ namespace Stellmart.Api.Context.Entities
 
         public int? ServiceRegionId { get; set; }
 
-        [NotMapped]
-        public IEnumerable<Review> Reviews => OnlineStoreReviews?.Select(o => o.Review);
-
         public virtual Region ServiceRegion { get; set; }
 
         [ForeignKey("ServiceId")]
         public virtual ICollection<Listing> Listings { get; set; }
-
-        private ICollection<OnlineStoreReview> OnlineStoreReviews { get; set; }
 
     }
 }

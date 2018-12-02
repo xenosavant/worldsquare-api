@@ -71,7 +71,6 @@ namespace Stellmart.Context
         public DbSet<ServiceRequestFulfillment> ServiceRequestFulfillments { get; set; }
         public DbSet<DeliveryRequestFulfillment> DeliveryRequestFulfillments { get; set; }
         public DbSet<TradeItem> TradeItems { get; set; }
-        public DbSet<OnlineStoreReview> OnlineStoreReviews { get; set; }
         public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         // Read Only Data
@@ -121,23 +120,6 @@ namespace Stellmart.Context
                 .HasForeignKey(i => i.ItemMetaDataId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-
-            modelBuilder.Entity<OnlineStoreReview>()
-                .HasKey(or => new { or.OnlineStoreId, or.ReviewId });
-
-            modelBuilder.Entity<OnlineStoreReview>()
-                .HasOne(or => or.OnlineStore)
-                .WithMany("OnlineStoreReviews")
-                .HasForeignKey(or => or.OnlineStoreId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-
-            modelBuilder.Entity<OnlineStoreReview>()
-                .HasOne(or => or.Review)
-                .WithMany("OnlineStoreReviews")
-                .HasForeignKey(or => or.ReviewId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<TradeProductShipment>()
                 .HasKey(t => new { t.TradeId, t.ProductShipmentId });
 
@@ -151,6 +133,22 @@ namespace Stellmart.Context
                .HasOne(t => t.ProductShipment)
                .WithMany("TradeProductShipments")
                .HasForeignKey(t => t.ProductShipmentId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<ListingMessageThread>()
+               .HasKey(t => new { t.ListingId, t.MessageThreadId });
+
+            modelBuilder.Entity<ListingMessageThread>()
+                .HasOne(t => t.Listing)
+                .WithMany("ListingMessageThreads")
+                .HasForeignKey(t => t.ListingId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<ListingMessageThread>()
+               .HasOne(t => t.MessageThread)
+               .WithMany("ListingMessageThreads")
+               .HasForeignKey(t => t.MessageThreadId)
                .OnDelete(DeleteBehavior.Restrict);
 
 
@@ -175,6 +173,18 @@ namespace Stellmart.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             // One to many relationships
+
+            modelBuilder.Entity<Review>()
+              .HasOne(r => r.Service)
+              .WithMany(s => s.Reviews)
+              .HasForeignKey(r => r.ServiceId)
+              .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Review>()
+              .HasOne(r => r.Listing)
+              .WithMany(s => s.Reviews)
+              .HasForeignKey(r => r.ListingId)
+              .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OrderItem>()
                .HasOne(o => o.InventoryItem)
@@ -306,12 +316,6 @@ namespace Stellmart.Context
                 .HasOne(s => s.Initiator)
                 .WithMany(u => u.Threads)
                 .HasForeignKey(s => s.InitiatorId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Review>()
-                .HasOne(s => s.Reviewer)
-                .WithMany(u => u.Reviews)
-                .HasForeignKey(s => s.ReviewerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OnlineStore>()
