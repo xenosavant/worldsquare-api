@@ -89,5 +89,22 @@ namespace WorldSquare.Api.Tests.Services
 
             Assert.Equal(keyPair.AccountId, account.PublicKey);
         }
+
+        [Fact]
+        public async Task GetSequenceNumber_ProvidePublicKey_GetsSequenceNumber()
+        {
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
+
+            var accountResponse = new AccountResponse(keyPair)
+            {
+                SequenceNumber = 42
+            };
+
+            _horizonServerManagerMock.GetAccountAsync(accountResponse.KeyPair.AccountId).Returns(accountResponse);
+
+            var result = await _subjectUnderTest.GetSequenceNumber(keyPair.AccountId);
+
+            Assert.Equal(accountResponse.SequenceNumber, result);
+        }
     }
 }
