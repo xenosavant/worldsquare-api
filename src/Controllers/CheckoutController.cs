@@ -14,9 +14,10 @@ namespace Stellmart.Api.Controllers
         private readonly ICheckoutLogic _checkoutLogic;
         private readonly IMapper _mapper;
 
-        public CheckoutController(IMapper mapper)
+        public CheckoutController(IMapper mapper, ICheckoutLogic checkoutLogic)
         {
             _mapper = mapper;
+            _checkoutLogic = checkoutLogic;
         }
 
         [HttpPost]

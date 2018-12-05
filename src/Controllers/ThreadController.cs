@@ -1,4 +1,7 @@
-﻿using AutoMapper;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
@@ -6,10 +9,6 @@ using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
 using Stellmart.Api.Data.Thread;
 using Stellmart.Api.Data.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Stellmart.Api.Controllers
 {
@@ -18,23 +17,23 @@ namespace Stellmart.Api.Controllers
     public class ThreadController : AuthorizedController
     {
         private readonly IMapper _mapper;
-        private readonly IThreadLogic _threadLogic;
         private readonly IThreadDataManager _threadDataManager;
+        private readonly IThreadLogic _threadLogic;
 
-        public ThreadController(
-         IMapper mapper)
+        public ThreadController(IMapper mapper, IThreadLogic threadLogic, IThreadDataManager threadDataManager)
         {
             _mapper = mapper;
+            _threadLogic = threadLogic;
+            _threadDataManager = threadDataManager;
         }
 
         [HttpGet]
         [Route("")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<ThreadViewModel>>> Get([FromQuery]
-           int? listingId,
-           int? page,
-           int? pageLength
-       )
+        public async Task<ActionResult<IEnumerable<ThreadViewModel>>> Get([FromQuery] int? listingId,
+            int? page,
+            int? pageLength
+        )
         {
             return _mapper.Map<List<ThreadViewModel>>(await _threadLogic.GetAsync(UserId, listingId, page, pageLength));
         }
