@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Context.Entities.ReadOnly;
+using Stellmart.Api.Data.Thread;
 using Stellmart.Api.Data.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -127,8 +128,27 @@ namespace Stellmart.Api.Business.Mapping.Profiles
                .ForMember(dest => dest.OnlineStoreName, opts => opts.MapFrom(src => src.Service.Name))
                .ForAllOtherMembers(x => x.Ignore());
 
+            CreateMap<MessageThread, ThreadViewModel>()
+              .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
+              .ForMember(dest => dest.Listing, opts => opts.MapFrom(src => src.Listing))
+              .ForMember(dest => dest.Messages, opts => opts.MapFrom(src => src.Messages.OrderByDescending(m => m.CreatedDate)))
+              .ForAllOtherMembers(x => x.Ignore());
 
+            CreateMap<Message, MessageViewModel>()
+             .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
+             .ForMember(dest => dest.UserName, opts => opts.MapFrom(src => src.Poster.UserName))
+             .ForMember(dest => dest.UserId, opts => opts.MapFrom(src => src.Poster.Id))
+             .ForMember(dest => dest.Body, opts => opts.MapFrom(src => src.Body))
+             .ForAllOtherMembers(x => x.Ignore());
 
+             CreateMap<CreateThreadRequest, MessageThread>()
+               .ForMember(dest => dest.Messages, opts => opts.MapFrom(src => new List<Message>() { new Message() { Body = src.Message } }))
+               .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
+               .ForAllOtherMembers(x => x.Ignore());
+
+            CreateMap<PostMessageRequest, Message>()
+                .ForMember(dest => dest.Body, opts => opts.MapFrom(src => src.Message))
+                .ForAllOtherMembers(x => x.Ignore());
         }
     }
 }

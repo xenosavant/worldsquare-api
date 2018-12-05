@@ -11,6 +11,7 @@ namespace Stellmart.Api.Business.Managers
     public class ReviewDataManager : IReviewDataManager
     {
         private readonly IRepository _repository;
+        private readonly string _navigationProperties = "Service";
 
         public ReviewDataManager(IRepository repository)
         {
@@ -24,12 +25,12 @@ namespace Stellmart.Api.Business.Managers
 
         public Task<IEnumerable<Review>> GetReviewsForServiceAsync(int serviceId)
         {
-            return _repository.GetAsync<Review>(r => r.ServiceId == serviceId, null, "Service");
+            return _repository.GetAsync<Review>(r => r.ServiceId == serviceId, null, _navigationProperties);
         }
 
         public Task<Review> GetById(int id)
         {
-            return _repository.GetOneAsync<Review>(s => s.Id == id, "Service");
+            return _repository.GetOneAsync<Review>(s => s.Id == id, _navigationProperties);
         }
 
         public async Task<Review> CreateAndSaveAsync(Review review, int userId)

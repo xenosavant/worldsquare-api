@@ -6,13 +6,9 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class Message : Entity<int>
+    public class Message : AuditableEntity<int>
     {
         public int MessageThreadId { get; set; }
-
-        public int PosterId { get; set; }
-
-        public DateTime PostedOn { get; set; }
 
         public string Body { get; set; }
 

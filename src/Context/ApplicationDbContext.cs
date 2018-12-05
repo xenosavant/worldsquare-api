@@ -506,7 +506,7 @@ namespace Stellmart.Context
             modelBuilder.Entity<Message>()
                  .HasOne(m => m.Poster)
                  .WithMany(u => u.Messages)
-                 .HasForeignKey(s => s.PosterId)
+                 .HasForeignKey(s => s.CreatedBy)
                  .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Message>()
