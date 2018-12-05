@@ -1,15 +1,12 @@
-﻿using Stellmart.Api.Data.Checkout;
+﻿using System.Threading.Tasks;
+using Stellmart.Api.Data.Checkout;
 using Stellmart.Api.Data.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Stellmart.Api.Business.Logic.Interfaces
 {
-    interface ICheckoutLogic
+    public interface ICheckoutLogic
     {
         Task<CheckoutData> ManagedCheckout(int userId, string password,
-            int nativeCurrencyTypeId = (int)NativeCurrencyTypes.Default);
+            int nativeCurrencyTypeId = (int) NativeCurrencyTypes.Default);
     }
 }
