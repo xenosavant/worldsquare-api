@@ -136,19 +136,19 @@ namespace Stellmart.Context
                .OnDelete(DeleteBehavior.Restrict);
 
 
-            modelBuilder.Entity<ListingMessageThread>()
-               .HasKey(t => new { t.ListingId, t.MessageThreadId });
+            modelBuilder.Entity<MessageThreadMember>()
+               .HasKey(t => new { t.MessageThreadId, t.UserId });
 
-            modelBuilder.Entity<ListingMessageThread>()
-                .HasOne(t => t.Listing)
-                .WithMany("ListingMessageThreads")
-                .HasForeignKey(t => t.ListingId)
+            modelBuilder.Entity<MessageThreadMember>()
+                .HasOne(t => t.Thread)
+                .WithMany("MessageThreadMembers")
+                .HasForeignKey(t => t.MessageThreadId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<ListingMessageThread>()
-               .HasOne(t => t.MessageThread)
-               .WithMany("ListingMessageThreads")
-               .HasForeignKey(t => t.MessageThreadId)
+            modelBuilder.Entity<MessageThreadMember>()
+               .HasOne(t => t.User)
+               .WithMany("MessageThreadMembers")
+               .HasForeignKey(t => t.UserId)
                .OnDelete(DeleteBehavior.Restrict);
 
 
@@ -310,12 +310,6 @@ namespace Stellmart.Context
                 .HasOne(s => s.DeliveryRequest)
                 .WithOne(d => d.Shipment)
                 .HasForeignKey<ProductShipment>(s => s.DeliveryRequestId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<MessageThread>()
-                .HasOne(s => s.Initiator)
-                .WithMany(u => u.Threads)
-                .HasForeignKey(s => s.InitiatorId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<OnlineStore>()

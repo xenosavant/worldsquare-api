@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class ListingMessageThread
+    public class MessageThreadMember
     {
-        public int ListingId { get; set; }
         public int MessageThreadId { get; set; }
-        public virtual Listing Listing { get; set; }
-        public virtual MessageThread MessageThread { get; set; }
+        public int UserId { get; set; }
+        public virtual MessageThread Thread { get; set; }
+        public virtual ApplicationUser User { get; set; }
     }
 }

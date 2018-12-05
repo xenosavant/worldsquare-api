@@ -10,10 +10,14 @@ namespace Stellmart.Api.Context.Entities
     {
         public int InitiatorId { get; set; }
 
+        public int ListingId { get; set; }
+
         public virtual ApplicationUser Initiator { get; set; }
 
         public virtual ICollection<Message> Messages { get; set; }
 
-        public virtual ICollection<ListingMessageThread> ListingMessageThreads { get; set; }
+        public virtual Listing Listing { get; set; }
+
+        public virtual ICollection<MessageThreadMember> MessageThreadMembers { get; set; }
     }
 }

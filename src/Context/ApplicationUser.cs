@@ -7,6 +7,7 @@ using System.ComponentModel.DataAnnotations;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel;
+using System.Linq;
 
 namespace Stellmart.Api.Context
 {
@@ -104,13 +105,15 @@ namespace Stellmart.Api.Context
 
         public virtual ICollection<ProductShipment> ReceivedShipments { get; set; }
 
-        public virtual ICollection<MessageThread> Threads { get; set; }
-
         public virtual ICollection<BuyerSecretKey> BuyerSecretKeys { get; set; }
 
         public virtual ICollection<Message> Messages { get; set; }
         public virtual ICollection<KycData> KycDatas { get; set; }
 
+        public virtual ICollection<MessageThreadMember> MessageThreadMembers { get; set; }
+
+        [NotMapped]
+        public IEnumerable<MessageThread> Threads => MessageThreadMembers?.Select(t => t.Thread);
 
         // IEntity
 

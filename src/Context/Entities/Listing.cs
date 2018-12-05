@@ -35,7 +35,7 @@ namespace Stellmart.Api.Context.Entities
 
         public virtual ICollection<InventoryItem> InventoryItems { get; set; }
 
-        public virtual ICollection<ListingMessageThread> ListingMessageThreads { get; set; }
+        public virtual ICollection<MessageThreadMember> ListingMessageThreads { get; set; }
 
         public virtual ICollection<Review> Reviews { get; set; }
 
