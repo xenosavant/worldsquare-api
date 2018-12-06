@@ -12,6 +12,7 @@ namespace Stellmart.Api.Business.Logic
     public class ReviewLogic : IReviewLogic
     {
         private readonly IReviewDataManager _reviewManager;
+        private readonly IListingDataManager _listingManager;
 
         public ReviewLogic(IReviewDataManager reviewManager)
         {
@@ -32,6 +33,15 @@ namespace Stellmart.Api.Business.Logic
             {
                 return await _reviewManager.GetReviewsForServiceAsync((int)serviceId);
             }
+        }
+
+        public async Task<IEnumerable<Review>> CreateAsync(Review review)
+        {
+            //if (review.ServiceId == null)
+            //{
+            //    var review = _reviewManager.GetById(review)
+            //}
+            throw new NotImplementedException();
         }
 
     }

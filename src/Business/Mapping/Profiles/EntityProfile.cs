@@ -119,6 +119,14 @@ namespace Stellmart.Api.Business.Mapping.Profiles
                 .ForMember(dest => dest.Quantity, opts => opts.MapFrom(src => src.Quantity))
                 .ForAllOtherMembers(x => x.Ignore());
 
+            CreateMap<CreateReviewRequest, Review>()
+              .ForMember(dest => dest.ServiceId, opts => opts.MapFrom(src => src.ServiceId))
+              .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
+              .ForMember(dest => dest.Title, opts => opts.MapFrom(src => src.Title))
+              .ForMember(dest => dest.Stars, opts => opts.MapFrom(src => src.Stars))
+              .ForMember(dest => dest.Body, opts => opts.MapFrom(src => src.Body))
+              .ForAllOtherMembers(x => x.Ignore());
+
             CreateMap<Review, ListingReviewViewModel>()
                .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
                .ForMember(dest => dest.Title, opts => opts.MapFrom(src => src.Title))

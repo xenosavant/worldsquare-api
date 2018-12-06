@@ -112,6 +112,8 @@ namespace Stellmart.Api.Context
 
         public virtual ICollection<MessageThreadMember> MessageThreadMembers { get; set; }
 
+        public virtual ICollection<Order> Orders { get; set; }
+
         [NotMapped]
         public IEnumerable<MessageThread> Threads => MessageThreadMembers?.Select(t => t.Thread);
 

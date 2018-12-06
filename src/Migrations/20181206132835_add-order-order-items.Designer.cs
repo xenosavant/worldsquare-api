@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Stellmart.Context;
 
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20181206132835_add-order-order-items")]
+    partial class addorderorderitems
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -1134,17 +1136,11 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("Body");
 
-                    b.Property<int>("CreatedBy");
-
-                    b.Property<DateTime>("CreatedDate");
-
                     b.Property<bool>("IsDeleted");
 
                     b.Property<int?>("ListingId");
 
-                    b.Property<int?>("ModifiedBy");
-
-                    b.Property<DateTime?>("ModifiedDate");
+                    b.Property<int>("ReviewerId");
 
                     b.Property<int>("ServiceId");
 
@@ -1152,13 +1148,11 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<string>("Title");
 
-                    b.Property<Guid>("UniqueId");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
-
                     b.HasIndex("ListingId");
+
+                    b.HasIndex("ReviewerId");
 
                     b.HasIndex("ServiceId");
 
@@ -2051,14 +2045,14 @@ namespace Stellmart.Api.Migrations
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.Review", b =>
                 {
-                    b.HasOne("Stellmart.Api.Context.ApplicationUser", "Reviewer")
-                        .WithMany("Reviews")
-                        .HasForeignKey("CreatedBy")
-                        .OnDelete(DeleteBehavior.Restrict);
-
                     b.HasOne("Stellmart.Api.Context.Entities.Listing", "Listing")
                         .WithMany("Reviews")
                         .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.ApplicationUser", "Reviewer")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ReviewerId")
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.HasOne("Stellmart.Api.Context.Entities.Service", "Service")

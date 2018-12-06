@@ -9,7 +9,15 @@ namespace Stellmart.Api.DataAccess
 {
     public interface IReadOnlyRepository
     {
-        IEnumerable<TEntity> GetAll<TEntity>(
+        IQueryable<TEntity> GetQueryable<TEntity>(
+            Expression<Func<TEntity, bool>> filter = null,
+            Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
+            string includeProperties = null,
+            int? skip = null,
+            int? take = null)
+            where TEntity : class, IEntity;
+
+            IEnumerable<TEntity> GetAll<TEntity>(
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null,
             int? skip = null,

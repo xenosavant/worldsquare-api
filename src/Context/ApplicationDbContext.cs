@@ -46,6 +46,8 @@ namespace Stellmart.Context
         public DbSet<GeoLocation> GeoLocations { get; set; }
         public DbSet<InventoryItem> InventoryItems { get; set; }
         public DbSet<ItemMetaData> ItemMetaDatas { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
 
         public DbSet<ItemMetaDataCategory> ItemMetaDataCategories { get; set; }
 
@@ -192,6 +194,12 @@ namespace Stellmart.Context
                .HasForeignKey(o => o.InventoryItemId)
                .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Order>()
+               .HasOne(o => o.Purchaser)
+               .WithMany(u => u.Orders)
+               .HasForeignKey(o => o.PurchaserId)
+               .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<OrderItem>()
                .HasOne(i => i.TradeItem)
                .WithMany(t => t.OrderItems)
@@ -291,7 +299,7 @@ namespace Stellmart.Context
             modelBuilder.Entity<Review>()
                 .HasOne(r => r.Reviewer)
                 .WithMany(u => u.Reviews)
-                .HasForeignKey(r => r.ReviewerId)
+                .HasForeignKey(r => r.CreatedBy)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ProductShipment>()

@@ -19,7 +19,7 @@ namespace Stellmart.Api.DataAccess
             this.context = context;
         }
 
-        protected virtual IQueryable<TEntity> GetQueryable<TEntity>(
+        public virtual IQueryable<TEntity> GetQueryable<TEntity>(
             Expression<Func<TEntity, bool>> filter = null,
             Func<IQueryable<TEntity>, IOrderedQueryable<TEntity>> orderBy = null,
             string includeProperties = null,

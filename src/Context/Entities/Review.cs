@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Context.Entities
 {
-    public class Review : Entity<int>
+    public class Review : AuditableEntity<int>
     {
-        public int ReviewerId { get; set; }
         public int ServiceId { get; set; }
         public int? ListingId { get; set; }
         public int Stars { get; set; }

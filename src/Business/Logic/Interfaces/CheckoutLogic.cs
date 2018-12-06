@@ -51,7 +51,8 @@ namespace Stellmart.Api.Business.Logic.Interfaces
             var onlineSale = await _onlineSaleManager.CreateAsync();
             var order = new Order()
             {
-                Sale = onlineSale
+                Sale = onlineSale,
+                PurchaserId = userId
             };
             foreach (var item in cart.LineItems)
             {
