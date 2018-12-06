@@ -8,6 +8,7 @@ namespace Stellmart.Api.Business.Managers.Interfaces
 {
     public interface IMessageDataManager
     {
-        Task<Message> Update(Message message, int userId, bool save = false);
+        Task<Message> UpdateAsync(Message message, int userId, bool save = false);
+        Task<Message> CreateAsync(Message message, int userId, bool save = false);
     }
 }

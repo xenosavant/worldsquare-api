@@ -17,9 +17,19 @@ namespace Stellmart.Api.Business.Managers
             _repository = repository;
         }
 
-        public async Task<Message> Update(Message message, int userId, bool save = false)
+        public async Task<Message> UpdateAsync(Message message, int userId, bool save = false)
         {
-            _repository.Update(message);
+            _repository.Update(message, userId);
+            if (save)
+            {
+                await _repository.SaveAsync();
+            }
+            return message;
+        }
+
+        public async Task<Message> CreateAsync(Message message, int userId, bool save = false)
+        {
+            _repository.Create(message, userId);
             if (save)
             {
                 await _repository.SaveAsync();

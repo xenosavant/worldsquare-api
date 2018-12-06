@@ -9,5 +9,6 @@ namespace Stellmart.Api.Services.Interfaces
     {
         Task<bool> IsAllowedToPostListingReview(int userId, int listingId);
         Task<bool> IsAllowedToViewReviewsForService(int userId, int serviceId);
+        Task<bool> IsAllowedToPostListingThread(int userId, int listingId);
     }
 }

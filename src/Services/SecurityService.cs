@@ -20,6 +20,10 @@ namespace Stellmart.Api.Services
 
         public async Task<bool> IsAllowedToPostListingReview(int userId, int listingId)
         {
+            if (_repository.GetQueryable<Review>().Any(r => r.ListingId == listingId && r.CreatedBy == userId))
+            {
+                return false;
+            }
             var queryable = _repository.GetQueryable<Listing>(l => l.InventoryItems.Any(i => i.OrderItems.Select(oi => oi.Order.PurchaserId == userId).Any()));
             return await queryable.AnyAsync();
         }
@@ -27,6 +31,16 @@ namespace Stellmart.Api.Services
         public Task<bool> IsAllowedToViewReviewsForService(int userId, int serviceId)
         {
             return _repository.GetQueryable<OnlineStore>(s => s.UserId == userId && s.Id == serviceId).AnyAsync();
+        }
+
+        public async Task<bool> IsAllowedToPostListingThread(int userId, int listingId)
+        {
+            if (_repository.GetQueryable<MessageThread>().Any(r => r.ListingId == listingId && r.CreatedBy == userId))
+            {
+                return false;
+            }
+            var queryable = _repository.GetQueryable<Listing>(l => l.InventoryItems.Any(i => i.OrderItems.Select(oi => oi.Order.PurchaserId == userId).Any()));
+            return await queryable.AnyAsync();
         }
     }
 }

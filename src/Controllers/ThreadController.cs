@@ -9,22 +9,29 @@ using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
 using Stellmart.Api.Data.Thread;
 using Stellmart.Api.Data.ViewModels;
+using Stellmart.Api.Services.Interfaces;
 
 namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class ThreadController : AuthorizedController
+    public class ThreadController : BaseController
     {
+        private readonly int UserId = 1;
         private readonly IMapper _mapper;
         private readonly IThreadDataManager _threadDataManager;
         private readonly IThreadLogic _threadLogic;
+        private readonly ISecurityService _securityService;
 
-        public ThreadController(IMapper mapper, IThreadLogic threadLogic, IThreadDataManager threadDataManager)
+        public ThreadController(IMapper mapper, 
+            IThreadLogic threadLogic, 
+            IThreadDataManager threadDataManager,
+            ISecurityService securityService)
         {
             _mapper = mapper;
             _threadLogic = threadLogic;
             _threadDataManager = threadDataManager;
+            _securityService = securityService;
         }
 
         [HttpGet]
@@ -59,13 +66,16 @@ namespace Stellmart.Api.Controllers
         [ProducesResponseType(400)]
         public async Task<ActionResult<ThreadViewModel>> Post([FromBody] CreateThreadRequest request)
         {
-            // TODO: check that listing was ordered by current user
+            if (! (await _securityService.IsAllowedToPostListingThread(UserId, request.ListingId)))
+            {
+                return BadRequest();
+            }
             var thread = await _threadDataManager.CreateAndSaveAsync(_mapper.Map<MessageThread>(request), UserId);
             return _mapper.Map<ThreadViewModel>(thread);
         }
 
         [HttpPatch]
-        [Route("")]
+        [Route("{id:int}")]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<ThreadViewModel>> Patch(int id, [FromBody] PostMessageRequest request)

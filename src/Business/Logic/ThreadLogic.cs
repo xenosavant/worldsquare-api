@@ -37,7 +37,7 @@ namespace Stellmart.Api.Business.Logic.Interfaces
         public async Task<MessageThread> PostMessageToThread(Message message, int threadId, int userId)
         {
             message.MessageThreadId = threadId;
-            await _messageManager.Update(message, userId, true);
+            await _messageManager.CreateAsync(message, userId, true);
             return await _threadManager.GetById(threadId);
         }
     }

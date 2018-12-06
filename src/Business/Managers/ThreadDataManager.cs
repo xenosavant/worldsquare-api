@@ -37,7 +37,7 @@ namespace Stellmart.Api.Business.Managers
 
         public async Task<MessageThread> CreateAndSaveAsync(MessageThread thread, int userId)
         {
-            _messageManager.Update(thread.Messages.First(), userId);
+            _repository.Create(thread.Messages.First(), userId);
             _repository.Create(thread, userId);
             await _repository.SaveAsync();
             return await GetById(thread.Id);

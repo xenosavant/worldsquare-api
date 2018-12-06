@@ -523,6 +523,12 @@ namespace Stellmart.Context
                  .HasForeignKey(m => m.MessageThreadId)
                  .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<MessageThread>()
+                 .HasOne(m => m.Initiator)
+                 .WithMany(u => u.Threads)
+                 .HasForeignKey(m => m.CreatedBy)
+                 .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Listing>()
                  .HasOne(l => l.OnlineStore)
                  .WithMany(u => u.Listings)

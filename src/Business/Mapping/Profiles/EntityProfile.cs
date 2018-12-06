@@ -139,7 +139,7 @@ namespace Stellmart.Api.Business.Mapping.Profiles
             CreateMap<MessageThread, ThreadViewModel>()
               .ForMember(dest => dest.Id, opts => opts.MapFrom(src => src.Id))
               .ForMember(dest => dest.Listing, opts => opts.MapFrom(src => src.Listing))
-              .ForMember(dest => dest.Messages, opts => opts.MapFrom(src => src.Messages.OrderByDescending(m => m.CreatedDate)))
+              .ForMember(dest => dest.Messages, opts => opts.MapFrom(src => src.Messages.OrderBy(m => m.CreatedDate)))
               .ForAllOtherMembers(x => x.Ignore());
 
             CreateMap<Message, MessageViewModel>()
@@ -150,7 +150,7 @@ namespace Stellmart.Api.Business.Mapping.Profiles
              .ForAllOtherMembers(x => x.Ignore());
 
              CreateMap<CreateThreadRequest, MessageThread>()
-               .ForMember(dest => dest.Messages, opts => opts.MapFrom(src => new List<Message>() { new Message() { Body = src.Message } }))
+               .ForMember(dest => dest.Messages, opts => opts.MapFrom(src => new List<Message>() { new Message() { Id = 0, Body = src.Message } }))
                .ForMember(dest => dest.ListingId, opts => opts.MapFrom(src => src.ListingId))
                .ForAllOtherMembers(x => x.Ignore());
 
