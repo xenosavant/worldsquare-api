@@ -7,6 +7,7 @@ namespace Stellmart.Api.Data.Contract
 	public int ContractTypeId;
 	public string SourceAccount {get; set; }
 	public string DestinationAccount { get; set; }
+	public ContractSignatureModel SourceAccountSecret {get; set;}
 
 	public HorizonAssetModel Asset { get; set; }
 

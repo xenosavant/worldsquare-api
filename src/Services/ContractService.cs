@@ -52,7 +52,7 @@ namespace Stellmart.Services
             return preTransaction;
         }
 
-        public async Task<Contract> SetupContractAsync()
+        public async Task<Contract> SetupContractAsync(ContractParameterModel contractParameterModel)
         {
             var escrow = _horizonService.CreateAccount();
 
@@ -68,20 +68,52 @@ namespace Stellmart.Services
             var xdrTransaction = await _horizonService.CreateTransaction(_worldSquareAccount.PublicKey, operations, null, 0);
             await _horizonService.SubmitTransaction(_horizonService.SignTransaction(_worldSquareAccount, null, xdrTransaction));
 
-            var sequenceNumber = await _horizonService.GetSequenceNumber(escrow.PublicKey);
+            // Add buyer and WS as signer and assign escrow master weight to 0
+            operations.Clear();
+            var weight = new HorizonAccountWeightModel() {
+                Signers = new List<HorizonAccountSignerModel>(){
+                    new HorizonAccountSignerModel {
+                        Signer = contractParameterModel.SourceAccount,
+                        Weight = 1
+                    },
+                    new HorizonAccountSignerModel {
+                        Signer = _worldSquareAccount.PublicKey,
+                        Weight = 4
+                    },
+                },
+                MasterWeight = 0,
+                LowThreshold = 5,
+                MediumThreshold = 5,
+                HighThreshold = 5,
+            };
 
+            var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(escrow.PublicKey, weight);
+            operations.Add(setOptionsWeightOperation);
+
+            xdrTransaction = await _horizonService.CreateTransaction(escrow.PublicKey, operations, null, 0);
+
+            await _horizonService.SubmitTransaction(_horizonService.SignTransaction(escrow, null, xdrTransaction));
+
+           //create contract
+            var sequenceNumber = await _horizonService.GetSequenceNumber(escrow.PublicKey);
             var contract = new Contract
             {
                 EscrowAccountId = escrow.PublicKey,
+                DestAccountId = contractParameterModel.DestinationAccount,
+                SourceAccountId = contractParameterModel.SourceAccount,
                 BaseSequenceNumber = sequenceNumber,
                 CurrentSequenceNumber = sequenceNumber,
-                ContractStateId = (int)ContractState.Initial,
-                ContractTypeId = 0
+                ContractStateId = (int)ContractState.Initial
             };
 
+            //create phase 2 regular and time over ride transactions and buyer signs it
+            contract = await ConstructPhaseTwoAsync(contract);
+            // ToDo: signing is pending
+
+            //if we are here, that means phase 0 is success
             var phaseZero = new ContractPhase
             {
-                Completed = false,
+                Completed = true,
                 SequenceNumber = sequenceNumber,
                 Contested = false
             };
@@ -90,64 +122,32 @@ namespace Stellmart.Services
             return contract;
         }
 
-        public async Task<Contract> FundContractAsync(Contract contract, ContractParameterModel contractParameterModel)
+        public async Task<Contract> FundContractAsync(Contract contract, ContractSignatureModel FundingAccount, string Amount)
         {
             var phaseOne = new ContractPhase();
             var operations = new List<Operation>();
 
-            contract.DestAccountId = contractParameterModel.DestinationAccount;
-            contract.SourceAccountId = contractParameterModel.SourceAccount;
-            //for phase 1, its base sequence number +1
-            phaseOne.SequenceNumber = contract.BaseSequenceNumber + 1;
+            //nothing to be done for contract in phase 1; this affects the sequence number
+            // ToDo: alter the sequence number
 
-            var weight = new HorizonAccountWeightModel() {
-                Signers = new List<HorizonAccountSignerModel>(){
-                    new HorizonAccountSignerModel {
-                        Signer = contract.DestAccountId,
-                        Weight = 1
-                    },
-                    new HorizonAccountSignerModel {
-                        Signer = _worldSquareAccount.PublicKey,
-                        Weight = 4
-                    },
-                },
-                LowThreshold = 5,
-                MediumThreshold = 5,
-                HighThreshold = 6,
-            };
+            //for phase 1, its base sequence number +1
+            //phaseOne.SequenceNumber = contract.BaseSequenceNumber + 1;
 
             var asset = new HorizonAssetModel {
                 IsNative = true,
-                Amount = contractParameterModel.Asset.Amount
+                Amount = Amount
             };
             var paymentOperation = _horizonService.CreatePaymentOperation(contract.SourceAccountId, contract.EscrowAccountId, asset);
             operations.Add(paymentOperation);
 
-            var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
-            operations.Add(setOptionsWeightOperation);
-
             var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, phaseOne.SequenceNumber - 1);
             
-            /*  var response = await _horizon.SubmitTxn(_horizon.SignTxn(contract.EscrowAccountId, xdrTransaction));
-                if(response.IsSuccess() == false)
-                return null;
-            */
+            var response = await _horizonService.SubmitTransaction(_horizonService.SignTransaction(null,
+                    FundingAccount.Secret, xdrTransaction));
 
-            var preTransaction = new PreTransaction
-            {
-                XdrString = xdrTransaction
-            };
+            if(response.IsSuccess() == false)
+                    return null;
 
-            var publicKeys = new[]
-            {
-                contract.DestAccountId, contract.EscrowAccountId
-            };
-
-            var signatureList = CreateSignatureList(preTransaction, publicKeys);
-
-            phaseOne.Transactions.Add(signatureList);
-
-            contract.Phases.Add(phaseOne);
             return contract;
         }
 
@@ -159,9 +159,25 @@ namespace Stellmart.Services
             //for phase 1, its base sequence number +1
             phaseTwo.SequenceNumber = contract.BaseSequenceNumber + 2;
 
-            //success txn, bump to next
-            var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (1 + 1));
-            operations.Add(bumpOperation);
+            //success txn, add seller as single txn signer
+            //Add seller as escrow signer along with buyer and WS
+            var weight = new HorizonAccountWeightModel() {
+                Signers = new List<HorizonAccountSignerModel>(){
+                    new HorizonAccountSignerModel {
+                        Signer = contract.DestAccountId,
+                        Weight = 1
+                    }
+                },
+                LowThreshold = 5,
+                MediumThreshold = 5,
+                HighThreshold = 6,
+            };
+
+            var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
+            operations.Add(setOptionsWeightOperation);
+
+            var setOptionsAddSeller = _horizonService.SetOptionsSingleSignerOperation(contract.DestAccountId);
+            operations.Add(setOptionsAddSeller);
 
             var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, phaseTwo.SequenceNumber - 1);
 
@@ -172,18 +188,17 @@ namespace Stellmart.Services
 
             var publicKeys = new[]
             {
-                contract.DestAccountId, contract.EscrowAccountId
+                contract.SourceAccountId, contract.DestAccountId
             };
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
 
             phaseTwo.Transactions.Add(signatureList);
 
-            //failure txn, bump
-            //ToDo: replace bump sequence with transfer fund to source account
-            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (1 + 3));
+            //failure txn, merge escrow to buyer
+            var mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.SourceAccountId);
 
-            operations.Add(bumpOperation);
+            operations.Add(mergeOperation);
 
             xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, phaseTwo.SequenceNumber - 1);
 
@@ -192,8 +207,12 @@ namespace Stellmart.Services
                 XdrString = xdrTransaction
             };
 
-            //use the same publicKeys as above
-            signatureList = CreateSignatureList(preTransactionRide, publicKeys);
+            var publicKeysOverRide = new[]
+            {
+                contract.SourceAccountId
+            };
+
+            signatureList = CreateSignatureList(preTransactionRide, publicKeysOverRide);
 
             phaseTwo.Transactions.Add(signatureList);
 
@@ -416,7 +435,9 @@ namespace Stellmart.Services
 
         public async Task<Contract> CreateContractAsync(Contract contract)
         {
-            contract = await ConstructPhaseTwoAsync(contract);
+            //phase 2 pretxn is created in phase 0 itself
+            //contract = await ConstructPhaseTwoAsync(contract);
+            // ToDo: check if escrow is funded before proceeding
 
             contract = await ConstructPhaseThreeAsync(contract);
 

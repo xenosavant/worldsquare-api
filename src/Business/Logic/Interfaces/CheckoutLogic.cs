@@ -60,7 +60,9 @@ namespace Stellmart.Api.Business.Logic.Interfaces
                     StoreId = item.InventoryItem.Listing.ServiceId,
                     InventoryItem = item.InventoryItem,
                 };
-                orderItem.Contract = await _contractService.SetupContractAsync();
+                // ToDo: Review me; SetupContractAsync needs param
+                var model = new ContractParameterModel();
+                orderItem.Contract = await _contractService.SetupContractAsync(model);
                 // TODO: create contract
 
                 //var model = new ContractParameterModel()
