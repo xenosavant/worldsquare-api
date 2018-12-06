@@ -59,20 +59,33 @@ namespace Stellmart.Services
             return accountResponse.SequenceNumber;
         }
 
-        //Native balance example ("GAMUNY3XR53RJFUIIZDLKJFSLXAX4EJRGGPO7SXNNNR2PUGH2JSZXKKI", "native", null)
-        public async Task<string> GetAccountBalance(string accountPublicKey, string assetType,
+        /* Native balance example ("GAMUNY3XR53RJFUIIZDLKJFSLXAX4EJRGGPO7SXNNNR2PUGH2JSZXKKI", "native", null, null)
+         * Non Native balance example ("GAMUNY3XR53RJFUIIZDLKJFSLXAX4EJRGGPO7SXNNNR2PUGH2JSZXKKI", null,
+         *  "USD", "GBSTRUSD7IRX73RQZBL3RQUH6KS3O4NYFY3QCALDLZD77XMZOPWAVTUK")
+         */
+        public async Task<string> GetAccountBalance(string accountPublicKey, string assetType, string assetCode,
             string assetIssuerPublicKey)
         {
             var accountResponse = await _horizonServerManager.GetAccountAsync(accountPublicKey);
             var balances = accountResponse.Balances;
 
-            foreach (var balance in balances)
-            {
-                if (!balance.AssetType.Equals(assetType)) continue;
+            if(assetType.Equals("native")) {
+                foreach (var balance in balances)
+                {
+                    if (!balance.AssetType.Equals("native")) continue;
 
-                return assetType.Equals("native") ? balance.BalanceString : null;
+                    return balance.BalanceString;
+                }
+            } else {
+                foreach (var balance in balances)
+                {
+                    if (!balance.AssetCode.Equals(assetCode)) continue;
+
+                    if (!balance.AssetIssuer.AccountId.Equals(assetIssuerPublicKey)) continue;
+
+                    return balance.BalanceString;
+                }
             }
-
             return null;
         }
 
