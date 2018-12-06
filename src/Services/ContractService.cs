@@ -244,7 +244,7 @@ namespace Stellmart.Services
             
             var publicKeys = new[]
             {
-                contract.DestAccountId, contract.EscrowAccountId
+                contract.DestAccountId
             };
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
@@ -294,7 +294,7 @@ namespace Stellmart.Services
             
             var publicKeys = new[]
             {
-                contract.DestAccountId, contract.EscrowAccountId
+                contract.DestAccountId
             };
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
@@ -373,7 +373,7 @@ namespace Stellmart.Services
 
             var publicKeys = new[]
             {
-                contract.DestAccountId, contract.EscrowAccountId
+                contract.DestAccountId
             };
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
@@ -406,7 +406,7 @@ namespace Stellmart.Services
             
             var publicKeys = new[]
             {
-                contract.DestAccountId, contract.EscrowAccountId
+                contract.DestAccountId
             };
 
             var signatureList = CreateSignatureList(preTransactionMerge, publicKeys);
