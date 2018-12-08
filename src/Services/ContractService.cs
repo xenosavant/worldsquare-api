@@ -110,6 +110,15 @@ namespace Stellmart.Services
             contract = await ConstructPhaseTwoAsync(contract);
             // ToDo: signing is pending
 
+            //buyer signing not required, but we will create all pre txn in phase 0 itself
+            contract = await ConstructPhaseThreeAsync(contract);
+
+            contract = await ConstructPhaseFourAsync(contract);
+
+            contract = await ConstructPhaseFourDisputeAsync(contract);
+
+            contract = await ConstructPhaseFiveAsync(contract);
+
             //if we are here, that means phase 0 is success
             var phaseZero = new ContractPhase
             {
@@ -157,7 +166,7 @@ namespace Stellmart.Services
             var operations = new List<Operation>();
 
             //for phase 1, its base sequence number +1
-            phaseTwo.SequenceNumber = contract.BaseSequenceNumber + 2;
+            phaseTwo.SequenceNumber = contract.BaseSequenceNumber + 1;
 
             //success txn, add seller as single txn signer
             //Add seller as escrow signer along with buyer and WS
@@ -226,11 +235,11 @@ namespace Stellmart.Services
             var phaseThree = new ContractPhase();
             var operations = new List<Operation>();
 
-            phaseThree.SequenceNumber = contract.BaseSequenceNumber + 3;
+            phaseThree.SequenceNumber = contract.BaseSequenceNumber + 2;
 
             //success txn, bump to next
             var bumpOperation =
-                _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (2 + 1));
+                _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseThree.SequenceNumber + 1);
 
             operations.Add(bumpOperation);
 
@@ -252,7 +261,7 @@ namespace Stellmart.Services
             phaseThree.Transactions.Add(signatureList);
 
             //failure txn, bump
-            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (2 + 2));
+            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseThree.SequenceNumber + 2);
 
             operations.Add(bumpOperation);
 
@@ -276,11 +285,11 @@ namespace Stellmart.Services
             var phaseFour = new ContractPhase();
             var operations = new List<Operation>();
 
-            phaseFour.SequenceNumber = contract.BaseSequenceNumber + 4;
+            phaseFour.SequenceNumber = contract.BaseSequenceNumber + 3;
 
             //dispute txn, bump to next
             var bumpOperation =
-                _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (3 + 1));
+                _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseFour.SequenceNumber +1);
 
             operations.Add(bumpOperation);
 
@@ -294,7 +303,7 @@ namespace Stellmart.Services
             
             var publicKeys = new[]
             {
-                contract.DestAccountId
+                contract.DestAccountId, contract.SourceAccountId
             };
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
@@ -318,7 +327,7 @@ namespace Stellmart.Services
             phaseFour.Transactions.Add(signatureList);
 
             //failure txn, bump
-            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, contract.BaseSequenceNumber + (3 + 1));
+            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseFour.SequenceNumber + 1);
             operations.Add(bumpOperation);
 
             xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, null, phaseFour.SequenceNumber - 1);
@@ -342,7 +351,7 @@ namespace Stellmart.Services
 
             var operations = new List<Operation>();
 
-            phaseFourDispute.SequenceNumber = contract.BaseSequenceNumber + 5;
+            phaseFourDispute.SequenceNumber = contract.BaseSequenceNumber + 4;
 
             var weight = new HorizonAccountWeightModel() {
                 Signers = new List<HorizonAccountSignerModel>(){
@@ -389,7 +398,7 @@ namespace Stellmart.Services
             var phaseFive = new ContractPhase();
             var operations = new List<Operation>();
 
-            phaseFive.SequenceNumber = contract.BaseSequenceNumber + 6;
+            phaseFive.SequenceNumber = contract.BaseSequenceNumber + 5;
 
             //release txn, merge txn
             var mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
@@ -439,6 +448,8 @@ namespace Stellmart.Services
             //contract = await ConstructPhaseTwoAsync(contract);
             // ToDo: check if escrow is funded before proceeding
 
+            //All pre txns creation are moved to phase0, maybe this function is not required.
+            /*
             contract = await ConstructPhaseThreeAsync(contract);
 
             contract = await ConstructPhaseFourAsync(contract);
@@ -446,6 +457,7 @@ namespace Stellmart.Services
             contract = await ConstructPhaseFourDisputeAsync(contract);
 
             contract = await ConstructPhaseFiveAsync(contract);
+            */
             return contract;
         }
 
