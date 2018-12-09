@@ -106,28 +106,40 @@ namespace Stellmart.Services
                 ContractStateId = (int)ContractState.Initial
             };
 
-            //create phase 2 regular and time over ride transactions and buyer signs it
-            contract = await ConstructPhaseTwoAsync(contract);
-            // ToDo: signing is pending
+            switch(contractParameterModel.ContractTypeId) {
 
-            //buyer signing not required, but we will create all pre txn in phase 0 itself
-            contract = await ConstructPhaseThreeAsync(contract);
+                case 0:
+                    //if we are here, that means phase 0 is success
+                    var phaseZero = new ContractPhase
+                    {
+                        Completed = true,
+                        SequenceNumber = sequenceNumber,
+                        Contested = false
+                    };
+                    contract.Phases.Add(phaseZero);
+                    //create phase 2 regular and time over ride transactions and buyer signs it
+                    contract = await ConstructPhaseTwoAsync(contract);
 
-            contract = await ConstructPhaseFourAsync(contract);
+                    var secret = contractParameterModel.SourceAccountSecret;
+                    // ToDo: add pre transaction to secret
+                    SignContract(secret);
 
-            contract = await ConstructPhaseFourDisputeAsync(contract);
+                    //buyer signing not required, but we will create all pre txn in phase 0 itself
+                    contract = await ConstructPhaseThreeAsync(contract);
 
-            contract = await ConstructPhaseFiveAsync(contract);
+                    contract = await ConstructPhaseFourAsync(contract);
 
-            //if we are here, that means phase 0 is success
-            var phaseZero = new ContractPhase
-            {
-                Completed = true,
-                SequenceNumber = sequenceNumber,
-                Contested = false
-            };
+                    contract = await ConstructPhaseFourDisputeAsync(contract);
 
-            contract.Phases.Add(phaseZero);
+                    contract = await ConstructPhaseFiveAsync(contract);
+
+                    break;
+
+                default:
+                        Console.WriteLine("contract id undefined\n");
+                        return null;
+            }
+
             return contract;
         }
 
@@ -135,12 +147,6 @@ namespace Stellmart.Services
         {
             var phaseOne = new ContractPhase();
             var operations = new List<Operation>();
-
-            //nothing to be done for contract in phase 1; this affects the sequence number
-            // ToDo: alter the sequence number
-
-            //for phase 1, its base sequence number +1
-            //phaseOne.SequenceNumber = contract.BaseSequenceNumber + 1;
 
             var asset = new HorizonAssetModel {
                 IsNative = true,
@@ -446,7 +452,6 @@ namespace Stellmart.Services
         {
             //phase 2 pretxn is created in phase 0 itself
             //contract = await ConstructPhaseTwoAsync(contract);
-            // ToDo: check if escrow is funded before proceeding
 
             //All pre txns creation are moved to phase0, maybe this function is not required.
             /*
@@ -518,7 +523,7 @@ namespace Stellmart.Services
             return true;
         }
 
-        private string AddSign(string xdrTransaction, string secretKey)
+        private string SignPreTransaction(string xdrTransaction, string secretKey)
         {
             int count, newcount = 0;
 
@@ -565,7 +570,7 @@ namespace Stellmart.Services
                     return false;
                 }
 
-                var hash = AddSign(preTransaction.XdrString, secretKey);
+                var hash = SignPreTransaction(preTransaction.XdrString, secretKey);
                 if (hash != null)
                 {
                     signature.SignatureHash = hash;
