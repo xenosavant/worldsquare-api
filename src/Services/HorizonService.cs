@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.Extensions.Options;
 using stellar_dotnet_sdk;
 using stellar_dotnet_sdk.responses;
@@ -11,6 +7,11 @@ using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services.Interfaces;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Asset = stellar_dotnet_sdk.Asset;
 using Operation = stellar_dotnet_sdk.Operation;
 using Signer = stellar_dotnet_sdk.Signer;
@@ -60,29 +61,25 @@ namespace Stellmart.Services
         }
 
 
-        public async Task<string> GetAccountBalance(string accountPublicKey, HorizonAssetModel Asset)
+        public async Task<string> GetAccountBalance(HorizonAssetModel model)
         {
-            var accountResponse = await _horizonServerManager.GetAccountAsync(accountPublicKey);
-            var balances = accountResponse.Balances;
+            var accountResponse = await _horizonServerManager.GetAccountAsync(model.AccountPublicKey);
 
-            if(Asset.AssetType.Equals("native")) {
-                foreach (var balance in balances)
-                {
-                    if (!balance.AssetType.Equals("native")) continue;
+            string balanceString = null;
 
-                    return balance.BalanceString;
-                }
-            } else {
-                foreach (var balance in balances)
-                {
-                    if (!balance.AssetCode.Equals(Asset.AssetCode)) continue;
-
-                    if (!balance.AssetIssuer.AccountId.Equals(Asset.AssetIssuerPublicKey)) continue;
-
-                    return balance.BalanceString;
-                }
+            if (model.AssetType == "native")
+            {
+                balanceString = accountResponse.Balances.FirstOrDefault(x => x.AssetType == model.AssetType)
+                    ?.BalanceString;
             }
-            return null;
+            else
+            {
+                balanceString = accountResponse.Balances.FirstOrDefault(x =>
+                    x.AssetType == model.AssetType && x.AssetIssuer.AccountId == model.AssetIssuerPublicKey)
+                    ?.BalanceString;
+            }
+
+            return balanceString;
         }
 
         public Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey,

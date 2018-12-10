@@ -9,5 +9,6 @@ namespace Stellmart.Api.Data.Horizon
         //The below 2 fields are not required for native asset / XLM
         public string AssetCode { get; set; }
         public string AssetIssuerPublicKey { get; set; }
+        public string AccountPublicKey { get; set; }
     }
 }
