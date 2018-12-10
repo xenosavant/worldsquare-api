@@ -59,17 +59,13 @@ namespace Stellmart.Services
             return accountResponse.SequenceNumber;
         }
 
-        /* Native balance example ("GAMUNY3XR53RJFUIIZDLKJFSLXAX4EJRGGPO7SXNNNR2PUGH2JSZXKKI", "native", null, null)
-         * Non Native balance example ("GAMUNY3XR53RJFUIIZDLKJFSLXAX4EJRGGPO7SXNNNR2PUGH2JSZXKKI", null,
-         *  "USD", "GBSTRUSD7IRX73RQZBL3RQUH6KS3O4NYFY3QCALDLZD77XMZOPWAVTUK")
-         */
-        public async Task<string> GetAccountBalance(string accountPublicKey, string assetType, string assetCode,
-            string assetIssuerPublicKey)
+
+        public async Task<string> GetAccountBalance(string accountPublicKey, HorizonAssetModel Asset)
         {
             var accountResponse = await _horizonServerManager.GetAccountAsync(accountPublicKey);
             var balances = accountResponse.Balances;
 
-            if(assetType.Equals("native")) {
+            if(Asset.AssetType.Equals("native")) {
                 foreach (var balance in balances)
                 {
                     if (!balance.AssetType.Equals("native")) continue;
@@ -79,9 +75,9 @@ namespace Stellmart.Services
             } else {
                 foreach (var balance in balances)
                 {
-                    if (!balance.AssetCode.Equals(assetCode)) continue;
+                    if (!balance.AssetCode.Equals(Asset.AssetCode)) continue;
 
-                    if (!balance.AssetIssuer.AccountId.Equals(assetIssuerPublicKey)) continue;
+                    if (!balance.AssetIssuer.AccountId.Equals(Asset.AssetIssuerPublicKey)) continue;
 
                     return balance.BalanceString;
                 }
@@ -94,7 +90,7 @@ namespace Stellmart.Services
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
 
-            if (horizonAsset.IsNative)
+            if (horizonAsset.AssetType.Equals("native"))
             {
                 Asset asset = new AssetTypeNative();
                 var operation =
@@ -106,7 +102,8 @@ namespace Stellmart.Services
             }
             else
             {
-                Asset asset = new AssetTypeCreditAlphaNum4(horizonAsset.Code, horizonAsset.Issuer);
+                Asset asset = new AssetTypeCreditAlphaNum4(horizonAsset.AssetCode,
+                        KeyPair.FromAccountId(horizonAsset.AssetIssuerPublicKey));
                 var operation =
                     new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), asset,
                             horizonAsset.Amount)
@@ -169,7 +166,8 @@ namespace Stellmart.Services
         public Operation ChangeTrustOperation(string sourceAccountPublicKey, HorizonAssetModel assetModel, string limit)
         {
             var source = KeyPair.FromAccountId(sourceAccountPublicKey);
-            Asset asset = new AssetTypeCreditAlphaNum4(assetModel.Code, assetModel.Issuer);
+            Asset asset = new AssetTypeCreditAlphaNum4(assetModel.AssetCode,
+                        KeyPair.FromAccountId(assetModel.AssetIssuerPublicKey));
 
             var operation = new ChangeTrustOperation.Builder(asset, limit)
                 .SetSourceAccount(source)
@@ -256,75 +254,6 @@ namespace Stellmart.Services
         {
             var transaction = ConvertXdrToTransaction(xdrTransaction);
             return Encoding.UTF8.GetString(transaction.Signatures[index].Signature.InnerValue);
-        }
-
-        public async Task<HorizonAssetModel> CreateAsset(string name, string limit)
-        {
-            var asset = new HorizonAssetModel
-            {
-                IsNative = false, MaxCoinLimit = limit, Code = name
-            };
-
-            var issuer = CreateAccount();
-            var distributor = CreateAccount();
-
-            //TBD : Real network code is pending
-            //Fund minimum XLM to create operations
-            await FundTestAccountAsync(issuer.PublicKey);
-            await FundTestAccountAsync(distributor.PublicKey);
-            asset.IssuerAccount = issuer;
-            asset.Distributor = distributor;
-            asset.Issuer = KeyPair.FromAccountId(issuer.PublicKey);
-
-            //Create trustline from Distributor to Issuer
-            var operations = new List<Operation>();
-            var trustOperation = ChangeTrustOperation(distributor.PublicKey, asset, limit);
-            operations.Add(trustOperation);
-
-            var xdrTransaction = await CreateTransaction(distributor.PublicKey, operations, null, 0);
-            await SubmitTransaction(SignTransaction(distributor, null, xdrTransaction));
-            asset.State = CustomTokenState.CreateCustomToken;
-            return asset;
-        }
-
-        public async Task<bool> MoveAsset(HorizonAssetModel asset)
-        {
-            if (asset.State != CustomTokenState.CreateCustomToken) return false;
-            //TBD: bad coding, create different class for new asset created by us
-            asset.Amount = asset.MaxCoinLimit;
-
-            var result = await PaymentTransaction(asset.IssuerAccount, asset.Distributor.PublicKey, asset);
-            if (result)
-                asset.State = CustomTokenState.MoveCustomToken;
-
-            return result;
-        }
-
-        public async Task<bool> LockAsset(HorizonAssetModel asset)
-        {
-            if (asset.State == CustomTokenState.MoveCustomToken)
-            {
-                //Set threshold and weights of Issuer account as 0; so that no more coin can be minted.
-                //All the coins should have been transferred to Distribution account by now.
-                //Its the responsibility of the Distribution account to transfer the tokens to others.
-                var weight = new HorizonAccountWeightModel
-                {
-                    MasterWeight = 0
-                };
-
-                //Let the SignerSecret be null
-                var operations = new List<Operation>();
-                var setOptionsWeightOperation = SetOptionsWeightOperation(asset.IssuerAccount.PublicKey, weight);
-                operations.Add(setOptionsWeightOperation);
-
-                var xdrTransaction = await CreateTransaction(asset.IssuerAccount.PublicKey, operations, null, 0);
-                await SubmitTransaction(SignTransaction(asset.IssuerAccount, null, xdrTransaction));
-                asset.State = CustomTokenState.LockCustomToken;
-
-                return true;
-            }
-
-            return false;
         }
 
         public async Task<bool> PaymentTransaction(HorizonKeyPairModel Source, string DestinationPublicKey,

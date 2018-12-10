@@ -1,25 +1,13 @@
 ﻿using stellar_dotnet_sdk;
 namespace Stellmart.Api.Data.Horizon
 {
-    public enum CustomTokenState
-    {
-        NotaCustomToken = 0,
-        CreateCustomToken,
-        MoveCustomToken,
-        LockCustomToken
-    }
-
     public class HorizonAssetModel
     {
-	    public bool IsNative { get; set; }
-        public string Code { get; set; }
-        public KeyPair Issuer { get; set; }
+        //for native, assetType is "native"
+	    public string AssetType { get; set; }
         public string Amount {get; set;}
-        //these fields are used during custom token creation
-
-        public CustomTokenState State {get; set;}
-        public HorizonKeyPairModel IssuerAccount {get; set;}
-        public HorizonKeyPairModel Distributor {get; set; }
-        public string MaxCoinLimit {get; set; }
+        //The below 2 fields are not required for native asset / XLM
+        public string AssetCode { get; set; }
+        public string AssetIssuerPublicKey { get; set; }
     }
 }

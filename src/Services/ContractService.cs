@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using stellar_dotnet_sdk;
 using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Data.Enums;
 using Stellmart.Api.Data.Contract;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
@@ -103,12 +104,13 @@ namespace Stellmart.Services
                 SourceAccountId = contractParameterModel.SourceAccount,
                 BaseSequenceNumber = sequenceNumber,
                 CurrentSequenceNumber = sequenceNumber,
-                ContractStateId = (int)ContractState.Initial
+                // ToDo: contract state yet to be added
+                //ContractStateId =0;
             };
 
             switch(contractParameterModel.ContractTypeId) {
 
-                case 0:
+                case (int)ContractTypes.OnlineSaleInternalShippingValidation:
                     //if we are here, that means phase 0 is success
                     var phaseZero = new ContractPhase
                     {
@@ -149,8 +151,7 @@ namespace Stellmart.Services
             var operations = new List<Operation>();
 
             var asset = new HorizonAssetModel {
-                IsNative = true,
-                Amount = Amount
+                AssetType = "native", Amount = Amount,
             };
             var paymentOperation = _horizonService.CreatePaymentOperation(contract.SourceAccountId, contract.EscrowAccountId, asset);
             operations.Add(paymentOperation);
@@ -450,19 +451,7 @@ namespace Stellmart.Services
 
         public async Task<Contract> CreateContractAsync(Contract contract)
         {
-            //phase 2 pretxn is created in phase 0 itself
-            //contract = await ConstructPhaseTwoAsync(contract);
-
-            //All pre txns creation are moved to phase0, maybe this function is not required.
-            /*
-            contract = await ConstructPhaseThreeAsync(contract);
-
-            contract = await ConstructPhaseFourAsync(contract);
-
-            contract = await ConstructPhaseFourDisputeAsync(contract);
-
-            contract = await ConstructPhaseFiveAsync(contract);
-            */
+            // redundant function ?
             return contract;
         }
 
