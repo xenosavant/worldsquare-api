@@ -69,9 +69,9 @@ namespace Stellmart.Api.Services
         {
             var accountResponse = await _horizonServerManager.GetAccountAsync(model.AccountPublicKey);
 
-            if (model.AssetType != null)
+            if (model.AssetCode != null)
             {
-                return accountResponse.Balances.FirstOrDefault(predicate: x => x.AssetType == model.AssetType && x.AssetIssuer.AccountId == model.AssetIssuerPublicKey)
+                return accountResponse.Balances.FirstOrDefault(predicate: x => x.AssetCode == model.AssetCode && x.AssetIssuer.AccountId == model.AssetIssuerPublicKey)
                     ?.BalanceString;
             }
 
