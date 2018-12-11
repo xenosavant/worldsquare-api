@@ -88,32 +88,13 @@ namespace WorldSquare.Api.Tests.Services
         }
 
         [Fact]
-        public async Task GetSequenceNumber_ProvidePublicKey_GetsSequenceNumber()
-        {
-            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
-
-            var accountResponse = new AccountResponse(keyPair) {SequenceNumber = 42};
-
-            _horizonServerManagerMock.GetAccountAsync(accountResponse.KeyPair.AccountId)
-                .Returns(accountResponse);
-
-            var result = await _subjectUnderTest.GetSequenceNumber(keyPair.AccountId);
-
-            Assert.Equal(accountResponse.SequenceNumber, result);
-        }
-
-        [Fact]
         public async Task GetAccountBalance_RequestBalanceWithAssetTypeNull_GetNativeBalance()
         {
             const string expectedBalance = "10000";
 
             var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
 
-            var assetModel = new HorizonAssetModel()
-                             {
-                                 AssetType = null,
-                                 AccountPublicKey = keyPair.AccountId
-                             };
+            var assetModel = new HorizonAssetModel {AssetType = null, AccountPublicKey = keyPair.AccountId};
 
             var accountResponse = new AccountResponse(keyPair)
                                   {
@@ -145,11 +126,7 @@ namespace WorldSquare.Api.Tests.Services
             const string assetIssuerPublicKey = "GAEHO5MAKDWY3AHG6HCFIMTQT4XXTPFX6MWESLROASNHRPSW4NUR2F7Y";
             var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
 
-            var assetModel = new HorizonAssetModel()
-                             {
-                                 AssetCode = "WST",
-                                 AssetIssuerPublicKey = assetIssuerPublicKey
-            };
+            var assetModel = new HorizonAssetModel {AssetCode = "WST", AssetIssuerPublicKey = assetIssuerPublicKey};
 
             var accountResponse = new AccountResponse(keyPair)
                                   {
@@ -179,6 +156,21 @@ namespace WorldSquare.Api.Tests.Services
             var result = await _subjectUnderTest.GetAccountBalance(assetModel);
 
             Assert.Equal(expectedBalance, result);
+        }
+
+        [Fact]
+        public async Task GetSequenceNumber_ProvidePublicKey_GetsSequenceNumber()
+        {
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
+
+            var accountResponse = new AccountResponse(keyPair) {SequenceNumber = 42};
+
+            _horizonServerManagerMock.GetAccountAsync(accountResponse.KeyPair.AccountId)
+                .Returns(accountResponse);
+
+            var result = await _subjectUnderTest.GetSequenceNumber(keyPair.AccountId);
+
+            Assert.Equal(accountResponse.SequenceNumber, result);
         }
     }
 }
