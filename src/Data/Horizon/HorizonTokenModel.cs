@@ -1,21 +1,17 @@
-﻿using stellar_dotnet_sdk;
+﻿using Stellmart.Api.Data.Enums;
+
 namespace Stellmart.Api.Data.Horizon
 {
-    public enum CustomTokenState
+    public class HorizonTokenModel
     {
-        NotaCustomToken = 0,
-        CreateCustomToken,
-        MoveCustomToken,
-        LockCustomToken
-    }
+        public HorizonAssetModel HorizonAssetModel { get; set; }
 
-    public class HorizonTokenModel: HorizonAssetModel
-    {
-        //these fields are used during custom token creation
-        public HorizonAssetModel Asset;
-        public CustomTokenState State {get; set;}
-        public HorizonKeyPairModel IssuerAccount {get; set;}
-        public HorizonKeyPairModel Distributor {get; set; }
-        public string MaxCoinLimit {get; set; }
+        public CustomTokenState State { get; set; }
+
+        public HorizonKeyPairModel IssuerAccount { get; set; }
+
+        public HorizonKeyPairModel Distributor { get; set; }
+
+        public string MaxCoinLimit { get; set; }
     }
 }
