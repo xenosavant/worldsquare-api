@@ -10,5 +10,6 @@ namespace Stellmart.Api.Data.Horizon
         public string AssetCode { get; set; }
         public string AssetIssuerPublicKey { get; set; }
         public string AccountPublicKey { get; set; }
+        public string DestinationAccountPublicKey { get; set; }
     }
 }

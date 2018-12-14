@@ -58,14 +58,14 @@ namespace Stellmart.Api.Services
             return _mapper.Map<HorizonFundTestAccountModel>(accountResponse);
         }
 
-        public async Task<long> GetSequenceNumber(string publicKey)
+        public async Task<long> GetSequenceNumberAsync(string publicKey)
         {
             var accountResponse = await _horizonServerManager.GetAccountAsync(publicKey);
 
             return accountResponse.SequenceNumber;
         }
 
-        public async Task<string> GetAccountBalance(HorizonAssetModel model)
+        public async Task<string> GetAccountBalanceAsync(HorizonAssetModel model)
         {
             var accountResponse = await _horizonServerManager.GetAccountAsync(model.AccountPublicKey);
 
@@ -79,26 +79,20 @@ namespace Stellmart.Api.Services
                 ?.BalanceString;
         }
 
-        public Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey, HorizonAssetModel horizonAsset)
+        public async Task<Operation> CreatePaymentOperationAsync(HorizonAssetModel model)
         {
-            var source = KeyPair.FromAccountId(sourceAccountPublicKey);
+            var sourceAccount = await _horizonServerManager.GetAccountAsync(model.AccountPublicKey);
+            var destinationAccount = await _horizonServerManager.GetAccountAsync(model.DestinationAccountPublicKey);
 
-            if (horizonAsset.AssetType.Equals(value: "native"))
+            Asset asset = null;
+
+            if (model.AssetType != "native")
             {
-                Asset asset = new AssetTypeNative();
-                var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), asset, horizonAsset.Amount).SetSourceAccount(source)
-                    .Build();
-
-                return operation;
+                asset = new AssetTypeCreditAlphaNum4(model.AssetCode, KeyPair.FromAccountId(model.AssetIssuerPublicKey));
             }
-            else
-            {
-                Asset asset = new AssetTypeCreditAlphaNum4(horizonAsset.AssetCode, KeyPair.FromAccountId(horizonAsset.AssetIssuerPublicKey));
-                var operation = new PaymentOperation.Builder(KeyPair.FromAccountId(destinationAccountPublicKey), asset, horizonAsset.Amount).SetSourceAccount(source)
-                    .Build();
 
-                return operation;
-            }
+            return new PaymentOperation.Builder(destinationAccount.KeyPair, asset, model.Amount).SetSourceAccount(sourceAccount.KeyPair)
+                .Build();
         }
 
         public Operation SetOptionsWeightOperation(string sourceAccountPublicKey, HorizonAccountWeightModel weight)

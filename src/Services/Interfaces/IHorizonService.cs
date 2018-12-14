@@ -26,7 +26,7 @@ namespace Stellmart.Api.Services.Interfaces
         /// </summary>
         /// <param name="publicKey"></param>
         /// <returns>Sequence number</returns>
-        Task<long> GetSequenceNumber(string publicKey);
+        Task<long> GetSequenceNumberAsync(string publicKey);
 
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Stellmart.Api.Services.Interfaces
         /// </summary>
         /// <param name="model"></param>
         /// <returns>Account balance</returns>
-        Task<string> GetAccountBalance(HorizonAssetModel model);
+        Task<string> GetAccountBalanceAsync(HorizonAssetModel model);
 
         /// <summary>
         /// Operation for creating payment
@@ -43,7 +43,7 @@ namespace Stellmart.Api.Services.Interfaces
         /// <param name="destinationAccountPublicKey"></param>
         /// <param name="horizonAsset"></param>
         /// <returns></returns>
-        Operation CreatePaymentOperation(string sourceAccountPublicKey, string destinationAccountPublicKey, HorizonAssetModel horizonAsset);
+        Task<Operation> CreatePaymentOperationAsync(HorizonAssetModel model);
 
         /// <summary>
         /// Operation to set weights
