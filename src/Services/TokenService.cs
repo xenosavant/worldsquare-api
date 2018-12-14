@@ -1,10 +1,11 @@
-using stellar_dotnet_sdk;
-using Stellmart.Api.Data.Horizon;
-using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using stellar_dotnet_sdk;
+using Stellmart.Api.Data.Enums;
+using Stellmart.Api.Data.Horizon;
+using Stellmart.Api.Services.Interfaces;
 
-namespace Stellmart.Services
+namespace Stellmart.Api.Services
 {
     public class TokenService : ITokenService
     {
@@ -14,16 +15,11 @@ namespace Stellmart.Services
         {
             _horizonService = horizonService;
         }
+
         public async Task<HorizonTokenModel> CreateAsset(string name, string limit)
         {
-            var asset = new HorizonAssetModel
-            {
-                AssetCode = name, AssetType = "credit_alphanum4",
-            };
-            var Token = new HorizonTokenModel
-            {
-                Asset = asset, MaxCoinLimit = limit,
-            };
+            var asset = new HorizonAssetModel {AssetCode = name, AssetType = "credit_alphanum4"};
+            var token = new HorizonTokenModel {HorizonAssetModel = asset, MaxCoinLimit = limit};
 
             var issuer = _horizonService.CreateAccount();
             var distributor = _horizonService.CreateAccount();
@@ -34,64 +30,75 @@ namespace Stellmart.Services
 
             await _horizonService.FundTestAccountAsync(distributor.PublicKey);
 
-            Token.IssuerAccount = issuer;
+            token.IssuerAccount = issuer;
 
-            Token.Distributor = distributor;
+            token.Distributor = distributor;
 
-            Token.Asset.AssetIssuerPublicKey = issuer.PublicKey;
+            token.HorizonAssetModel.AssetIssuerPublicKey = issuer.PublicKey;
 
             //Create trustline from Distributor to Issuer
             var operations = new List<Operation>();
             var trustOperation = _horizonService.ChangeTrustOperation(distributor.PublicKey, asset, limit);
             operations.Add(trustOperation);
 
-            var xdrTransaction = await _horizonService.CreateTransaction(distributor.PublicKey, operations, null, 0);
+            var xdrTransaction = await _horizonService.CreateTransaction(distributor.PublicKey, operations, time: null, sequence: 0);
 
-            await _horizonService.SubmitTransaction(_horizonService.SignTransaction(distributor, null, xdrTransaction));
+            await _horizonService.SubmitTransaction(_horizonService.SignTransaction(distributor.SecretKey, xdrTransaction));
 
-            Token.State = CustomTokenState.CreateCustomToken;
-            return Token;
+            token.State = CustomTokenState.CREATE_CUSTOM_TOKEN;
+
+            return token;
         }
 
-        public async Task<bool> MoveAssetToDistributor(HorizonTokenModel Token)
+        public async Task<bool> MoveAssetToDistributor(HorizonTokenModel token)
         {
-            if (Token.State != CustomTokenState.CreateCustomToken) return false;
+            if (token.State != CustomTokenState.CREATE_CUSTOM_TOKEN)
+            {
+                return false;
+            }
 
-            Token.Amount = Token.MaxCoinLimit;
-            var asset = new HorizonAssetModel {
-                Amount = Token.MaxCoinLimit,
-            };
+            token.MaxCoinLimit = token.MaxCoinLimit;
 
-            var result = await _horizonService.PaymentTransaction(Token.IssuerAccount, Token.Distributor.PublicKey, asset);
+            var horizonTokenModel = new HorizonTokenModel
+                                    {
+                                        HorizonAssetModel = new HorizonAssetModel
+                                                            {
+                                                                Amount = token.MaxCoinLimit,
+                                                                AssetIssuerPublicKey = token.Distributor.PublicKey,
+                                                                AccountPublicKey = token.Distributor.PublicKey
+                                                            }
+                                    };
+
+            var result = await _horizonService.PaymentTransaction(horizonTokenModel);
+
             if (result)
-                Token.State = CustomTokenState.MoveCustomToken;
+            {
+                token.State = CustomTokenState.MOVE_CUSTOM_TOKEN;
+            }
 
             return result;
         }
 
-        public async Task<bool> LockIssuer(HorizonTokenModel Token)
+        public async Task<bool> LockIssuer(HorizonTokenModel token)
         {
-            if (Token.State == CustomTokenState.MoveCustomToken)
+            if (token.State == CustomTokenState.MOVE_CUSTOM_TOKEN)
             {
                 //Set threshold and weights of Issuer account as 0; so that no more coin can be minted.
                 //All the coins should have been transferred to Distribution account by now.
                 //Its the responsibility of the Distribution account to transfer the tokens to others.
-                var weight = new HorizonAccountWeightModel
-                {
-                    MasterWeight = 0
-                };
+                var weight = new HorizonAccountWeightModel {MasterWeight = 0};
 
                 //Let the SignerSecret be null
                 var operations = new List<Operation>();
 
-                var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(Token.IssuerAccount.PublicKey, weight);
+                var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(token.IssuerAccount.PublicKey, weight);
                 operations.Add(setOptionsWeightOperation);
 
-                var xdrTransaction = await _horizonService.CreateTransaction(Token.IssuerAccount.PublicKey, operations, null, 0);
+                var xdrTransaction = await _horizonService.CreateTransaction(token.IssuerAccount.PublicKey, operations, time: null, sequence: 0);
 
-                await _horizonService.SubmitTransaction(_horizonService.SignTransaction(Token.IssuerAccount, null, xdrTransaction));
+                await _horizonService.SubmitTransaction(_horizonService.SignTransaction(token.IssuerAccount.SecretKey, xdrTransaction));
 
-                Token.State = CustomTokenState.LockCustomToken;
+                token.State = CustomTokenState.LOCK_CUSTOM_TOKEN;
 
                 return true;
             }
