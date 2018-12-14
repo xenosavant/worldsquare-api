@@ -222,10 +222,10 @@ namespace Stellmart.Api.Services
             return transaction.ToUnsignedEnvelopeXdrBase64();
         }
 
-        public string SignTransaction(HorizonKeyPairModel account, string secretKey, string xdrTransaction)
+        public string SignTransaction(string secretKey, string xdrTransaction)
         {
             var transaction = ConvertXdrToTransaction(xdrTransaction);
-            var usableSecretSeed = KeyPair.FromSecretSeed(secretKey ?? account.SecretKey);
+            var usableSecretSeed = KeyPair.FromSecretSeed(secretKey);
 
             transaction.Sign(usableSecretSeed);
 
@@ -261,16 +261,17 @@ namespace Stellmart.Api.Services
                                                .Signature.InnerValue);
         }
 
-        public async Task<bool> PaymentTransaction(HorizonKeyPairModel source, string destinationPublicKey, HorizonAssetModel asset)
+        public async Task<bool> PaymentTransaction(HorizonTokenModel model)
         {
             var operations = new List<Operation>();
 
-            var paymentOperation = CreatePaymentOperation(destinationPublicKey, source.PublicKey, asset);
+            var paymentOperation = await CreatePaymentOperationAsync(model.HorizonAssetModel);
             operations.Add(paymentOperation);
 
-            var xdrTransaction = await CreateTransaction(source.PublicKey, operations, time: null, sequence: 0);
+            var xdrTransaction = await CreateTransaction(model.HorizonAssetModel.AccountPublicKey, operations, time: null, sequence: 0);
 
-            var response = await SubmitTransaction(SignTransaction(source, secretKey: null, xdrTransaction: xdrTransaction));
+            var signedTransaction = SignTransaction(model.Distributor.SecretKey, xdrTransaction);
+            var response = await SubmitTransaction(signedTransaction);
 
             return response.IsSuccess();
         }

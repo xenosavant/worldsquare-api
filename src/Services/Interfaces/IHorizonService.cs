@@ -107,11 +107,10 @@ namespace Stellmart.Api.Services.Interfaces
         /// <summary>
         /// Sign transaction
         /// </summary>
-        /// <param name="account"></param>
         /// <param name="secretKey"></param>
         /// <param name="xdrTransaction"></param>
         /// <returns></returns>
-        string SignTransaction(HorizonKeyPairModel account, string secretKey, string xdrTransaction);
+        string SignTransaction(string secretKey, string xdrTransaction);
 
         /// <summary>
         /// Submit transaction
@@ -123,11 +122,9 @@ namespace Stellmart.Api.Services.Interfaces
         /// <summary>
         /// Payment transaction
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="destinationPublicKey"></param>
         /// <param name="asset"></param>
         /// <returns></returns>
-        Task<bool> PaymentTransaction(HorizonKeyPairModel source, string destinationPublicKey, HorizonAssetModel asset);
+        Task<bool> PaymentTransaction(HorizonTokenModel model);
 
         /// <summary>
         /// Get public key from private key
