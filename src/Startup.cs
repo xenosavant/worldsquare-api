@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
@@ -10,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Stellmart.Api.Business.Policies;
 using Stellmart.Api.Config;
 using Stellmart.Api.Context;
 using Stellmart.Api.Data.Settings;
@@ -54,7 +56,12 @@ namespace Stellmart
             });
 
             services.AddMvcCore()
-                .AddAuthorization()
+                .AddAuthorization(options => {
+                    options.AddPolicy("TwoFactorRequired", policy =>
+                        policy.Requirements.Add(new TwoFactorRequirement(true)));
+                    options.AddPolicy("TwoFactorOptional", policy =>
+                        policy.Requirements.Add(new TwoFactorRequirement(false)));
+                })
                 .AddJsonFormatters();
 
             services.AddMvc();
@@ -62,6 +69,8 @@ namespace Stellmart
             services
             .AddAuthentication(GetAuthenticationOptions)
             .AddJwtBearer(GetJwtBearerOptions);
+
+            services.AddSingleton<IAuthorizationHandler, TwoFactorHandler>();
 
             services.Configure<HorizonSettings>(Configuration.GetSection("HorizonSettings"));
             services.Configure<YotiSettings>(Configuration.GetSection("YotiSettings"));
