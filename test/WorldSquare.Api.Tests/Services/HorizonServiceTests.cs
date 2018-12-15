@@ -114,7 +114,7 @@ namespace WorldSquare.Api.Tests.Services
             _horizonServerManagerMock.GetAccountAsync(accountResponse.KeyPair.AccountId)
                 .Returns(accountResponse);
 
-            var result = await _subjectUnderTest.GetAccountBalance(assetModel);
+            var result = await _subjectUnderTest.GetAccountBalanceAsync(assetModel);
 
             Assert.Equal(expectedBalance, result);
         }
@@ -153,7 +153,7 @@ namespace WorldSquare.Api.Tests.Services
             _horizonServerManagerMock.GetAccountAsync(Arg.Any<string>())
                 .Returns(accountResponse);
 
-            var result = await _subjectUnderTest.GetAccountBalance(assetModel);
+            var result = await _subjectUnderTest.GetAccountBalanceAsync(assetModel);
 
             Assert.Equal(expectedBalance, result);
         }
@@ -168,7 +168,7 @@ namespace WorldSquare.Api.Tests.Services
             _horizonServerManagerMock.GetAccountAsync(accountResponse.KeyPair.AccountId)
                 .Returns(accountResponse);
 
-            var result = await _subjectUnderTest.GetSequenceNumber(keyPair.AccountId);
+            var result = await _subjectUnderTest.GetSequenceNumberAsync(keyPair.AccountId);
 
             Assert.Equal(accountResponse.SequenceNumber, result);
         }
