@@ -57,6 +57,8 @@ namespace Stellmart.Api.Context
 
         public int TwoFactorFailedCount { get; set; }
 
+        public DateTime TwoFactorAuthTime  { get; set; }
+
         [DefaultValue(5)]
         public int MaxTwoFactorFailedAccessAttempts { get; set; }
 
