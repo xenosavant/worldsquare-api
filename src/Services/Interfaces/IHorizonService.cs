@@ -43,7 +43,7 @@ namespace Stellmart.Api.Services.Interfaces
         /// <param name="destinationAccountPublicKey"></param>
         /// <param name="horizonAsset"></param>
         /// <returns></returns>
-        Task<Operation> CreatePaymentOperationAsync(HorizonAssetModel model);
+        Task<PaymentOperation> CreatePaymentOperationAsync(HorizonAssetModel model);
 
         /// <summary>
         /// Operation to set weights

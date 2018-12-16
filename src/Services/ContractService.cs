@@ -119,7 +119,7 @@ namespace Stellmart.Api.Services
 
             var asset = new HorizonAssetModel
                         {
-                            AssetType = "native", Amount = amount, AccountPublicKey = contract.SourceAccountId, DestinationAccountPublicKey = contract.EscrowAccountId
+                            AssetType = "native", Amount = amount, SourceAccountPublicKey = contract.SourceAccountId, DestinationAccountPublicKey = contract.EscrowAccountId
                         };
             var paymentOperation = await _horizonService.CreatePaymentOperationAsync(asset);
             operations.Add(paymentOperation);
@@ -139,6 +139,7 @@ namespace Stellmart.Api.Services
         public async Task<Contract> CreateContractAsync(Contract contract)
         {
             // redundant function ?
+            await Task.CompletedTask;
             return contract;
         }
 

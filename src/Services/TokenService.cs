@@ -65,7 +65,7 @@ namespace Stellmart.Api.Services
                                                             {
                                                                 Amount = token.MaxCoinLimit,
                                                                 AssetIssuerPublicKey = token.Distributor.PublicKey,
-                                                                AccountPublicKey = token.Distributor.PublicKey
+                                                                SourceAccountPublicKey = token.Distributor.PublicKey
                                                             }
                                     };
 

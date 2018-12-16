@@ -67,7 +67,7 @@ namespace Stellmart.Api.Services
 
         public async Task<string> GetAccountBalanceAsync(HorizonAssetModel model)
         {
-            var accountResponse = await _horizonServerManager.GetAccountAsync(model.AccountPublicKey);
+            var accountResponse = await _horizonServerManager.GetAccountAsync(model.SourceAccountPublicKey);
 
             if (model.AssetCode != null)
             {
@@ -79,16 +79,20 @@ namespace Stellmart.Api.Services
                 ?.BalanceString;
         }
 
-        public async Task<Operation> CreatePaymentOperationAsync(HorizonAssetModel model)
+        public async Task<PaymentOperation> CreatePaymentOperationAsync(HorizonAssetModel model)
         {
-            var sourceAccount = await _horizonServerManager.GetAccountAsync(model.AccountPublicKey);
+            var sourceAccount = await _horizonServerManager.GetAccountAsync(model.SourceAccountPublicKey);
             var destinationAccount = await _horizonServerManager.GetAccountAsync(model.DestinationAccountPublicKey);
 
-            Asset asset = null;
+            Asset asset;
 
-            if (model.AssetType != "native")
+            if (model.AssetCode != null)
             {
                 asset = new AssetTypeCreditAlphaNum4(model.AssetCode, KeyPair.FromAccountId(model.AssetIssuerPublicKey));
+            }
+            else
+            {
+                asset = new AssetTypeNative();
             }
 
             return new PaymentOperation.Builder(destinationAccount.KeyPair, asset, model.Amount).SetSourceAccount(sourceAccount.KeyPair)
@@ -268,7 +272,7 @@ namespace Stellmart.Api.Services
             var paymentOperation = await CreatePaymentOperationAsync(model.HorizonAssetModel);
             operations.Add(paymentOperation);
 
-            var xdrTransaction = await CreateTransaction(model.HorizonAssetModel.AccountPublicKey, operations, time: null, sequence: 0);
+            var xdrTransaction = await CreateTransaction(model.HorizonAssetModel.SourceAccountPublicKey, operations, time: null, sequence: 0);
 
             var signedTransaction = SignTransaction(model.Distributor.SecretKey, xdrTransaction);
             var response = await SubmitTransaction(signedTransaction);
