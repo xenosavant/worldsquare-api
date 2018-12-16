@@ -10,6 +10,7 @@ using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;
 using Stellmart.Api.Services;
 using Stellmart.Api.Services.Interfaces;
+using WorldSquare.Api.Tests.Stubs;
 using Xunit;
 
 namespace WorldSquare.Api.Tests.Services
@@ -20,7 +21,8 @@ namespace WorldSquare.Api.Tests.Services
         {
             _horizonSettingsMock = Options.Create(new HorizonSettings {Server = "testnet"});
 
-            _byteSecretSeed = Convert.FromBase64String(SECRET_SEED);
+            _byteSecretSeedOne = Convert.FromBase64String(SECRET_SEED_TEST_ACCOUNT_ONE);
+            _byteSecretSeedTwo = Convert.FromBase64String(SECRET_SEED_TEST_ACCOUNT_TWO);
 
             _mapperMock = Substitute.For<IMapper>();
             _horizonServerManagerMock = Substitute.For<IHorizonServerManager>();
@@ -34,13 +36,15 @@ namespace WorldSquare.Api.Tests.Services
         private readonly IHorizonServerManager _horizonServerManagerMock;
 
         // generated secret seed with RNGCryptoServiceProvider and converted to base64string
-        private const string SECRET_SEED = "G3fQ8T/duAPYASsMnV7vwOdcXN2to7eA/FHkT9OEkvA=";
-        private readonly byte[] _byteSecretSeed;
+        private const string SECRET_SEED_TEST_ACCOUNT_ONE = "G3fQ8T/duAPYASsMnV7vwOdcXN2to7eA/FHkT9OEkvA=";
+        private const string SECRET_SEED_TEST_ACCOUNT_TWO = "H3fQ8T/duAPYASsMnV7vwOdcXN2to7eA/FHkT9OEkvA=";
+        private readonly byte[] _byteSecretSeedOne;
+        private readonly byte[] _byteSecretSeedTwo;
 
         [Fact]
         public void CreateAccount_GetKeyPair()
         {
-            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeedOne);
 
             var horizonKeyPairModel = new HorizonKeyPairModel {PublicKey = keyPair.AccountId, SecretKey = keyPair.SecretSeed};
 
@@ -55,9 +59,117 @@ namespace WorldSquare.Api.Tests.Services
         }
 
         [Fact]
+        public async Task CreatePaymentOperation_MissingAmountParameters_ThrowException()
+        {
+            const string expectedExceptionMessage = "amount cannot be null\r\nParameter name: amount";
+            const string assetIssuerPublicKey = "GAEHO5MAKDWY3AHG6HCFIMTQT4XXTPFX6MWESLROASNHRPSW4NUR2F7Y";
+            const string sourcePublicKey = "GAATMX35YCMFUY5F3U6S33QBMZYTDCYG4QFESVTJZKEHXZGJLSCUUJQE";
+            const string destinationPublicKey = "GDOEYXKEDJDTGACNR7PMN32LOW4XEHHPU27DC6XR4OSP7LW6PIPZVHGK";
+
+            var keyPairOne = KeyPair.FromSecretSeed(_byteSecretSeedOne);
+            var keyPairTwo = KeyPair.FromSecretSeed(_byteSecretSeedTwo);
+
+            var assetModel = new HorizonAssetModel
+                             {
+                                 SourceAccountPublicKey = sourcePublicKey, DestinationAccountPublicKey = destinationPublicKey, AssetIssuerPublicKey = assetIssuerPublicKey
+                             };
+
+            var sourceAccountResponse = AccountStubs.GetAccount(keyPairOne, assetIssuerPublicKey);
+            var destinationAccountResponse = AccountStubs.GetAccount(keyPairTwo, assetIssuerPublicKey);
+
+            _horizonServerManagerMock.GetAccountAsync(sourcePublicKey)
+                .Returns(sourceAccountResponse);
+
+            _horizonServerManagerMock.GetAccountAsync(destinationPublicKey)
+                .Returns(destinationAccountResponse);
+
+            var exception = await Assert.ThrowsAsync<ArgumentNullException>(testCode: async () => await _subjectUnderTest.CreatePaymentOperationAsync(assetModel));
+            Assert.Equal(expectedExceptionMessage, exception.Message);
+        }
+
+        [Fact]
+        public async Task CreatePaymentOperation_NativePayment_ReturnPaymentOperationWithNativeAsset()
+        {
+            const string expectedAmount = "1234";
+            const string expectedAssetType = "native";
+            const string assetIssuerPublicKey = "GAEHO5MAKDWY3AHG6HCFIMTQT4XXTPFX6MWESLROASNHRPSW4NUR2F7Y";
+            const string sourcePublicKey = "GAATMX35YCMFUY5F3U6S33QBMZYTDCYG4QFESVTJZKEHXZGJLSCUUJQE";
+            const string destinationPublicKey = "GDOEYXKEDJDTGACNR7PMN32LOW4XEHHPU27DC6XR4OSP7LW6PIPZVHGK";
+
+            var keyPairOne = KeyPair.FromSecretSeed(_byteSecretSeedOne);
+            var keyPairTwo = KeyPair.FromSecretSeed(_byteSecretSeedTwo);
+
+            var assetModel = new HorizonAssetModel
+                             {
+                                 SourceAccountPublicKey = sourcePublicKey,
+                                 DestinationAccountPublicKey = destinationPublicKey,
+                                 AssetIssuerPublicKey = assetIssuerPublicKey,
+                                 Amount = "1234"
+                             };
+
+            var sourceAccountResponse = AccountStubs.GetAccount(keyPairOne, assetIssuerPublicKey);
+            var destinationAccountResponse = AccountStubs.GetAccount(keyPairTwo, assetIssuerPublicKey);
+
+            _horizonServerManagerMock.GetAccountAsync(sourcePublicKey)
+                .Returns(sourceAccountResponse);
+
+            _horizonServerManagerMock.GetAccountAsync(destinationPublicKey)
+                .Returns(destinationAccountResponse);
+
+            var result = await _subjectUnderTest.CreatePaymentOperationAsync(assetModel);
+            Assert.NotNull(result);
+            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(sourcePublicKey, result.SourceAccount.AccountId);
+            Assert.Equal(destinationPublicKey, result.Destination.AccountId);
+
+            Assert.IsType<AssetTypeNative>(result.Asset);
+            Assert.Equal(expectedAssetType, result.Asset.GetType());
+        }
+
+        [Fact]
+        public async Task CreatePaymentOperation_PassAssetModelWithWstAsset_ReturnPaymentOperationWithWstAsset()
+        {
+            const string expectedAmount = "1234";
+            const string expectedAssetType = "credit_alphanum4";
+            const string assetIssuerPublicKey = "GAEHO5MAKDWY3AHG6HCFIMTQT4XXTPFX6MWESLROASNHRPSW4NUR2F7Y";
+            const string sourcePublicKey = "GAATMX35YCMFUY5F3U6S33QBMZYTDCYG4QFESVTJZKEHXZGJLSCUUJQE";
+            const string destinationPublicKey = "GDOEYXKEDJDTGACNR7PMN32LOW4XEHHPU27DC6XR4OSP7LW6PIPZVHGK";
+
+            var keyPairOne = KeyPair.FromSecretSeed(_byteSecretSeedOne);
+            var keyPairTwo = KeyPair.FromSecretSeed(_byteSecretSeedTwo);
+
+            var assetModel = new HorizonAssetModel
+                             {
+                                 AssetCode = "WST",
+                                 SourceAccountPublicKey = sourcePublicKey,
+                                 DestinationAccountPublicKey = destinationPublicKey,
+                                 AssetIssuerPublicKey = assetIssuerPublicKey,
+                                 Amount = "1234"
+                             };
+
+            var sourceAccountResponse = AccountStubs.GetAccount(keyPairOne, assetIssuerPublicKey);
+            var destinationAccountResponse = AccountStubs.GetAccount(keyPairTwo, assetIssuerPublicKey);
+
+            _horizonServerManagerMock.GetAccountAsync(sourcePublicKey)
+                .Returns(sourceAccountResponse);
+
+            _horizonServerManagerMock.GetAccountAsync(destinationPublicKey)
+                .Returns(destinationAccountResponse);
+
+            var result = await _subjectUnderTest.CreatePaymentOperationAsync(assetModel);
+            Assert.NotNull(result);
+            Assert.Equal(expectedAmount, result.Amount);
+            Assert.Equal(sourcePublicKey, result.SourceAccount.AccountId);
+            Assert.Equal(destinationPublicKey, result.Destination.AccountId);
+
+            Assert.IsType<AssetTypeCreditAlphaNum4>(result.Asset);
+            Assert.Equal(expectedAssetType, result.Asset.GetType());
+        }
+
+        [Fact]
         public async Task FundTestAccountAsync_ProvidePublicKey_GetFundedAccount()
         {
-            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeedOne);
 
             var accountResponse = new AccountResponse(keyPair)
                                   {
@@ -92,9 +204,9 @@ namespace WorldSquare.Api.Tests.Services
         {
             const string expectedBalance = "10000";
 
-            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeedOne);
 
-            var assetModel = new HorizonAssetModel {AssetType = null, AccountPublicKey = keyPair.AccountId};
+            var assetModel = new HorizonAssetModel {AssetType = null, SourceAccountPublicKey = keyPair.AccountId};
 
             var accountResponse = new AccountResponse(keyPair)
                                   {
@@ -124,7 +236,7 @@ namespace WorldSquare.Api.Tests.Services
         {
             const string expectedBalance = "1234";
             const string assetIssuerPublicKey = "GAEHO5MAKDWY3AHG6HCFIMTQT4XXTPFX6MWESLROASNHRPSW4NUR2F7Y";
-            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeedOne);
 
             var assetModel = new HorizonAssetModel {AssetCode = "WST", AssetIssuerPublicKey = assetIssuerPublicKey};
 
@@ -161,7 +273,7 @@ namespace WorldSquare.Api.Tests.Services
         [Fact]
         public async Task GetSequenceNumber_ProvidePublicKey_GetsSequenceNumber()
         {
-            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeed);
+            var keyPair = KeyPair.FromSecretSeed(_byteSecretSeedOne);
 
             var accountResponse = new AccountResponse(keyPair) {SequenceNumber = 42};
 
