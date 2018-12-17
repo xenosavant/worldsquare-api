@@ -59,17 +59,16 @@ namespace Stellmart.Api.Services
 
             token.MaxCoinLimit = token.MaxCoinLimit;
 
-            var horizonTokenModel = new HorizonTokenModel
-                                    {
-                                        HorizonAssetModel = new HorizonAssetModel
-                                                            {
-                                                                Amount = token.MaxCoinLimit,
-                                                                AssetIssuerPublicKey = token.Distributor.PublicKey,
-                                                                SourceAccountPublicKey = token.Distributor.PublicKey
-                                                            }
-                                    };
+            var asset = new HorizonAssetModel
+                        {
+                            Amount = token.MaxCoinLimit,
+                            AssetCode = token.HorizonAssetModel.AssetCode,
+                            AssetIssuerPublicKey = token.IssuerAccount.PublicKey,
+                            SourceAccountPublicKey = token.IssuerAccount.PublicKey,
+                            DestinationAccountPublicKey = token.Distributor.PublicKey
+                        };
 
-            var result = await _horizonService.PaymentTransaction(horizonTokenModel);
+            var result = await _horizonService.PaymentTransaction(asset, token.IssuerAccount.SecretKey);
 
             if (result)
             {

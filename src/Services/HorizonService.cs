@@ -265,16 +265,16 @@ namespace Stellmart.Api.Services
                                                .Signature.InnerValue);
         }
 
-        public async Task<bool> PaymentTransaction(HorizonTokenModel model)
+        public async Task<bool> PaymentTransaction(HorizonAssetModel asset, string secretKey)
         {
             var operations = new List<Operation>();
 
-            var paymentOperation = await CreatePaymentOperationAsync(model.HorizonAssetModel);
+            var paymentOperation = await CreatePaymentOperationAsync(asset);
             operations.Add(paymentOperation);
 
-            var xdrTransaction = await CreateTransaction(model.HorizonAssetModel.SourceAccountPublicKey, operations, time: null, sequence: 0);
+            var xdrTransaction = await CreateTransaction(asset.SourceAccountPublicKey, operations, time: null, sequence: 0);
 
-            var signedTransaction = SignTransaction(model.Distributor.SecretKey, xdrTransaction);
+            var signedTransaction = SignTransaction(secretKey, xdrTransaction);
             var response = await SubmitTransaction(signedTransaction);
 
             return response.IsSuccess();

@@ -123,8 +123,9 @@ namespace Stellmart.Api.Services.Interfaces
         /// Payment transaction
         /// </summary>
         /// <param name="asset"></param>
+        /// <param name="secretKey"></param>
         /// <returns></returns>
-        Task<bool> PaymentTransaction(HorizonTokenModel model);
+        Task<bool> PaymentTransaction(HorizonAssetModel asset, string secretKey);
 
         /// <summary>
         /// Get public key from private key
