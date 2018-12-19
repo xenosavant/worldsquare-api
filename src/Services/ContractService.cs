@@ -97,7 +97,7 @@ namespace Stellmart.Api.Services
 
                     contract = await ConstructPhaseReceiptAsync(contract);
 
-                    contract = await ConstructphaseAsync(contract);
+                    contract = await ConstructPhaseDisputeAsync(contract);
 
                     contract = await ConstructPhaseResolutionAsync(contract);
 
@@ -415,7 +415,7 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructphaseAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseDisputeAsync(Contract contract)
         {
             var phase = new ContractPhase();
 
