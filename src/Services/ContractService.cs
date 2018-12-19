@@ -80,11 +80,16 @@ namespace Stellmart.Api.Services
             {
                 case (int) ContractTypes.OnlineSaleInternalShippingValidation:
 
-                    //if we are here, that means phase 0 is success
+                    //if we are here, that means the current phase is success
                     var phase = new ContractPhase {Completed = true, SequenceNumber = sequenceNumber, Contested = false};
                     contract.Phases.Add(phase);
 
-                    //create phase 2 regular and time over ride transactions and buyer signs it
+                    //FundContractAsync sequence number is same like before since no change to escrow account
+                    //Phase will be true when funding in complete in FundContractAsync
+                    phase = new ContractPhase {Completed = false, SequenceNumber = sequenceNumber, Contested = false};
+                    contract.Phases.Add(phase);
+
+                    //create Phase Ship regular and time over ride transactions and buyer signs it
                     contract = await ConstructPhaseShipAsync(contract);
 
                     var secret = contractParameterModel.SourceAccountSecret;
@@ -92,7 +97,7 @@ namespace Stellmart.Api.Services
                     // ToDo: add pre transaction to secret
                     SignContract(secret);
 
-                    //buyer signing not required, but we will create all pre txn in phase 0 itself
+                    //buyer signing not required, but we will create all pre txn here itself
                     contract = await ConstructPhaseDeliveryAsync(contract);
 
                     contract = await ConstructPhaseReceiptAsync(contract);
@@ -133,6 +138,7 @@ namespace Stellmart.Api.Services
                 return null;
             }
 
+            // ToDo: set phase to be true here
             return contract;
         }
 
@@ -274,7 +280,7 @@ namespace Stellmart.Api.Services
             var phase = new ContractPhase();
             var operations = new List<Operation>();
 
-            //for phase 1, its base sequence number +1
+            //for phase x, its base sequence number +x
             phase.SequenceNumber = contract.BaseSequenceNumber + 1;
 
             //success txn, add seller as single txn signer
