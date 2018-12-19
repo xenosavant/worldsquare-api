@@ -81,11 +81,11 @@ namespace Stellmart.Api.Services
                 case (int) ContractTypes.OnlineSaleInternalShippingValidation:
 
                     //if we are here, that means phase 0 is success
-                    var phaseZero = new ContractPhase {Completed = true, SequenceNumber = sequenceNumber, Contested = false};
-                    contract.Phases.Add(phaseZero);
+                    var phase = new ContractPhase {Completed = true, SequenceNumber = sequenceNumber, Contested = false};
+                    contract.Phases.Add(phase);
 
                     //create phase 2 regular and time over ride transactions and buyer signs it
-                    contract = await ConstructPhaseTwoAsync(contract);
+                    contract = await ConstructPhaseShipAsync(contract);
 
                     var secret = contractParameterModel.SourceAccountSecret;
 
@@ -93,13 +93,13 @@ namespace Stellmart.Api.Services
                     SignContract(secret);
 
                     //buyer signing not required, but we will create all pre txn in phase 0 itself
-                    contract = await ConstructPhaseThreeAsync(contract);
+                    contract = await ConstructPhaseDeliveryAsync(contract);
 
-                    contract = await ConstructPhaseFourAsync(contract);
+                    contract = await ConstructPhaseReceiptAsync(contract);
 
-                    contract = await ConstructPhaseFourDisputeAsync(contract);
+                    contract = await ConstructphaseAsync(contract);
 
-                    contract = await ConstructPhaseFiveAsync(contract);
+                    contract = await ConstructPhaseResolutionAsync(contract);
 
                     break;
 
@@ -269,13 +269,13 @@ namespace Stellmart.Api.Services
             return preTransaction;
         }
 
-        private async Task<Contract> ConstructPhaseTwoAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseShipAsync(Contract contract)
         {
-            var phaseTwo = new ContractPhase();
+            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
             //for phase 1, its base sequence number +1
-            phaseTwo.SequenceNumber = contract.BaseSequenceNumber + 1;
+            phase.SequenceNumber = contract.BaseSequenceNumber + 1;
 
             //success txn, add seller as single txn signer
             //Add seller as escrow signer along with buyer and WS
@@ -293,7 +293,7 @@ namespace Stellmart.Api.Services
             var setOptionsAddSeller = _horizonService.SetOptionsSingleSignerOperation(contract.DestAccountId);
             operations.Add(setOptionsAddSeller);
 
-            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseTwo.SequenceNumber - 1);
+            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransaction = new PreTransaction {XdrString = xdrTransaction};
 
@@ -301,14 +301,14 @@ namespace Stellmart.Api.Services
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
 
-            phaseTwo.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
             //failure txn, merge escrow to buyer
             var mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.SourceAccountId);
 
             operations.Add(mergeOperation);
 
-            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseTwo.SequenceNumber - 1);
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransactionRide = new PreTransaction {XdrString = xdrTransaction};
 
@@ -316,26 +316,26 @@ namespace Stellmart.Api.Services
 
             signatureList = CreateSignatureList(preTransactionRide, publicKeysOverRide);
 
-            phaseTwo.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
-            contract.Phases.Add(phaseTwo);
+            contract.Phases.Add(phase);
 
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseThreeAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseDeliveryAsync(Contract contract)
         {
-            var phaseThree = new ContractPhase();
+            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
-            phaseThree.SequenceNumber = contract.BaseSequenceNumber + 2;
+            phase.SequenceNumber = contract.BaseSequenceNumber + 2;
 
             //success txn, bump to next
-            var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseThree.SequenceNumber + 1);
+            var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 1);
 
             operations.Add(bumpOperation);
 
-            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseThree.SequenceNumber - 1);
+            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransaction = new PreTransaction {XdrString = xdrTransaction};
 
@@ -343,39 +343,39 @@ namespace Stellmart.Api.Services
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
 
-            phaseThree.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
             //failure txn, bump
-            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseThree.SequenceNumber + 2);
+            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 2);
 
             operations.Add(bumpOperation);
 
-            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseThree.SequenceNumber - 1);
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransactionRide = new PreTransaction {XdrString = xdrTransaction};
 
             signatureList = CreateSignatureList(preTransactionRide, publicKeys);
 
-            phaseThree.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
-            contract.Phases.Add(phaseThree);
+            contract.Phases.Add(phase);
 
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseFourAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseReceiptAsync(Contract contract)
         {
-            var phaseFour = new ContractPhase();
+            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
-            phaseFour.SequenceNumber = contract.BaseSequenceNumber + 3;
+            phase.SequenceNumber = contract.BaseSequenceNumber + 3;
 
             //dispute txn, bump to next
-            var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseFour.SequenceNumber + 1);
+            var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 1);
 
             operations.Add(bumpOperation);
 
-            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseFour.SequenceNumber - 1);
+            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransaction = new PreTransaction {XdrString = xdrTransaction};
 
@@ -383,45 +383,45 @@ namespace Stellmart.Api.Services
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
 
-            phaseFour.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
             //success txn, merge txn
             var mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
 
             operations.Add(mergeOperation);
 
-            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseFour.SequenceNumber - 1);
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransactionMerge = new PreTransaction {XdrString = xdrTransaction};
 
             signatureList = CreateSignatureList(preTransactionMerge, publicKeys);
 
-            phaseFour.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
             //failure txn, bump
-            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phaseFour.SequenceNumber + 1);
+            bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 1);
             operations.Add(bumpOperation);
 
-            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseFour.SequenceNumber - 1);
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransactionRide = new PreTransaction {XdrString = xdrTransaction};
 
             signatureList = CreateSignatureList(preTransactionRide, publicKeys);
 
-            phaseFour.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
-            contract.Phases.Add(phaseFour);
+            contract.Phases.Add(phase);
 
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseFourDisputeAsync(Contract contract)
+        private async Task<Contract> ConstructphaseAsync(Contract contract)
         {
-            var phaseFourDispute = new ContractPhase();
+            var phase = new ContractPhase();
 
             var operations = new List<Operation>();
 
-            phaseFourDispute.SequenceNumber = contract.BaseSequenceNumber + 4;
+            phase.SequenceNumber = contract.BaseSequenceNumber + 4;
 
             var weight = new HorizonAccountWeightModel
                          {
@@ -438,7 +438,7 @@ namespace Stellmart.Api.Services
             var setOptionsWeightOperation = _horizonService.SetOptionsWeightOperation(contract.EscrowAccountId, weight);
             operations.Add(setOptionsWeightOperation);
 
-            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseFourDispute.SequenceNumber - 1);
+            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransaction = new PreTransaction {XdrString = xdrTransaction};
 
@@ -446,26 +446,26 @@ namespace Stellmart.Api.Services
 
             var signatureList = CreateSignatureList(preTransaction, publicKeys);
 
-            phaseFourDispute.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
-            contract.Phases.Add(phaseFourDispute);
+            contract.Phases.Add(phase);
 
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseFiveAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseResolutionAsync(Contract contract)
         {
-            var phaseFive = new ContractPhase();
+            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
-            phaseFive.SequenceNumber = contract.BaseSequenceNumber + 5;
+            phase.SequenceNumber = contract.BaseSequenceNumber + 5;
 
             //release txn, merge txn
             var mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
 
             operations.Add(mergeOperation);
 
-            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseFive.SequenceNumber - 1);
+            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransactionMerge = new PreTransaction {XdrString = xdrTransaction};
 
@@ -473,22 +473,22 @@ namespace Stellmart.Api.Services
 
             var signatureList = CreateSignatureList(preTransactionMerge, publicKeys);
 
-            phaseFive.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
             //refund txn, merge txn
             mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.SourceAccountId);
 
             operations.Add(mergeOperation);
 
-            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseFive.SequenceNumber - 1);
+            xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phase.SequenceNumber - 1);
 
             var preTransactionMergeRefund = new PreTransaction {XdrString = xdrTransaction};
 
             signatureList = CreateSignatureList(preTransactionMergeRefund, publicKeys);
 
-            phaseFive.Transactions.Add(signatureList);
+            phase.Transactions.Add(signatureList);
 
-            contract.Phases.Add(phaseFive);
+            contract.Phases.Add(phase);
 
             return contract;
         }
