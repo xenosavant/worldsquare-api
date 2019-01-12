@@ -19,6 +19,10 @@ namespace Bounce.Api.Data.Search.Indexes
             ItemConditionId = listing.ItemMetaData.ItemConditionId;
             KeyWords = JsonConvert.DeserializeObject<string[]>(listing.ItemMetaData.KeyWords);
             Categories = listing.ItemMetaData.Categories.Select(c => c.Description).ToArray();
+            MinUsdPrice = listing.GetMinimumPrice("USD");
+            MaxUsdPrice = listing.GetMaximumPrice("USD");
+            MinXlmPrice = listing.GetMinimumPrice("XLM");
+            MaxXlmPrice = listing.GetMaximumPrice("XLM");
         }
 
         [System.ComponentModel.DataAnnotations.Key]
@@ -41,10 +45,16 @@ namespace Bounce.Api.Data.Search.Indexes
         public string [] Categories { get; set; }
 
         [IsFilterable]
-        public double? MinUsdPrice { get; set; }
+        public int? MinUsdPrice { get; set; }
 
         [IsFilterable]
-        public double? MaxUsdPrice { get; set; }
+        public int? MaxUsdPrice { get; set; }
+
+        [IsFilterable]
+        public int? MinXlmPrice { get; set; }
+
+        [IsFilterable]
+        public int? MaxXlmPrice { get; set; }
 
     }
 }

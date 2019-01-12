@@ -12,15 +12,16 @@ namespace Stellmart.Api.Business.Managers
     {
 
         private readonly IRepository _repository;
+        private readonly string _navParams = "OrderItems";
 
         public OrderDataManager(IRepository repository)
         {
             _repository = repository;
         }
 
-        public Task<Order> GetOrder(int id)
+        public Task<Order> GetOrder(int id, string navParams = null)
         {
-            return _repository.GetByIdAsync<Order>(id);
+            return _repository.GetOneAsync<Order>(o => o.Id == id, navParams ?? _navParams);
         }
 
         public async Task<Order> UpdateOrder(Order order)

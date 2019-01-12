@@ -1,6 +1,7 @@
 ﻿using Microsoft.Azure.Search;
 using Microsoft.Azure.Search.Models;
 using Stellmart.Api.Context.Entities.Interfaces;
+using Stellmart.Api.Data.Search;
 using Stellmart.Api.Data.Search.Queries;
 using Stellmart.Api.Services.Interfaces;
 using System;
@@ -19,22 +20,38 @@ namespace Stellmart.Api.Services
             _serviceClient = serviceClient;
         }
 
-        public async Task<List<int>> SearchAsync<TEntity, TIndex>(string searchText, ISearchQuery queryFilter)
+        public async Task<AzureSearchResult> SearchAsync<TEntity, TIndex>(string searchText, ISearchQuery queryFilter, int skip, int take)
         {
             var indexClient = GetClient(typeof(TEntity).Name.ToLower());
+
             var searchParams = new SearchParameters()
             {
                 Filter = queryFilter.BuildAzureQueryFilter(),
-                Select = new[] { "id" }
+                Select = new[] { "id" },
+                QueryType = QueryType.Full,
+                SearchMode = SearchMode.Any,
+                Skip = skip,
+                Top = take,
+                IncludeTotalResultCount = true
             };
-            // TODO: Fuzzy search isn't working
-            var results = await indexClient.Documents.SearchAsync(searchText == null ? "*" : searchText + "~1", searchParams);
-            return results.Results.Select(r =>
+
+            var splitText = searchText.Split("+");
+            if (splitText.Count() > 1)
+            {
+                searchText = splitText.Aggregate((accumulator, value) => accumulator += value + "~ ");
+            }
+            var result = await indexClient.Documents.SearchAsync(searchText == null ? "*" : searchText, searchParams);
+            var ids =  result.Results.Select(r =>
             {
                 r.Document.TryGetValue("id", out object id);
-                Int32.TryParse((string)id, out int result);
-                return result;
+                Int32.TryParse((string)id, out int returnId);
+                return returnId;
             }).ToList();
+            return new AzureSearchResult()
+            {
+                Ids = ids,
+                Count = result.Results.Count
+            };
         }
 
 

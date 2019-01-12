@@ -33,13 +33,15 @@ namespace Stellmart.Context
         public DbSet<SystemSignature> SystemSignatures { get; set; }
         public DbSet<SecretSignature> SecretSignatures { get; set; }
 
+        public DbSet<Contract> Contracts { get; set; }
+
         public DbSet<SecretKey> SecretKeys { get; set; }
         public DbSet<BuyerSecretKey> BuyerSecretKeys { get; set; }
 
         // Entities
 
         public DbSet<Area> Areas { get; set; }
-        public DbSet<Contract> Contracts { get; set; }
+
         public DbSet<ContractPhase> ContractPhases { get; set; }
         public DbSet<Country> Countries { get; set; }
         public DbSet<CurrencyAmount> CurrencyAmounts { get; set; }
@@ -410,12 +412,6 @@ namespace Stellmart.Context
                 .HasForeignKey(l => l.UnitTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<InventoryItem>()
-                .HasOne(l => l.Price)
-                .WithOne(p => p.InventoryItem)
-                .HasForeignKey<InventoryItem>(l => l.UnitPriceId)
-                .OnDelete(DeleteBehavior.Restrict);
-
             modelBuilder.Entity<TradeItem>()
                 .HasOne(t => t.TradeInValue)
                 .WithOne(c => c.TradeItem)
@@ -535,10 +531,28 @@ namespace Stellmart.Context
                  .HasForeignKey(l => l.ServiceId)
                  .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<Listing>()
+                 .HasOne(l => l.Currency)
+                 .WithMany(u => u.Listings)
+                 .HasForeignKey(l => l.CurrencyId)
+                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Contract>()
+                .HasOne(c => c.Obligation)
+                .WithMany(u => u.Contracts)
+                .HasForeignKey(c => c.ObligationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<Contract>()
                 .HasOne(c => c.State)
                 .WithMany(u => u.Contracts)
                 .HasForeignKey(c => c.ContractStateId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Obligation>()
+                .HasOne(c => c.Interaction)
+                .WithMany(u => u.Obligations)
+                .HasForeignKey(c => c.InteracationId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<CurrencyAmount>()

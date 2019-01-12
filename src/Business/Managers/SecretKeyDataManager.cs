@@ -17,9 +17,9 @@ namespace Stellmart.Api.Business.Managers
             _repository = repository;
         }
 
-        public async Task<BuyerSecretKey> GetBuyerSecretKeyByOrderId(int orderId)
+        public async Task<BuyerSecretKey> GetSecretKeyByObligationId(int obligationId)
         {
-            return (await _repository.GetAsync<BuyerSecretKey>(k => k.OrderId == orderId)).FirstOrDefault();
+            return (await _repository.GetAsync<BuyerSecretKey>(k => k.ObligationId == obligationId)).FirstOrDefault();
         }
     }
 }

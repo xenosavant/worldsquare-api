@@ -27,7 +27,7 @@ namespace Stellmart.Api.Context.Entities
         public int ContractStateId { get; set; }
 
         [Required]
-        public int ContractTypeId { get; set; }
+        public int ObligationId { get; set; }
 
         public virtual ContractState State { get; set; }
 
@@ -36,6 +36,8 @@ namespace Stellmart.Api.Context.Entities
         public virtual ServiceRequestFulfillment Fulfillment { get; set; }
 
         public virtual OrderItem OrderItem { get; set; }
+
+        public virtual Obligation Obligation { get; set; }
 
     }
 }

@@ -12,9 +12,8 @@ namespace Stellmart.Api.Data.ViewModels
         public string Description { get; set; }
         public int? UnitTypeId { get; set; }
         public int ItemConditionId { get; set; }
-        public int CurrencyTypeId { get; set; }
         public decimal CurrencyAmount { get; set; }
-        public string Descriptors { get; set; }
+        public string [] Variations { get; set; }
         public int Quantity { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace Stellmart.Api.Context.Entities
 
         public int UnitPriceId { get; set; }
 
-        public string Descriptors { get; set; }
+        public string Variations { get; set; }
 
         public string UPC { get; set; }
 
@@ -30,7 +30,10 @@ namespace Stellmart.Api.Context.Entities
 
         public int UnitsReturned { get; set; }
 
-        public virtual CurrencyAmount Price { get; set; }
+        public int Price { get; set; }
+
+        [NotMapped]
+        public Currency Currency => Listing.Currency;
 
         public virtual Listing Listing { get; set; }
 

@@ -8,7 +8,7 @@ namespace Stellmart.Api.Business.Managers.Interfaces
 {
     public interface IOrderDataManager
     {
-        Task<Order> GetOrder(int id);
+        Task<Order> GetOrder(int id, string navParams = null);
         Task<Order> UpdateOrder(Order order);
         Task<Order> CreateAsync(Order order);
     }

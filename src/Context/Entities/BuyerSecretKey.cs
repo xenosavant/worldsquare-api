@@ -10,7 +10,7 @@ namespace Stellmart.Api.Context.Entities
     {
         public int UserId { get; set; }
 
-        public int OrderId { get; set; }
+        public int ObligationId { get; set; }
 
         public virtual ApplicationUser Buyer { get; set; }
     }

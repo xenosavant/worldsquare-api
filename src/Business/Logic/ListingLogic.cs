@@ -4,6 +4,7 @@ using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
+using Stellmart.Api.Data.Listing;
 using Stellmart.Api.Data.Search.Queries;
 using Stellmart.Api.Services.Interfaces;
 using System.Collections.Generic;
@@ -31,9 +32,9 @@ namespace Stellmart.Api.Business.Logic
             _inventoryManager = inventoryManager;
         }
 
-        public async Task<IEnumerable<Listing>> GetAsync(int? onlineStroreId,  string category,
+        public async Task<ListingSearchDto> GetAsync(int? onlineStroreId,  string category,
             int? conditionId, string searchString, double? usdMin,
-            double? usdMax, int? page, int? pageLength)
+            double? usdMax, double? xlmMin, double? xlmMax, int page, int pageLength)
         {
             var query = new ItemSearchQuery()
             {
@@ -43,12 +44,13 @@ namespace Stellmart.Api.Business.Logic
                 MinimumPriceUsd = usdMin,
                 MaximumPriceUsd = usdMax
             };
-            var ids = (await _searchService.SearchAsync<Listing, ItemSearchQuery>(searchString + "~1", query)).ToList();
-            if (page != null && pageLength != null)
+            var searchResult = await _searchService.SearchAsync<Listing, ItemSearchQuery>(searchString, query, (page - 1) * pageLength, pageLength);
+            var results = (await _listingManager.GetAsync(searchResult.Ids)).ToList();
+            return new ListingSearchDto()
             {
-                ids = ids.Skip(((int)page - 1) * (int)pageLength).Take((int)pageLength).ToList();
-            }
-            return await _listingManager.GetAsync(ids);
+                Listings = results,
+                Count = results.Count
+            };
         } 
 
         public Task<Listing> GetById(int id)
@@ -58,13 +60,20 @@ namespace Stellmart.Api.Business.Logic
 
         public async Task<Listing> CreateAsync(int userId, Listing listing)
         {
+            foreach (var item in listing.InventoryItems)
+            {
+                item.Price = item.Price * listing.Currency.Precision;
+            }
             _inventoryManager.Create(listing.InventoryItems);
             await _metaDataManager.UpdateRelationshipsAsync(listing.ItemMetaData);
             listing.IsActive = true;
+            listing.CurrencyId = listing.Currency.Id;
+            listing.Currency = null;
             var newListing = await _listingManager.CreateAndSaveAsync(listing, userId);
+            newListing =  await _listingManager.GetById(newListing.Id);
             await _searchService.IndexAsync<Listing, ItemMetaDataSearchIndex>(
-                    new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(listing) });
-            return await _listingManager.GetById(newListing.Id);
+                   new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(newListing) });
+            return newListing;
         }
 
         public async Task<Listing> UpdateAsync(int userId, Listing listing, Delta<Listing> delta)

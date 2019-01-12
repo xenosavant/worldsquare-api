@@ -1,4 +1,5 @@
-﻿using Stellmart.Api.Context.Entities.Entity;
+﻿using Newtonsoft.Json;
+using Stellmart.Api.Context.Entities.Entity;
 using Stellmart.Api.Context.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,15 @@ namespace Stellmart.Api.Context.Entities
         public IItem Item
         {
             get { return InventoryItem == null ? (IItem)InventoryItem : (IItem)TradeItem; }
+        }
+
+        public string [] GetVariations()
+        {
+            if (InventoryItem != null)
+            {
+                return JsonConvert.DeserializeObject<Dictionary<string, string>>(InventoryItem.Variations).Select(d => d.Value).ToArray();
+            }
+            return null;
         }
     }
 }

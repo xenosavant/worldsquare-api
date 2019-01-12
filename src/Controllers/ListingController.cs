@@ -4,6 +4,7 @@ using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data;
+using Stellmart.Api.Data.Listing;
 using Stellmart.Api.Data.ViewModels;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,8 +13,9 @@ namespace Stellmart.Api.Controllers
 {
     [Produces("application/json")]
     [Route("api/[controller]")]
-    public class ListingController : AuthorizedController
+    public class ListingController : BaseController
     {
+        private readonly int UserId = 1;
         private readonly IListingLogic _listingLogic;
         private readonly IListingDataManager _listingDataManager;
         private readonly IMapper _mapper;
@@ -31,7 +33,7 @@ namespace Stellmart.Api.Controllers
         [HttpGet]
         [Route("")]
         [ProducesResponseType(200)]
-        public async Task<ActionResult<IEnumerable<ListingDetailViewModel>>> Get(
+        public async Task<ActionResult<ListingSearchResponse>> Get(
             //[ModelBinder(
             //typeof(CommaDelimitedArrayModelBinder))]
             [FromQuery]
@@ -41,11 +43,19 @@ namespace Stellmart.Api.Controllers
             string searchstring,
             double? usdMin,
             double? usdMax,
-            int? page, 
-            int? pageLength)
+            double? xlmMin,
+            double? xlmMax,
+            int page)
         {
-            return _mapper.Map<List<ListingDetailViewModel>>(await _listingLogic.GetAsync(onlineStoreId, category, 
-                conditionId, searchstring, usdMin, usdMax, page, pageLength));
+            var pageLength = 20;
+
+            var result = await _listingLogic.GetAsync(onlineStoreId, category, 
+                conditionId, searchstring, usdMin, usdMax, xlmMin, xlmMax, page, pageLength);
+            return new ListingSearchResponse()
+            {
+                Listings = _mapper.Map<List<ListingViewModel>>(result.Listings),
+                Count = result.Count
+            };
         }
 
         [HttpGet]
@@ -73,7 +83,7 @@ namespace Stellmart.Api.Controllers
                 return BadRequest();
             }
             var listing = _mapper.Map<Listing>(viewModel);
-            var newListing = await _listingLogic.CreateAsync(UserId, listing);
+            var newListing = await _listingLogic.CreateAsync(1, listing);
             return CreatedAtRoute("GetListing", new { id = newListing.Id }, _mapper.Map<ListingViewModel>(newListing));
         }
 

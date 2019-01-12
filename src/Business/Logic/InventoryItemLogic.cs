@@ -35,7 +35,7 @@ namespace Stellmart.Api.Business.Logic
         {
             await _inventoryManager.CreateAndSaveAsync(new List<InventoryItem>() { item });
             var listing = await _listingManager.GetById((int)item.ListingId,
-                "InventoryItems.Price,ItemMetaData,ItemMetaData.ItemMetaDataCategories.Category");
+                "InventoryItems,ItemMetaData,ItemMetaData.ItemMetaDataCategories.Category");
             await _searchService.UpdateAsync<Listing, ItemMetaDataSearchIndex>(
                 new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(listing) });
             return item;
@@ -43,20 +43,10 @@ namespace Stellmart.Api.Business.Logic
 
         public async Task<InventoryItem> UpdateAndSaveAsync(int userId, InventoryItem item, Delta<InventoryItem> delta)
         {
-            if (delta.ContainsKey("CurrencyAmount"))
-            {
-                item.Price.Amount = delta["CurrencyAmount"];
-                delta.Remove("CurrencyAmount");
-            }
-            if (delta.ContainsKey("CurrencyTypeId"))
-            {
-                item.Price.CurrencyTypeId = delta["CurrencyTypeId"];
-                delta.Remove("CurrencyTypeId");
-            }
             delta.Patch(item);
             var savedItem = await _inventoryManager.UpdateAndSaveAsync(new List<InventoryItem>() { item });
             var listing = await _listingManager.GetById((int)item.ListingId,
-               "InventoryItems.Price,ItemMetaData,ItemMetaData.ItemMetaDataCategories.Category");
+               "InventoryItems,ItemMetaData,ItemMetaData.ItemMetaDataCategories.Category");
             await _searchService.UpdateAsync<Listing, ItemMetaDataSearchIndex>(
                 new List<ItemMetaDataSearchIndex>() { new ItemMetaDataSearchIndex(listing) });
             return savedItem.FirstOrDefault();

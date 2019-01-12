@@ -23,6 +23,8 @@ namespace Stellmart.Api.Data.ViewModels
 
         public MessageThread Thread { get; set; }
 
+        public CurrencyViewModel Currency { get; set; }
+
         public IEnumerable<InventoryItemViewModel> InventoryItems { get; set; }
     }
 }

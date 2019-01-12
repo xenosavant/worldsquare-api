@@ -18,6 +18,7 @@ namespace Stellmart.Api.Business.Logic
         private readonly IShippingService _shippingService;
         private readonly IUserDataManager _userDataManager;
         private readonly IEncryptionService _encryptionService;
+        private readonly IOrderDataManager _orderDataManager;
 
         public ShippingLogic(IContractService contractService,
             IShipmentTrackerDataManager trackerManager,
@@ -26,7 +27,8 @@ namespace Stellmart.Api.Business.Logic
             IShippingService shippingService,
             IEncryptionService encryptionService,
             ISecretKeyDataManager secretKeyManager,
-            IUserDataManager userDataManager)
+            IUserDataManager userDataManager,
+            IOrderDataManager orderDataManager)
         {
             _secretKeyManager = secretKeyManager;
             _shipmentDataManager = shipmentDataManager;
@@ -36,6 +38,7 @@ namespace Stellmart.Api.Business.Logic
             _signatureManager = signatureManager;
             _shippingService = shippingService;
             _userDataManager = userDataManager;
+            _orderDataManager = orderDataManager;
         }
 
         public async Task<ProductShipment> CreateAsync(ShipPackageData data)
@@ -44,7 +47,9 @@ namespace Stellmart.Api.Business.Logic
 
             if (data.EasyPostTrackerId != null)
             {
-                var secretKey = await _secretKeyManager.GetBuyerSecretKeyByOrderId(data.OrderId);
+                var order = await _orderDataManager.GetOrder(data.OrderId, "Sale.Obligations");
+                var obligationId = order.Sale.Obligation.Id;
+                var secretKey = await _secretKeyManager.GetSecretKeyByObligationId(obligationId);
                 var user = await _userDataManager.GetByIdAsync(data.CurrentUserId);
                 // TODO: we should probably verify this key is correct before we attempt to sign
                 var stellarKey = _encryptionService.DecryptSecretKey(user.StellarEncryptedSecretKey, user.StellarSecretKeyIv, data.Password);

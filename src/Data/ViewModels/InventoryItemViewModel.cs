@@ -12,7 +12,7 @@ namespace Stellmart.Api.Data.ViewModels
 
         public int? ListingId { get; set; }
 
-        public string Descriptors { get; set; }
+        public Dictionary<string, string> Variations { get; set; }
 
         public string UPC { get; set; }
 
@@ -24,8 +24,6 @@ namespace Stellmart.Api.Data.ViewModels
 
         public int? UnitsReturned { get; set; }
 
-        public int CurrencyTypeId { get; set; }
-
-        public decimal CurrencyAmount { get; set; }
+        public double CurrencyAmount { get; set; }
     }
 }

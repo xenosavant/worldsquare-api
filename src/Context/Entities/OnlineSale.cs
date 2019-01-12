@@ -11,9 +11,14 @@ namespace Stellmart.Api.Context.Entities
     {
         public virtual Order Order { get; set; }
 
+        public Obligation Obligation => Obligations.FirstOrDefault();
+
         public override void Update(IContractService contractService)
-        { 
-            // update contract for all order items
+        {
+            foreach (var contract in Obligation.Contracts)
+            {
+                // update contracts
+            }
         }
     }
 }

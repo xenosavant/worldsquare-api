@@ -8,6 +8,6 @@ namespace Stellmart.Api.Business.Managers.Interfaces
 {
     public interface ISecretKeyDataManager
     {
-        Task<BuyerSecretKey> GetBuyerSecretKeyByOrderId(int orderId);
+        Task<BuyerSecretKey> GetSecretKeyByObligationId(int obligationId);
     }
 }

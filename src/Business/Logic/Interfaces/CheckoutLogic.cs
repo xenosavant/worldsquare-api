@@ -48,6 +48,19 @@ namespace Stellmart.Api.Business.Logic.Interfaces
         {
             var user = _userManager.GetByIdAsync(userId);
             var cart = await _cartDataManager.GetAsync(userId, "LineItems.InventoryItem.Listing");
+
+            // seperate cart items into groups by serveiceid
+            var groupedByService = cart.LineItems.GroupBy(li => li.InventoryItem.Listing.ServiceId);
+
+            // create a new online sale interaction for each one with an obligation
+
+
+            // create a order items for each item 
+
+            // create a contract for each order item and associate with obligation
+
+
+
             var onlineSale = await _onlineSaleManager.CreateAsync();
             var order = new Order()
             {

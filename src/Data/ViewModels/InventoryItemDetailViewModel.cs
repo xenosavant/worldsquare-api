@@ -8,8 +8,8 @@ namespace Stellmart.Api.Data.ViewModels
     public class InventoryItemDetailViewModel
     {
         public int Id { get; set; }
-        public string Descriptors { get; set; }
-        public int CurrencyTypeId { get; set; }
+        public string Variations { get; set; }
+        public string CurrencyName { get; set; }
         public decimal CurrencyAmount { get; set; }
     }
 }

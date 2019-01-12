@@ -102,14 +102,25 @@ namespace Stellmart.Api.Context
 
                     context.QuantityUnits.AddRange(quantityUnits);
 
-                    var currency = new Currency()
-                    {
-                        Active = true,
-                        Description = "USD",
-                        DisplayOrder = 1
-                    };
+                    var currencies  = 
+                        new Currency[] {
+                            new Currency()
+                            {
+                                Active = true,
+                                Description = "USD",
+                                DisplayOrder = 1,
+                                Precision = 100
+                            },
+                            new Currency()
+                            {
+                                Active = true,
+                                Description = "XLM",
+                                DisplayOrder = 1,
+                                Precision = 10000000
+                            }
+                        };
 
-                    context.Currencies.Add(currency);
+                    context.Currencies.AddRange(currencies);
 
                     var twoFactors = new TwoFactorAuthenticationType[]
                     {
@@ -191,7 +202,7 @@ namespace Stellmart.Api.Context
                     {
                         Email = configuration["SeedData:InitialAdminUser"],
                         UserName = configuration["SeedData:InitialAdminUser"],
-                        NativeCurrency = currency,
+                        NativeCurrency = currencies[0],
                         RewardsLevel = rewardsLevel,
                         TwoFactorAuthenticationType = twoFactors[2],
                         VerificationLevel = verificationLevels[0],
@@ -226,7 +237,7 @@ namespace Stellmart.Api.Context
                         TagLine = "The entire world, squared",
                         Verified = true,
                         User = user,
-                        NativeCurrency = currency
+                        NativeCurrency = currencies[0]
                     };
 
                     context.OnlineStores.Add(internalStore);

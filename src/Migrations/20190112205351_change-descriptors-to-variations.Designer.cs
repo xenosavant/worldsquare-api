@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Stellmart.Context;
 
 namespace Stellmart.Api.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190112205351_change-descriptors-to-variations")]
+    partial class changedescriptorstovariations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -387,15 +389,11 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int>("CurrencyTypeId");
 
-                    b.Property<int?>("InventoryItemId");
-
                     b.Property<bool>("IsDeleted");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CurrencyTypeId");
-
-                    b.HasIndex("InventoryItemId");
 
                     b.ToTable("CurrencyAmounts");
                 });
@@ -437,8 +435,6 @@ namespace Stellmart.Api.Migrations
 
                     b.Property<int?>("ListingId");
 
-                    b.Property<int>("Price");
-
                     b.Property<string>("SKU");
 
                     b.Property<string>("UPC");
@@ -458,6 +454,9 @@ namespace Stellmart.Api.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("ListingId");
+
+                    b.HasIndex("UnitPriceId")
+                        .IsUnique();
 
                     b.ToTable("InventoryItems");
                 });
@@ -1862,10 +1861,6 @@ namespace Stellmart.Api.Migrations
                         .WithMany("CurrencyAmounts")
                         .HasForeignKey("CurrencyTypeId")
                         .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Stellmart.Api.Context.Entities.InventoryItem", "InventoryItem")
-                        .WithMany()
-                        .HasForeignKey("InventoryItemId");
                 });
 
             modelBuilder.Entity("Stellmart.Api.Context.Entities.InventoryItem", b =>
@@ -1873,6 +1868,11 @@ namespace Stellmart.Api.Migrations
                     b.HasOne("Stellmart.Api.Context.Entities.Listing", "Listing")
                         .WithMany("InventoryItems")
                         .HasForeignKey("ListingId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Stellmart.Api.Context.Entities.CurrencyAmount", "Price")
+                        .WithOne("InventoryItem")
+                        .HasForeignKey("Stellmart.Api.Context.Entities.InventoryItem", "UnitPriceId")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
