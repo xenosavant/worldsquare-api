@@ -9,6 +9,6 @@ namespace Stellmart.Api.Data.Checkout
     public class CheckoutResponse
     {
         public bool Success { get; set; }
-        public Order Order { get; set; }
+        public List<Order> Orders { get; set; }
     }
 }

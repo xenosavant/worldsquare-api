@@ -23,9 +23,9 @@ namespace Stellmart.Api.Business.Managers
             return  _repository.GetAllAsync<OnlineStore>();
         }
 
-        public Task<OnlineStore> GetById(int id)
+        public Task<OnlineStore> GetById(int id, string navParams = null)
         {
-            return _repository.GetOneAsync<OnlineStore>(s => s.Id == id, NavigationProperties);
+            return _repository.GetOneAsync<OnlineStore>(s => s.Id == id, navParams ?? NavigationProperties);
         }
 
         public OnlineStore Create(OnlineStore store, int id)

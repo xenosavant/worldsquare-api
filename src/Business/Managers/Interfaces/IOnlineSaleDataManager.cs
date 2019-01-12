@@ -8,6 +8,6 @@ namespace Stellmart.Api.Business.Managers.Interfaces
 {
     public interface IOnlineSaleDataManager
     {
-        Task<OnlineSale> CreateAsync();
+        Task<OnlineSale> CreateAsync(OnlineSale sale);
     }
 }

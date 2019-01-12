@@ -7,7 +7,7 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     public interface IOnlineStoreDataManager
     {
         Task<IEnumerable<OnlineStore>> GetAll();
-        Task<OnlineStore> GetById(int id);
+        Task<OnlineStore> GetById(int id, string navParams = null);
         OnlineStore Create(OnlineStore store, int id);
         Task<OnlineStore> CreateAndSaveAsync(OnlineStore store, int id);
         OnlineStore Update(OnlineStore store, int id);

@@ -8,10 +8,15 @@ namespace Stellmart.Api.Context.Entities
 {
     public class Obligation : UniqueEntity
     {
+        // the service
         public int ServiceId { get; set; }
+        // the user providing the service (null means ws)
         public int? ProviderId { get; set; }
+        // the recipient of the service
         public int RecipientId { get; set; }
+        // the party arbitrating the transactions (third signer) (null means ws)
         public int? ArbiterId { get; set; }
+        // the interaction that the obligation is part of
         public int InteracationId { get; set; }
         // The time limit in the initial phase after funding in which the provider 
         // must initiate the service. For an online sale, this would mean shipping all of the products.

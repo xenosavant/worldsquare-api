@@ -17,12 +17,11 @@ namespace Stellmart.Api.Business.Managers
             _repository = repository;
         }
 
-        public async Task<OnlineSale> CreateAsync()
+        public async Task<OnlineSale> CreateAsync(OnlineSale sale)
         {
-            var onlineSale = new OnlineSale();
-            _repository.Create(onlineSale);
+            _repository.Create(sale);
             await _repository.SaveAsync();
-            return onlineSale;
+            return sale;
         }
     }
 }

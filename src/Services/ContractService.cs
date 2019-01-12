@@ -46,7 +46,7 @@ namespace Stellmart.Api.Services
                          {
                              Signers = new List<HorizonAccountSignerModel>
                                        {
-                                           new HorizonAccountSignerModel {Signer = contractParameterModel.SourceAccount, Weight = 1},
+                                           new HorizonAccountSignerModel {Signer = contractParameterModel.SourceAccountId, Weight = 1},
                                            new HorizonAccountSignerModel {Signer = _worldSquareAccount.PublicKey, Weight = 4}
                                        },
                              MasterWeight = 0,
@@ -67,8 +67,8 @@ namespace Stellmart.Api.Services
             var contract = new Contract
                            {
                                EscrowAccountId = escrow.PublicKey,
-                               DestAccountId = contractParameterModel.DestinationAccount,
-                               SourceAccountId = contractParameterModel.SourceAccount,
+                               DestAccountId = contractParameterModel.DestinationAccountId,
+                               SourceAccountId = contractParameterModel.SourceAccountId,
                                BaseSequenceNumber = sequenceNumber,
                                CurrentSequenceNumber = sequenceNumber
 
@@ -76,9 +76,12 @@ namespace Stellmart.Api.Services
                                //ContractStateId =0;
                            };
 
-            switch (contractParameterModel.ContractTypeId)
-            {
-                case (int) ContractTypes.OnlineSaleInternalShippingValidation:
+            // NO CONTRACT TYPES NOW, everything is defined by parent objects and contracts are agnostic 
+
+
+            //switch (contractParameterModel.ContractTypeId)
+            //{
+            //    case (int) ContractTypes.OnlineSaleInternalShippingValidation:
 
                     //if we are here, that means the current phase is success
                     var phase = new ContractPhase {Completed = true, SequenceNumber = sequenceNumber, Contested = false};
@@ -106,13 +109,13 @@ namespace Stellmart.Api.Services
 
                     contract = await ConstructPhaseResolutionAsync(contract);
 
-                    break;
+                //    break;
 
-                default:
-                    Console.WriteLine(value: "contract id undefined\n");
+                //default:
+                //    Console.WriteLine(value: "contract id undefined\n");
 
-                    return null;
-            }
+                //    return null;
+            //}
 
             return contract;
         }

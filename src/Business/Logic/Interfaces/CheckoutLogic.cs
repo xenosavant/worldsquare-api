@@ -19,9 +19,11 @@ namespace Stellmart.Api.Business.Logic.Interfaces
         private readonly IContractService _contractService;
         private readonly ICartDataManager _cartDataManager;
         private readonly IOnlineSaleDataManager _onlineSaleManager;
+        private readonly IOnlineStoreDataManager _onlineStoreManager;
         private readonly IOrderDataManager _orderManager;
         private readonly IOrderItemDataManager _orderItemManager;
         private readonly IUserDataManager _userManager;
+        private readonly IEncryptionService _encryptionService;
 
         public CheckoutLogic(
             ISignatureService signatureService, 
@@ -31,7 +33,9 @@ namespace Stellmart.Api.Business.Logic.Interfaces
             IOrderDataManager orderManager,
             IContractService contractService,
             IOrderItemDataManager orderItemManager,
-            IUserDataManager userManager)
+            IUserDataManager userManager,
+            IOnlineStoreDataManager onlineStoreManager,
+            IEncryptionService encryptionService)
         {
             _singatureService = signatureService;
             _contractService = contractService;
@@ -41,67 +45,88 @@ namespace Stellmart.Api.Business.Logic.Interfaces
             _orderManager = orderManager;
             _orderItemManager = orderItemManager;
             _userManager = userManager;
+            _onlineStoreManager = onlineStoreManager;
+            _encryptionService = encryptionService;
         }
 
         public async Task<CheckoutData> ManagedCheckout(int userId, string password,
             int nativeCurrencyTypeId = (int)NativeCurrencyTypes.Default)
         {
-            var user = _userManager.GetByIdAsync(userId);
+            var user = await _userManager.GetByIdAsync(userId);
             var cart = await _cartDataManager.GetAsync(userId, "LineItems.InventoryItem.Listing");
 
             // seperate cart items into groups by serveiceid
             var groupedByService = cart.LineItems.GroupBy(li => li.InventoryItem.Listing.ServiceId);
 
+            var returnOrders = new List<Order>();
             // create a new online sale interaction for each one with an obligation
-
-
-            // create a order items for each item 
-
-            // create a contract for each order item and associate with obligation
-
-
-
-            var onlineSale = await _onlineSaleManager.CreateAsync();
-            var order = new Order()
+            foreach (var group in groupedByService)
             {
-                Sale = onlineSale,
-                PurchaserId = userId
-            };
-            foreach (var item in cart.LineItems)
-            {
-                var orderItem = new OrderItem()
-                {
-                    StoreId = item.InventoryItem.Listing.ServiceId,
-                    InventoryItem = item.InventoryItem,
+                var service = await _onlineStoreManager.GetById(group.Key, "User");
+                var secret = _encryptionService.DecryptSecretKey(user.StellarEncryptedSecretKey, user.StellarSecretKeyIv, password);
+                var now = DateTime.Now;
+                var onlineSale = new OnlineSale() {
+                    Obligations = new List<Obligation>()
+                    {
+                        new Obligation()
+                        {
+                            ServiceId = service.Id,
+                            ProviderId = service.UserId,
+                            RecipientId = userId,
+                            InteracationId = 0,
+                            ServiceInitiationTimeLimit = now.AddDays(3),
+                            ServiceFulfillmentTimeLimit = now.AddDays(14),
+                            ServiceReceiptTimeLimit = now.AddDays(17),
+                            IntermediaryPhases = 1,
+                            Fulfilled = false
+                        }
+                    }
                 };
-                // ToDo: Review me; SetupContractAsync needs param
-                var model = new ContractParameterModel();
-                orderItem.Contract = await _contractService.SetupContractAsync(model);
-                // TODO: create contract
 
-                //var model = new ContractParameterModel()
-                //{
-                //    ContractTypeId = (int)ContractTypes.OnlineSaleInternalShippingValidation,
-                //    DestinationAccount = new 
-                //    SourceAccount = // get this from currentUserAccount,
-                //    Asset = new HorizonAssetModel()
-                //    {
-                //        IsNative = true,
-                //        Amount = // get this from product total
-                //    }
-                //};
-                //orderItem.Contract = await _contractService.FundContractAsync(orderItem.Contract, model);
-                _orderItemManager.Update(orderItem);
+                var savedOnlineSale = await _onlineSaleManager.CreateAsync(onlineSale);
+                var order = new Order()
+                {
+                    Sale = onlineSale,
+                    PurchaserId = userId
+                };
+
+                var contracts = new List<Contract>();
+                foreach (var item in group)
+                {
+                    var model = new ContractParameterModel()
+                    {
+                        SourceAccountSecret = new ContractSignatureModel()
+                        {
+                            Secret = secret
+                        },
+                        Obligation = onlineSale.Obligation,
+                        Asset = new HorizonAssetModel()
+                        {
+                            // TODO: add asset for WSD / Stronghold
+                        },
+                        DestinationAccountId = service.User.StellarPublicKey,
+                        SourceAccountId = user.StellarPublicKey
+                    };
+
+                    var contract = await _contractService.SetupContractAsync(model);
+                    var orderItem = new OrderItem()
+                    {
+                        StoreId = service.Id,
+                        InventoryItem = item.InventoryItem,
+                        Contract = contract
+                    };
+                    order.Items.Add(orderItem);
+                    onlineSale.Obligation.Contracts.Add(contract);
+                }
+                await _orderManager.CreateAsync(order);
+                returnOrders.Add(order);
             }
-
-            await _orderManager.CreateAsync(order);
 
             return new CheckoutData()
             {
-                Order = order,
+                Orders = returnOrders,
                 Success = true
             };
         }
-
     }
 }
