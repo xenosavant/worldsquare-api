@@ -8,7 +8,7 @@ using Stellmart.Api.Data.Shipping;
 using Stellmart.Api.Services.Interfaces;
 using EasyPost;
 using Stellmart.Api.Business.Logic.Interfaces;
-using Stellmart.Api.Data.Contract;
+using Stellmart.Api.Data.Contracts;
 
 namespace Stellmart.Api.Controllers
 {

@@ -46,9 +46,9 @@ namespace Stellmart.Api.Business.Managers
             return false;
         }
 
-        public async Task<ApplicationUser> GetByIdAsync(int id)
+        public async Task<ApplicationUser> GetByIdAsync(int id, string navParams = null)
         {
-            return await _repository.GetByIdAsync<ApplicationUser>(id);
+            return await _repository.GetOneAsync<ApplicationUser>(u => u.Id == id, navParams);
         }
 
         public async Task<IReadOnlyCollection<ApplicationUser>> GetAllAsync()

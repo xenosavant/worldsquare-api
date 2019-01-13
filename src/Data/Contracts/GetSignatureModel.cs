@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Data.Contract
+namespace Stellmart.Api.Data.Contracts
 {
     public class GetSignatureModel
     {

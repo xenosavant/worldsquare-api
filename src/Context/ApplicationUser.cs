@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel;
 using System.Linq;
+using Stellmart.Api.Context.Entities.Payment;
 
 namespace Stellmart.Api.Context
 {
@@ -35,8 +36,6 @@ namespace Stellmart.Api.Context
         public byte[] StellarSecretKeyIv { get; set; }
 
         public bool ManagedAccount { get; set; }
-
-        public int? RewardsLevelId { get; set; }
 
         public int? TwoFactorTypeId { get; set; }
 
@@ -66,8 +65,6 @@ namespace Stellmart.Api.Context
         public int DefaultTwoFatorLockoutMinutes{ get; set; }
 
         public virtual ICollection<Location> Locations { get; set; }
-
-        public virtual RewardsLevel RewardsLevel { get; set; }
 
         public virtual VerificationLevel VerificationLevel { get; set; }
 
@@ -118,6 +115,13 @@ namespace Stellmart.Api.Context
 
         [NotMapped]
         public IEnumerable<MessageThread> Threads => MessageThreadMembers?.Select(t => t.Thread);
+
+        public virtual ICollection<UserPaymentMethod> UserPaymentMethods { get; set; }
+
+        public PaymentMethod GetPaymentMethod(int id)
+        {
+            return UserPaymentMethods.Select(up => up.PaymentMethod).Where(pm => pm.Id == id).FirstOrDefault();
+        }
 
         // IEntity
 

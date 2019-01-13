@@ -18,6 +18,10 @@ namespace Stellmart.Api.Context.Entities
         public int? ArbiterId { get; set; }
         // the interaction that the obligation is part of
         public int InteracationId { get; set; }
+        // The time limit for funding the contract
+        // This is the amount of time that can elapse before the contract is funded by the
+        // recipient. After this time the contract will be cancelled
+        public DateTime FundingTimeLimit { get; set; }
         // The time limit in the initial phase after funding in which the provider 
         // must initiate the service. For an online sale, this would mean shipping all of the products.
         // For a ride service, this would mean picking up the rider.

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Stellmart.Api.Data.Checkout
+namespace Stellmart.Api.Data.OnlineSale
 {
-    public class CheckoutResponse
+    public class OnlineSaleData
     {
         public bool Success { get; set; }
         public List<Order> Orders { get; set; }

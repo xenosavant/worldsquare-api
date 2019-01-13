@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Data.Contract;
+using Stellmart.Api.Data.Contracts;
 using Stellmart.Api.DataAccess;
 
 namespace Stellmart.Api.Business.Managers

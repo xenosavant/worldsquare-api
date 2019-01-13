@@ -40,6 +40,10 @@ namespace Stellmart.Api.Services
             {
                 searchText = splitText.Aggregate((accumulator, value) => accumulator += value + "~ ");
             }
+            else
+            {
+                searchText += "~";
+            }
             var result = await indexClient.Documents.SearchAsync(searchText == null ? "*" : searchText, searchParams);
             var ids =  result.Results.Select(r =>
             {

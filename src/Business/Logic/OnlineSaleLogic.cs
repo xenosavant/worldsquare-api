@@ -1,18 +1,20 @@
 ﻿using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Data.Checkout;
+using Stellmart.Api.Data.OnlineSale;
 using Stellmart.Api.Data.Enums;
-using Stellmart.Api.Data.Contract;
+using Stellmart.Api.Data.Contracts;
 using Stellmart.Api.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Stellmart.Api.Data.Horizon;
+using Stellmart.Api.Context;
+using Stellmart.Api.Context.Entities.Payment;
 
 namespace Stellmart.Api.Business.Logic.Interfaces
 {
-    public class CheckoutLogic : ICheckoutLogic
+    public class OnlineSaleLogic : IOnlineSaleLogic
     {
         private readonly ISignatureService _singatureService;
         private readonly IHorizonService _horizonService;
@@ -24,8 +26,9 @@ namespace Stellmart.Api.Business.Logic.Interfaces
         private readonly IOrderItemDataManager _orderItemManager;
         private readonly IUserDataManager _userManager;
         private readonly IEncryptionService _encryptionService;
+        private readonly IPaymentService _paymentService;
 
-        public CheckoutLogic(
+        public OnlineSaleLogic(
             ISignatureService signatureService, 
             IHorizonService horizonService,
             ICartDataManager cartDataManager,
@@ -35,7 +38,8 @@ namespace Stellmart.Api.Business.Logic.Interfaces
             IOrderItemDataManager orderItemManager,
             IUserDataManager userManager,
             IOnlineStoreDataManager onlineStoreManager,
-            IEncryptionService encryptionService)
+            IEncryptionService encryptionService,
+            IPaymentService paymentService)
         {
             _singatureService = signatureService;
             _contractService = contractService;
@@ -47,13 +51,12 @@ namespace Stellmart.Api.Business.Logic.Interfaces
             _userManager = userManager;
             _onlineStoreManager = onlineStoreManager;
             _encryptionService = encryptionService;
+            _paymentService = paymentService;
         }
 
-        public async Task<CheckoutData> ManagedCheckout(int userId, string password,
-            int nativeCurrencyTypeId = (int)NativeCurrencyTypes.Default)
+        public async Task<OnlineSaleData> Checkout(ApplicationUser user, string password)
         {
-            var user = await _userManager.GetByIdAsync(userId);
-            var cart = await _cartDataManager.GetAsync(userId, "LineItems.InventoryItem.Listing");
+            var cart = await _cartDataManager.GetAsync(user.Id, "LineItems.InventoryItem.Listing");
 
             // seperate cart items into groups by serveiceid
             var groupedByService = cart.LineItems.GroupBy(li => li.InventoryItem.Listing.ServiceId);
@@ -72,8 +75,9 @@ namespace Stellmart.Api.Business.Logic.Interfaces
                         {
                             ServiceId = service.Id,
                             ProviderId = service.UserId,
-                            RecipientId = userId,
+                            RecipientId = user.Id,
                             InteracationId = 0,
+                            FundingTimeLimit = now.AddDays(1),
                             ServiceInitiationTimeLimit = now.AddDays(3),
                             ServiceFulfillmentTimeLimit = now.AddDays(14),
                             ServiceReceiptTimeLimit = now.AddDays(17),
@@ -87,7 +91,7 @@ namespace Stellmart.Api.Business.Logic.Interfaces
                 var order = new Order()
                 {
                     Sale = onlineSale,
-                    PurchaserId = userId
+                    PurchaserId = user.Id
                 };
 
                 var contracts = new List<Contract>();
@@ -102,7 +106,7 @@ namespace Stellmart.Api.Business.Logic.Interfaces
                         Obligation = onlineSale.Obligation,
                         Asset = new HorizonAssetModel()
                         {
-                            // TODO: add asset for WSD / Stronghold
+                            AssetType = "native"
                         },
                         DestinationAccountId = service.User.StellarPublicKey,
                         SourceAccountId = user.StellarPublicKey
@@ -122,11 +126,31 @@ namespace Stellmart.Api.Business.Logic.Interfaces
                 returnOrders.Add(order);
             }
 
-            return new CheckoutData()
+            return new OnlineSaleData()
             {
                 Orders = returnOrders,
                 Success = true
             };
+        }
+
+        public async Task<PaymentResult> MakePayment(ApplicationUser user, List<OnlineSale> sales, string password, int paymentMethodId)
+        {
+            _paymentService.SetContracts(sales.SelectMany(s => s.Obligation.Contracts).ToList());
+            _paymentService.SetUser(user);
+            var secret = _encryptionService.DecryptSecretKey(user.StellarEncryptedSecretKey, user.StellarSecretKeyIv, password);
+            _paymentService.SetSecret(secret);
+            _paymentService.SetStrategy((IPaymentStrategy)user.GetPaymentMethod(paymentMethodId));
+            return await _paymentService.MakePayment();
+        }
+
+        public async Task<PaymentResult> ValidatePayment(ApplicationUser user, List<OnlineSale> sales, string password, int paymentMethodId)
+        {
+            _paymentService.SetContracts(sales.SelectMany(s => s.Obligation.Contracts).ToList());
+            _paymentService.SetUser(user);
+            var secret = _encryptionService.DecryptSecretKey(user.StellarEncryptedSecretKey, user.StellarSecretKeyIv, password);
+            _paymentService.SetSecret(secret);
+            _paymentService.SetStrategy((IPaymentStrategy)user.GetPaymentMethod(paymentMethodId));
+            return await _paymentService.ValidatePayment();
         }
     }
 }

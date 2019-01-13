@@ -15,8 +15,6 @@ namespace Stellmart.Api.Data.Account
         public byte[] StellarSecretKeyIv { get; set; }
         public int? PrimaryShippingLocationId { get; set; }
 
-        public int? RewardsLevelId { get; set; }
-
         public int? TwoFactorTypeId { get; set; }
 
         public int? NativeCurrencyId { get; set; }

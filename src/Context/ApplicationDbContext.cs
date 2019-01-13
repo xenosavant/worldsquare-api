@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Stellmart.Api.Context;
 using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Context.Entities.Payment;
 using Stellmart.Api.Context.Entities.ReadOnly;
 
 namespace Stellmart.Context
@@ -33,14 +34,18 @@ namespace Stellmart.Context
         public DbSet<SystemSignature> SystemSignatures { get; set; }
         public DbSet<SecretSignature> SecretSignatures { get; set; }
 
-        public DbSet<Contract> Contracts { get; set; }
-
         public DbSet<SecretKey> SecretKeys { get; set; }
         public DbSet<BuyerSecretKey> BuyerSecretKeys { get; set; }
 
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<ManagedXlmPayment> ManagedXlmPayments { get; set; }
+        public DbSet<UnmanagedXlmPayment> UnManagedXlmPayments { get; set; }
+
         // Entities
 
+        public DbSet<Contract> Contracts { get; set; }
         public DbSet<Area> Areas { get; set; }
+        public DbSet<Asset> Assets { get; set; }
 
         public DbSet<ContractPhase> ContractPhases { get; set; }
         public DbSet<Country> Countries { get; set; }
@@ -81,7 +86,6 @@ namespace Stellmart.Context
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<ItemCondition> ItemConditions { get; set; }
-        public DbSet<ContractState> ContractStates { get; set; }
         public DbSet<Currency> Currencies { get; set; }
         public DbSet<DistanceUnit> DistanceUnits { get; set; }
         public DbSet<FulfillmentState> FulfillmentStates { get; set; }
@@ -153,6 +157,21 @@ namespace Stellmart.Context
                .HasOne(t => t.User)
                .WithMany("MessageThreadMembers")
                .HasForeignKey(t => t.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserPaymentMethod>()
+               .HasKey(t => new { t.UserId, t.PaymentMethodId });
+
+            modelBuilder.Entity<UserPaymentMethod>()
+                .HasOne(t => t.User)
+                .WithMany("UserPaymentMethods")
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UserPaymentMethod>()
+               .HasOne(t => t.PaymentMethod)
+               .WithMany("UserPaymentMethods")
+               .HasForeignKey(t => t.PaymentMethodId)
                .OnDelete(DeleteBehavior.Restrict);
 
 
@@ -377,12 +396,6 @@ namespace Stellmart.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ApplicationUser>()
-                .HasOne(u => u.RewardsLevel)
-                .WithMany(c => c.Users)
-                .HasForeignKey(s => s.RewardsLevelId)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<ApplicationUser>()
                 .HasOne(u => u.TwoFactorAuthenticationType)
                 .WithMany(c => c.Users)
                 .HasForeignKey(s => s.TwoFactorTypeId)
@@ -544,9 +557,15 @@ namespace Stellmart.Context
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Contract>()
-                .HasOne(c => c.State)
+                .HasOne(c => c.FundingAsset)
                 .WithMany(u => u.Contracts)
-                .HasForeignKey(c => c.ContractStateId)
+                .HasForeignKey(c => c.FundingAssetId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Asset>()
+                .HasOne(c => c.Currency)
+                .WithMany(u => u.Assets)
+                .HasForeignKey(c => c.CurrencyId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Obligation>()

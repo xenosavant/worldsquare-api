@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Options;
 using stellar_dotnet_sdk;
 using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Data.Contract;
+using Stellmart.Api.Data.Contracts;
 using Stellmart.Api.Data.Enums;
 using Stellmart.Api.Data.Horizon;
 using Stellmart.Api.Data.Settings;

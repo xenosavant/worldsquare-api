@@ -45,12 +45,12 @@ namespace Stellmart.Api.Controllers
             double? usdMax,
             double? xlmMin,
             double? xlmMax,
-            int page)
+            int? page)
         {
             var pageLength = 20;
-
+            page = page ?? 1;
             var result = await _listingLogic.GetAsync(onlineStoreId, category, 
-                conditionId, searchstring, usdMin, usdMax, xlmMin, xlmMax, page, pageLength);
+                conditionId, searchstring, usdMin, usdMax, xlmMin, xlmMax, (int)page, pageLength);
             return new ListingSearchResponse()
             {
                 Listings = _mapper.Map<List<ListingViewModel>>(result.Listings),

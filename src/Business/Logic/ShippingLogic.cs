@@ -1,7 +1,7 @@
 ﻿using Stellmart.Api.Business.Logic.Interfaces;
 using Stellmart.Api.Business.Managers.Interfaces;
 using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Data.Contract;
+using Stellmart.Api.Data.Contracts;
 using Stellmart.Api.Data.Shipping;
 using Stellmart.Api.Services.Interfaces;
 using System.Threading.Tasks;

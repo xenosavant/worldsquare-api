@@ -5,8 +5,11 @@ using System.Threading.Tasks;
 
 namespace Stellmart.Api.Data.Enums
 {
-    public enum ContractTypes
+    public enum PaymentResult
     {
-        OnlineSaleInternalShippingValidation = 1
+        Completed = 1,
+        Processing = 2,
+        InsufficentFunds = 3,
+        Error = 4
     }
 }

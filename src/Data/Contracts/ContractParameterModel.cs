@@ -1,7 +1,7 @@
 ﻿using Stellmart.Api.Context.Entities;
 using Stellmart.Api.Data.Horizon;
 
-namespace Stellmart.Api.Data.Contract
+namespace Stellmart.Api.Data.Contracts
 {
     public class ContractParameterModel
     {

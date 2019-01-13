@@ -17,5 +17,7 @@ namespace Stellmart.Api.Context.Entities.ReadOnly
 
         public virtual ICollection<Listing> Listings { get; set; }
 
+        public virtual ICollection<Asset> Assets { get; set; }
+
     }
 }

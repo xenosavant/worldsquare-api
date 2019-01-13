@@ -9,6 +9,6 @@ namespace Stellmart.Api.Business.Managers.Interfaces
     {
         Task<bool> SignupAsync(ApplicationUserModel model);
         Task<IReadOnlyCollection<ApplicationUser>> GetAllAsync();
-        Task<ApplicationUser> GetByIdAsync(int id);
+        Task<ApplicationUser> GetByIdAsync(int id, string navParams = null);
     }
 }

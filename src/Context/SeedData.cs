@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Stellmart.Api.Context.Entities;
+using Stellmart.Api.Context.Entities.Payment;
 using Stellmart.Api.Context.Entities.ReadOnly;
 using Stellmart.Context;
 using System;
@@ -53,6 +54,13 @@ namespace Stellmart.Api.Context
                     };
 
                     context.RewardsLevels.Add(rewardsLevel);
+
+                    var managedXlmPayment = new ManagedXlmPayment()
+                    {
+                        DisplayText = "Pay with xlm from wordlsquare account"
+                    };
+
+                    context.ManagedXlmPayments.Add(managedXlmPayment);
 
                     var conditions = new ItemCondition[]
                         {
@@ -203,7 +211,6 @@ namespace Stellmart.Api.Context
                         Email = configuration["SeedData:InitialAdminUser"],
                         UserName = configuration["SeedData:InitialAdminUser"],
                         NativeCurrency = currencies[0],
-                        RewardsLevel = rewardsLevel,
                         TwoFactorAuthenticationType = twoFactors[2],
                         VerificationLevel = verificationLevels[0],
                         CreatedBy = 1,

@@ -12,7 +12,7 @@ namespace Stellmart.Api.Context.Entities
     {
         [Required]
         public string EscrowAccountId { get; set; }
-         [Required]
+        [Required]
         public string DestAccountId { get; set; }
         [Required]
         public string SourceAccountId { get; set; }
@@ -29,7 +29,16 @@ namespace Stellmart.Api.Context.Entities
         [Required]
         public int ObligationId { get; set; }
 
-        public virtual ContractState State { get; set; }
+        [Required]
+        public int CurrentPhaseNumber { get; set; }
+
+        // the amount of funding of the asset in stroops
+        public int FundingAmount { get; set; }
+
+        // the id of the asset for the funding
+        public int FundingAssetId { get; set; }
+
+        public virtual Asset FundingAsset { get; set; }
 
         public virtual ICollection<ContractPhase> Phases { get; set; }
 

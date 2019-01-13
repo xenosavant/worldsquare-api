@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Stellmart.Api.Context.Entities;
-using Stellmart.Api.Data.Contract;
+using Stellmart.Api.Data.Contracts;
 
 namespace Stellmart.Api.Services.Interfaces
 {
