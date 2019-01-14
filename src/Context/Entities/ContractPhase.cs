@@ -16,6 +16,8 @@ namespace Stellmart.Api.Context.Entities
         public long SequenceNumber { get; set; }
 
         [Required]
+        public long PhaseNumber { get; set; }
+        [Required]
         public bool Completed { get; set; }
 
         [Required]

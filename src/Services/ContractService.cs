@@ -64,13 +64,15 @@ namespace Stellmart.Api.Services
 
             //create contract
             var sequenceNumber = await _horizonService.GetSequenceNumberAsync(escrow.PublicKey);
+            var PhaseGlobal = 0;
             var contract = new Contract
                            {
                                EscrowAccountId = escrow.PublicKey,
                                DestAccountId = contractParameterModel.DestinationAccountId,
                                SourceAccountId = contractParameterModel.SourceAccountId,
                                BaseSequenceNumber = sequenceNumber,
-                               CurrentSequenceNumber = sequenceNumber
+                               CurrentSequenceNumber = sequenceNumber,
+                               CurrentPhaseNumber = 0,
 
                                // ToDo: contract state yet to be added
                                //ContractStateId =0;
@@ -84,16 +86,19 @@ namespace Stellmart.Api.Services
             //    case (int) ContractTypes.OnlineSaleInternalShippingValidation:
 
                     //if we are here, that means the current phase is success
-                    var phase = new ContractPhase {Completed = true, SequenceNumber = sequenceNumber, Contested = false};
+                    var phase = new ContractPhase {Completed = true, SequenceNumber = sequenceNumber, Contested = false,
+                                    PhaseNumber = ++PhaseGlobal};
                     contract.Phases.Add(phase);
+                    contract.CurrentPhaseNumber++;
 
                     //FundContractAsync sequence number is same like before since no change to escrow account
                     //Phase will be true when funding in complete in FundContractAsync
-                    phase = new ContractPhase {Completed = false, SequenceNumber = sequenceNumber, Contested = false};
+                    phase = new ContractPhase {Completed = false, SequenceNumber = sequenceNumber, Contested = false,
+                                    PhaseNumber = ++PhaseGlobal};
                     contract.Phases.Add(phase);
 
                     //create Phase Ship regular and time over ride transactions and buyer signs it
-                    contract = await ConstructPhaseShipAsync(contract);
+                    contract = await ConstructPhaseShipAsync(contract, ++PhaseGlobal);
 
                     var secret = contractParameterModel.SourceAccountSecret;
 
@@ -101,13 +106,13 @@ namespace Stellmart.Api.Services
                     SignContract(secret);
 
                     //buyer signing not required, but we will create all pre txn here itself
-                    contract = await ConstructPhaseDeliveryAsync(contract);
+                    contract = await ConstructPhaseDeliveryAsync(contract, ++PhaseGlobal);
 
-                    contract = await ConstructPhaseReceiptAsync(contract);
+                    contract = await ConstructPhaseReceiptAsync(contract, ++PhaseGlobal);
 
-                    contract = await ConstructPhaseDisputeAsync(contract);
+                    contract = await ConstructPhaseDisputeAsync(contract, ++PhaseGlobal);
 
-                    contract = await ConstructPhaseResolutionAsync(contract);
+                    contract = await ConstructPhaseResolutionAsync(contract, ++PhaseGlobal);
 
                 //    break;
 
@@ -141,7 +146,11 @@ namespace Stellmart.Api.Services
                 return null;
             }
 
-            // ToDo: set phase to be true here
+            // set phase to be true here, no need to update sequence number
+            var phase = GetNextPhase(contract);
+            phase.Completed = true;
+            contract.CurrentPhaseNumber++;
+
             return contract;
         }
 
@@ -154,23 +163,7 @@ namespace Stellmart.Api.Services
 
         public async Task<bool> UpdateContractAsync(Contract contract)
         {
-            var enumerator = contract.Phases.GetEnumerator();
-
-            var move = contract.CurrentSequenceNumber - contract.BaseSequenceNumber;
-
-            for (long i = 0; i <= move; i++)
-            {
-                enumerator.MoveNext();
-            }
-
-            var phase = enumerator.Current;
-
-            if (phase.Completed)
-            {
-                Console.WriteLine(value: "Error: Sequence number and phase.completed not matching\n");
-
-                return false;
-            }
+            var phase = GetNextPhase(contract);
 
             foreach (var preTransaction in phase.Transactions)
             {
@@ -189,7 +182,7 @@ namespace Stellmart.Api.Services
 
                     //update contract
                     contract.CurrentSequenceNumber = await _horizonService.GetSequenceNumberAsync(contract.EscrowAccountId);
-
+                    contract.CurrentPhaseNumber++;
                     break;
                 }
             }
@@ -278,13 +271,14 @@ namespace Stellmart.Api.Services
             return preTransaction;
         }
 
-        private async Task<Contract> ConstructPhaseShipAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseShipAsync(Contract contract, long PhaseNumber)
         {
             var phase = new ContractPhase();
             var operations = new List<Operation>();
 
             //for phase x, its base sequence number +x
             phase.SequenceNumber = contract.BaseSequenceNumber + 1;
+            phase.PhaseNumber = PhaseNumber;
 
             //success txn, add seller as single txn signer
             //Add seller as escrow signer along with buyer and WS
@@ -332,12 +326,13 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseDeliveryAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseDeliveryAsync(Contract contract, long PhaseNumber)
         {
             var phase = new ContractPhase();
             var operations = new List<Operation>();
 
             phase.SequenceNumber = contract.BaseSequenceNumber + 2;
+            phase.PhaseNumber = PhaseNumber;
 
             //success txn, bump to next
             var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 1);
@@ -372,12 +367,13 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseReceiptAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseReceiptAsync(Contract contract, long PhaseNumber)
         {
             var phase = new ContractPhase();
             var operations = new List<Operation>();
 
             phase.SequenceNumber = contract.BaseSequenceNumber + 3;
+            phase.PhaseNumber = PhaseNumber;
 
             //dispute txn, bump to next
             var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 1);
@@ -424,13 +420,14 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseDisputeAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseDisputeAsync(Contract contract, long PhaseNumber)
         {
             var phase = new ContractPhase();
 
             var operations = new List<Operation>();
 
             phase.SequenceNumber = contract.BaseSequenceNumber + 4;
+            phase.PhaseNumber = PhaseNumber;
 
             var weight = new HorizonAccountWeightModel
                          {
@@ -462,12 +459,13 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseResolutionAsync(Contract contract)
+        private async Task<Contract> ConstructPhaseResolutionAsync(Contract contract, long PhaseNumber)
         {
             var phase = new ContractPhase();
             var operations = new List<Operation>();
 
             phase.SequenceNumber = contract.BaseSequenceNumber + 5;
+            phase.PhaseNumber = PhaseNumber;
 
             //release txn, merge txn
             var mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
@@ -502,6 +500,17 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
+        private static ContractPhase GetNextPhase(Contract contract)
+        {
+            var enumerator = contract.Phases.GetEnumerator();
+
+            for (long i = 0; i <= contract.CurrentPhaseNumber; i++)
+            {
+                enumerator.MoveNext();
+            }
+            return enumerator.Current;
+
+        }
         private static long GetCurrentTimeInSeconds()
         {
             return (long) (DateTime.UtcNow - new DateTime(year: 1970, month: 1, day: 1)).TotalSeconds;
