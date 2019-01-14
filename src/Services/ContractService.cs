@@ -127,7 +127,6 @@ namespace Stellmart.Api.Services
 
         public async Task<Contract> FundContractAsync(Contract contract, ContractSignatureModel fundingAccount, string amount)
         {
-            var phaseOne = new ContractPhase();
             var operations = new List<Operation>();
 
             var asset = new HorizonAssetModel
@@ -137,7 +136,7 @@ namespace Stellmart.Api.Services
             var paymentOperation = await _horizonService.CreatePaymentOperationAsync(asset);
             operations.Add(paymentOperation);
 
-            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: phaseOne.SequenceNumber - 1);
+            var xdrTransaction = await _horizonService.CreateTransaction(contract.EscrowAccountId, operations, time: null, sequence: 0);
 
             var response = await _horizonService.SubmitTransaction(_horizonService.SignTransaction(fundingAccount.Secret, xdrTransaction));
 
