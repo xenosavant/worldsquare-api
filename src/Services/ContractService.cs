@@ -16,6 +16,7 @@ namespace Stellmart.Api.Services
     public class ContractService : IContractService
     {
         private readonly IHorizonService _horizonService;
+        //ToDo: add minimumFund in config
         private readonly string _minimumFund;
         private readonly HorizonKeyPairModel _worldSquareAccount;
 
@@ -64,7 +65,10 @@ namespace Stellmart.Api.Services
 
             //create contract
             var sequenceNumber = await _horizonService.GetSequenceNumberAsync(escrow.PublicKey);
-            var PhaseGlobal = 0;
+            //de-couple phase and sequence numbering
+            var PhaseAdd = 0;
+            var SequenceAdd = 0;
+
             var contract = new Contract
                            {
                                EscrowAccountId = escrow.PublicKey,
@@ -87,18 +91,18 @@ namespace Stellmart.Api.Services
 
                     //if we are here, that means the current phase is success
                     var phase = new ContractPhase {Completed = true, SequenceNumber = sequenceNumber, Contested = false,
-                                    PhaseNumber = ++PhaseGlobal};
+                                    PhaseNumber = ++PhaseAdd};
                     contract.Phases.Add(phase);
                     contract.CurrentPhaseNumber++;
 
                     //FundContractAsync sequence number is same like before since no change to escrow account
                     //Phase will be true when funding in complete in FundContractAsync
                     phase = new ContractPhase {Completed = false, SequenceNumber = sequenceNumber, Contested = false,
-                                    PhaseNumber = ++PhaseGlobal};
+                                    PhaseNumber = ++PhaseAdd};
                     contract.Phases.Add(phase);
 
                     //create Phase Ship regular and time over ride transactions and buyer signs it
-                    contract = await ConstructPhaseShipAsync(contract, ++PhaseGlobal);
+                    contract = await ConstructPhaseShipAsync(contract, ++PhaseAdd, ++SequenceAdd);
 
                     var secret = contractParameterModel.SourceAccountSecret;
 
@@ -106,13 +110,13 @@ namespace Stellmart.Api.Services
                     SignContract(secret);
 
                     //buyer signing not required, but we will create all pre txn here itself
-                    contract = await ConstructPhaseDeliveryAsync(contract, ++PhaseGlobal);
+                    contract = await ConstructPhaseDeliveryAsync(contract, ++PhaseAdd, ++SequenceAdd);
 
-                    contract = await ConstructPhaseReceiptAsync(contract, ++PhaseGlobal);
+                    contract = await ConstructPhaseReceiptAsync(contract, ++PhaseAdd, ++SequenceAdd);
 
-                    contract = await ConstructPhaseDisputeAsync(contract, ++PhaseGlobal);
+                    contract = await ConstructPhaseDisputeAsync(contract, ++PhaseAdd, ++SequenceAdd);
 
-                    contract = await ConstructPhaseResolutionAsync(contract, ++PhaseGlobal);
+                    contract = await ConstructPhaseResolutionAsync(contract, ++PhaseAdd, ++SequenceAdd);
 
                 //    break;
 
@@ -148,6 +152,7 @@ namespace Stellmart.Api.Services
             // set phase to be true here, no need to update sequence number
             var phase = GetNextPhase(contract);
             phase.Completed = true;
+            //update contract
             contract.CurrentPhaseNumber++;
 
             return contract;
@@ -199,7 +204,6 @@ namespace Stellmart.Api.Services
             if (!VerifyTimeBound(preTransaction.MinimumTime, preTransaction.MaximumTime))
             {
                 Console.WriteLine(value: "time bound delay verification failed");
-
                 return false;
             }
 
@@ -221,7 +225,6 @@ namespace Stellmart.Api.Services
                 {
                     //secret key and public key did not match
                     Console.WriteLine(value: "secret key and public key did not match");
-
                     return false;
                 }
 
@@ -230,9 +233,7 @@ namespace Stellmart.Api.Services
                 if (hash != null)
                 {
                     signature.SignatureHash = hash;
-
                     signature.Signed = true;
-
                     signature.SignedOn = DateTime.UtcNow;
 
                     return true;
@@ -240,7 +241,6 @@ namespace Stellmart.Api.Services
 
                 //signature list did not increment
                 Console.WriteLine(value: "secret key and public key did not match");
-
                 return false;
             }
 
@@ -253,31 +253,13 @@ namespace Stellmart.Api.Services
             return false;
         }
 
-        private PreTransaction CreateSignatureList(PreTransaction preTransaction, IReadOnlyCollection<string> publicKeys)
+        private async Task<Contract> ConstructPhaseShipAsync(Contract contract, long PhaseAdd, long SequenceAdd)
         {
-            foreach (var key in publicKeys)
-            {
-                var sign = new UserSignature {PublicKey = key, Signed = false, Transaction = preTransaction};
-
-                preTransaction.Signatures.Add(sign);
-            }
-
-            //System Signature is common for all type of pre-transaction
-            Signature systemSignature = new SystemSignature {PublicKey = _worldSquareAccount.PublicKey, Signed = false, Transaction = preTransaction};
-
-            preTransaction.Signatures.Add(systemSignature);
-
-            return preTransaction;
-        }
-
-        private async Task<Contract> ConstructPhaseShipAsync(Contract contract, long PhaseNumber)
-        {
-            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
             //for phase x, its base sequence number +x
-            phase.SequenceNumber = contract.BaseSequenceNumber + 1;
-            phase.PhaseNumber = PhaseNumber;
+            var phase = new ContractPhase {Completed = false, SequenceNumber = contract.BaseSequenceNumber + SequenceAdd,
+                                            Contested = false, PhaseNumber = PhaseAdd};
 
             //success txn, add seller as single txn signer
             //Add seller as escrow signer along with buyer and WS
@@ -325,13 +307,12 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseDeliveryAsync(Contract contract, long PhaseNumber)
+        private async Task<Contract> ConstructPhaseDeliveryAsync(Contract contract, long PhaseAdd, long SequenceAdd)
         {
-            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
-            phase.SequenceNumber = contract.BaseSequenceNumber + 2;
-            phase.PhaseNumber = PhaseNumber;
+            var phase = new ContractPhase {Completed = false, SequenceNumber = contract.BaseSequenceNumber + SequenceAdd,
+                                            Contested = false, PhaseNumber = PhaseAdd};
 
             //success txn, bump to next
             var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 1);
@@ -366,13 +347,12 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseReceiptAsync(Contract contract, long PhaseNumber)
+        private async Task<Contract> ConstructPhaseReceiptAsync(Contract contract, long PhaseAdd, long SequenceAdd)
         {
-            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
-            phase.SequenceNumber = contract.BaseSequenceNumber + 3;
-            phase.PhaseNumber = PhaseNumber;
+            var phase = new ContractPhase {Completed = false, SequenceNumber = contract.BaseSequenceNumber + SequenceAdd,
+                                            Contested = false, PhaseNumber = PhaseAdd};
 
             //dispute txn, bump to next
             var bumpOperation = _horizonService.BumpSequenceOperation(contract.EscrowAccountId, phase.SequenceNumber + 1);
@@ -419,14 +399,12 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseDisputeAsync(Contract contract, long PhaseNumber)
+        private async Task<Contract> ConstructPhaseDisputeAsync(Contract contract, long PhaseAdd, long SequenceAdd)
         {
-            var phase = new ContractPhase();
-
             var operations = new List<Operation>();
 
-            phase.SequenceNumber = contract.BaseSequenceNumber + 4;
-            phase.PhaseNumber = PhaseNumber;
+            var phase = new ContractPhase {Completed = false, SequenceNumber = contract.BaseSequenceNumber + SequenceAdd,
+                                            Contested = false, PhaseNumber = PhaseAdd};
 
             var weight = new HorizonAccountWeightModel
                          {
@@ -458,13 +436,12 @@ namespace Stellmart.Api.Services
             return contract;
         }
 
-        private async Task<Contract> ConstructPhaseResolutionAsync(Contract contract, long PhaseNumber)
+        private async Task<Contract> ConstructPhaseResolutionAsync(Contract contract, long PhaseAdd, long SequenceAdd)
         {
-            var phase = new ContractPhase();
             var operations = new List<Operation>();
 
-            phase.SequenceNumber = contract.BaseSequenceNumber + 5;
-            phase.PhaseNumber = PhaseNumber;
+            var phase = new ContractPhase {Completed = false, SequenceNumber = contract.BaseSequenceNumber + SequenceAdd,
+                                            Contested = false, PhaseNumber = PhaseAdd};
 
             //release txn, merge txn
             var mergeOperation = _horizonService.CreateAccountMergeOperation(contract.EscrowAccountId, contract.DestAccountId);
@@ -538,7 +515,22 @@ namespace Stellmart.Api.Services
 
             return noDelay;
         }
+        private PreTransaction CreateSignatureList(PreTransaction preTransaction, IReadOnlyCollection<string> publicKeys)
+        {
+            foreach (var key in publicKeys)
+            {
+                var sign = new UserSignature {PublicKey = key, Signed = false, Transaction = preTransaction};
 
+                preTransaction.Signatures.Add(sign);
+            }
+
+            //System Signature is common for all type of pre-transaction
+            Signature systemSignature = new SystemSignature {PublicKey = _worldSquareAccount.PublicKey, Signed = false, Transaction = preTransaction};
+
+            preTransaction.Signatures.Add(systemSignature);
+
+            return preTransaction;
+        }
         private string SignPreTransaction(string xdrTransaction, string secretKey)
         {
             int count, newcount = 0;
